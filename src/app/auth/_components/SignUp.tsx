@@ -6,7 +6,7 @@ import { useAuthActions } from "@convex-dev/auth/react"
 import { toast } from "sonner"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { PiSpinnerBold } from "react-icons/pi"
+import { Loader } from 'lucide-react';
 import { cn } from "@/lib/utils"
 
 import SignUpForm from "@/app/auth/_components/SignUpForm"
@@ -76,7 +76,7 @@ const SignUp = ({ onToggleAuthCard: onToggleAuthForm }: TSignUpProps) => {
     <div className="flex flex-col h-full justify-center items-center">
       {isLoading && (
         <div className="absolute flex items-center justify-center">
-          <PiSpinnerBold className="animate-spin text-2xl" />
+          <Loader className="animate-spin text-2xl" />
         </div>
       )}
 

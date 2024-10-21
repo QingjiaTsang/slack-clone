@@ -4,6 +4,7 @@ import { z } from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
 
 const otpFormSchema = z.object({
   code: z.string().min(8, { message: 'Code must be 8 digits' }),
@@ -37,7 +38,18 @@ const OTPVerificationForm = ({ onSubmit, email }: OTPVerificationFormProps) => {
             <FormItem>
               <FormLabel>Verification Code</FormLabel>
               <FormControl>
-                <Input placeholder="Enter verification code" {...field} />
+                <InputOTP maxLength={8} {...field}>
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} />
+                    <InputOTPSlot index={1} />
+                    <InputOTPSlot index={2} />
+                    <InputOTPSlot index={3} />
+                    <InputOTPSlot index={4} />
+                    <InputOTPSlot index={5} />
+                    <InputOTPSlot index={6} />
+                    <InputOTPSlot index={7} />
+                  </InputOTPGroup>
+                </InputOTP>
               </FormControl>
               <FormMessage />
             </FormItem>

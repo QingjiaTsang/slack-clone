@@ -1,16 +1,26 @@
-"use client";
+import { api } from "../../convex/_generated/api";
+import { fetchQuery } from "convex/nextjs";
+import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import InitialWorkspaceRedirect from "@/components/InitialWorkspaceRedirect";
 
 
-export default function Home() {
-  const router = useRouter()
+export default async function Home() {
+  const currentUserWorkspaces = await fetchQuery(
+    api.workspaces.getWorkspacesByAuth,
+    {},
+    // Note: if no token is sent, getAuthUserId() in the server will return null
+    // For more info, see:
+    // https://labs.convex.dev/auth/authz/nextjs#preloading-and-loading-data
+    // https://docs.convex.dev/client/react/nextjs/server-rendering#server-side-authentication
+    {
+      token: convexAuthNextjsToken()
+    }
+  );
 
   return (
-    <div >
-      <h1>Hello World</h1>
-      <Button onClick={() => router.push('/test')}>router to test</Button>
-    </div>
+    <>
+      <InitialWorkspaceRedirect initialWorkspaces={currentUserWorkspaces} />
+    </>
   );
 }

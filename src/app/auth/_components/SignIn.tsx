@@ -21,9 +21,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 
-import { FcGoogle } from "react-icons/fc";
-import { FaGithub } from "react-icons/fa";
-import { PiSpinnerBold } from "react-icons/pi";
+import { Loader } from 'lucide-react';
 
 import { useAuthActions } from "@convex-dev/auth/react";
 
@@ -99,7 +97,7 @@ const SignIn = ({ onToggleAuthCard: onToggleAuthForm }: TSignInProps) => {
     <div className="flex flex-col h-full justify-center items-center">
       {isLoading && (
         <div className="absolute flex items-center justify-center">
-          <PiSpinnerBold className="animate-spin text-2xl" />
+          <Loader className="animate-spin text-2xl" />
         </div>
       )}
       <Card className={cn('w-[350px]', { 'opacity-50 pointer-events-none': isLoading })}>
