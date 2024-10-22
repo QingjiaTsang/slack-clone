@@ -7,7 +7,6 @@ type TWorkspacePageProps = {
 }
 
 const WorkspacePage = ({ params }: TWorkspacePageProps) => {
-
   return (
     <div>
       <h1>Workspace</h1>

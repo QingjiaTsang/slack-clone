@@ -23,20 +23,21 @@ const WorkspaceLayout = async ({ children, params }: TWorkspaceLayoutProps) => {
   // Since Convex normally has an automatic real-time data update mechanism (implemented by websocket),
   // it's better to use client-side fetching for data that needs to be real-time.
   const workspace = await fetchQuery(
-    api.workspaces.getWorkspaceById,
+    api.workspaces.getOneById,
     { id: params.id },
     { token: convexAuthNextjsToken() }
   );
 
   const userWorkspaces = await fetchQuery(
-    api.workspaces.getWorkspacesByAuth,
+    api.workspaces.getAllByAuth,
     {},
     { token: convexAuthNextjsToken() }
   );
 
-  if (!workspace) {
-    return notFound();
-  }
+  // todo: handle workspace not found in a better way
+  // if (!workspace) {
+  //   return notFound();
+  // }
 
   return (
     <WorkspaceProvider currentWorkspace={workspace}>

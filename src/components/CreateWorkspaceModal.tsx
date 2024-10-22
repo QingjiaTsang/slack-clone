@@ -1,6 +1,6 @@
 'use client'
 
-import { Doc, Id } from "../../convex/_generated/dataModel";
+import { Id } from "../../convex/_generated/dataModel";
 
 import { useRouter } from "next/navigation";
 
@@ -9,19 +9,16 @@ import { useCreateWorkspaceModal } from "@/stores/useCreateWorkspaceModal";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet"
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner";
@@ -53,7 +50,7 @@ const CreateWorkspaceModal = () => {
     Error,
     { name: string }
   >({
-    mutationFn: useConvexMutation(api.workspaces.createWorkspace),
+    mutationFn: useConvexMutation(api.workspaces.create),
     onSuccess: (newWorkspaceId) => {
       closeModal()
       toast.success('Workspace created')
@@ -70,7 +67,7 @@ const CreateWorkspaceModal = () => {
     defaultValues: { name: '' }
   })
 
-  const { isOpen, setIsOpen, openModal, closeModal } = useCreateWorkspaceModal();
+  const { isOpen, setIsOpen, closeModal } = useCreateWorkspaceModal();
 
   const onSubmit = async (data: TWorkspaceFormSchema) => {
     mutate({ name: data.name })
@@ -102,7 +99,7 @@ const CreateWorkspaceModal = () => {
 
   if (isMobile) {
     return (
-      <Sheet open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetContent side="bottom" className="space-y-4">
           <SheetHeader>
             <SheetTitle>Create a Workspace</SheetTitle>
@@ -114,7 +111,7 @@ const CreateWorkspaceModal = () => {
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create a Workspace</DialogTitle>

@@ -7,7 +7,7 @@ import InitialWorkspaceRedirect from "@/components/InitialWorkspaceRedirect";
 
 export default async function Home() {
   const currentUserWorkspaces = await fetchQuery(
-    api.workspaces.getWorkspacesByAuth,
+    api.workspaces.getAllByAuth,
     {},
     // Note: if no token is sent, getAuthUserId() in the server will return null
     // For more info, see:

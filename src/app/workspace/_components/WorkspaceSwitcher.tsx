@@ -55,7 +55,7 @@ const WorkspaceSwitcher = ({ currentWorkspace, otherWorkspaces }: TWorkspaceSide
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className={cn({ 'w-full bg-white': isMobile })}>
+      <DropdownMenuContent side="bottom" align="start" className={cn({ 'w-full bg-white': isMobile })}>
         <DropdownMenuItem className="flex flex-col items-start">
           <div className="text-lg font-medium truncate w-60">
             {currentWorkspace?.name}
@@ -67,15 +67,15 @@ const WorkspaceSwitcher = ({ currentWorkspace, otherWorkspaces }: TWorkspaceSide
 
         {otherWorkspaces?.map((workspace) => (
           <DropdownMenuItem
-            key={workspace._id}
-            onClick={() => router.push(`/workspace/${workspace._id}`)}
+            key={workspace?._id}
+            onClick={() => router.push(`/workspace/${workspace?._id}`)}
             className="flex flex-col items-start overflow-hidden cursor-pointer"
           >
             <div className="text-lg font-medium truncate w-60 group ">
               <Button variant="ghost" size="icon" className='capitalize mr-2 font-semibold text-xl text-white bg-[#616061] group-hover:bg-[#616061]/80'>
-                {workspace.name[0]}
+                {workspace?.name[0]}
               </Button>
-              {workspace.name}
+              {workspace?.name}
             </div>
           </DropdownMenuItem>
         ))}

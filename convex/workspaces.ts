@@ -6,7 +6,7 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 // for query, it doesn't throws error in order to avoid error handling in RSC and RCC for code briefness
 // but for mutation, it's allowed to throw errors because it's always using react-query to handle error in client side
 
-export const createWorkspace = mutation({
+export const create = mutation({
   args: {
     name: v.string(),
   },
@@ -24,34 +24,52 @@ export const createWorkspace = mutation({
       joinCode: joinCode,
     })
 
+    await ctx.db.insert("members", {
+      workspaceId: newWorkspaceId,
+      userId: userId,
+      role: "admin",
+    });
+
     return newWorkspaceId;
   }
 });
 
-export const getWorkspacesByAuth = query({
+export const getAllByAuth = query({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
-    if (userId === null) {
+    if (!userId) {
       return null;
     }
 
-    return await ctx.db.query("workspaces").filter((q) => q.eq(q.field("userId"), userId)).collect();
+    const members = await ctx.db.query("members").filter(q => q.eq(q.field("userId"), userId)).collect();
+
+    const workspaces = (await Promise.all(members.map((member) =>
+      ctx.db.get(member.workspaceId)
+    ))).filter((workspace) => !!workspace);
+
+
+    return workspaces;
   }
 });
 
-export const getWorkspaceById = query({
+export const getOneById = query({
   args: {
     id: v.id("workspaces"),
   },
   handler: async (ctx, { id }) => {
     const userId = await getAuthUserId(ctx);
-    if (userId === null) {
+    if (!userId) {
       return null;
     }
 
-    const workspace = await ctx.db.get(id);
-    if (workspace?.userId !== userId) {
+    const workspacePromise = ctx.db.get(id);
+
+    const memberPromise = ctx.db.query("members").filter(q => q.eq(q.field("userId"), userId)).first();
+
+    const [workspace, member] = await Promise.all([workspacePromise, memberPromise]);
+
+    if (!workspace || !member) {
       return null;
     }
 

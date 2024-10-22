@@ -2,7 +2,7 @@
 import { Workspace } from '@/types/docs';
 
 import { ReactNode } from 'react';
-import { atom, Provider, useSetAtom } from 'jotai';
+import { atom, Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 
 

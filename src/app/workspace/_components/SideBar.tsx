@@ -21,7 +21,7 @@ type TSideNavBarProps = {
 
 const SideBar = ({ currentWorkspace, userWorkspaces }: TSideNavBarProps) => {
   const pathname = usePathname();
-  const filteredWorkspaces = userWorkspaces?.filter((userWorkspace) => userWorkspace._id !== currentWorkspace?._id)
+  const filteredWorkspaces = userWorkspaces?.filter((userWorkspace) => userWorkspace?._id !== currentWorkspace?._id)
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
