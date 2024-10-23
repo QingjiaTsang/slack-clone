@@ -13,11 +13,11 @@ import SignUpForm from "@/app/auth/_components/SignUpForm"
 import OTPVerificationForm from "@/app/auth/_components/OTPVerificationForm"
 import OAuthButtons from "@/app/auth/_components/OAuthButtons"
 
-type TSignUpProps = {
+type SignUpProps = {
   onToggleAuthCard: () => void
 }
 
-const SignUp = ({ onToggleAuthCard: onToggleAuthForm }: TSignUpProps) => {
+const SignUp = ({ onToggleAuthCard: onToggleAuthForm }: SignUpProps) => {
   const router = useRouter()
 
   const { signIn } = useAuthActions()

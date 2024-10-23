@@ -17,5 +17,3 @@ export const getAllById = query({
     return members;
   }
 })
-
-

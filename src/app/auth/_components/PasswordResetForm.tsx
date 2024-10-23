@@ -19,13 +19,13 @@ const resetSchema = z.object({
 
 type TResetSchema = z.infer<typeof resetSchema>
 
-type TResetFormProps = {
+type ResetFormProps = {
   onSubmit: (data: { code: string, password: string }) => void
   onBack: () => void
 }
 
 
-const ResetForm = ({ onSubmit, onBack }: TResetFormProps) => {
+const ResetForm = ({ onSubmit, onBack }: ResetFormProps) => {
   const methods = useForm<TResetSchema>({
     resolver: zodResolver(resetSchema),
     defaultValues: {

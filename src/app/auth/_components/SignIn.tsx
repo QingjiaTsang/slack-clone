@@ -42,11 +42,11 @@ const signInFormSchema = z.object({
 
 type TSignInFormSchema = z.infer<typeof signInFormSchema>
 
-type TSignInProps = {
+type SignInProps = {
   onToggleAuthCard: () => void
 }
 
-const SignIn = ({ onToggleAuthCard: onToggleAuthForm }: TSignInProps) => {
+const SignIn = ({ onToggleAuthCard: onToggleAuthForm }: SignInProps) => {
   const router = useRouter()
 
   const { signIn } = useAuthActions()

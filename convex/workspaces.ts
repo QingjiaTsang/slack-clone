@@ -20,7 +20,7 @@ export const create = mutation({
 
     const newWorkspaceId = await ctx.db.insert("workspaces", {
       name: name,
-      userId: userId,
+      creatorId: userId,
       joinCode: joinCode,
     })
 
@@ -74,5 +74,94 @@ export const getOneById = query({
     }
 
     return workspace;
+  }
+});
+
+export const deleteOneById = mutation({
+  args: {
+    id: v.id("workspaces"),
+  },
+  handler: async (ctx, { id }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      return null;
+    }
+
+    const workspace = await ctx.db.get(id);
+
+    if (!workspace) {
+      throw new Error("Workspace not found");
+    }
+
+    const userMember = await ctx.db
+      .query("members")
+      .withIndex("by_user_id_and_workspace_id",
+        q => q
+          .eq("userId", userId)
+          .eq("workspaceId", id)
+      )
+      .first();
+
+    if (!userMember || userMember.role !== "admin") {
+      throw new Error("Unauthorized");
+    }
+
+    const members = await ctx.db.query("members").withIndex("by_workspace_id", q => q.eq("workspaceId", id)).collect();
+    members.forEach(async (member) => {
+      await ctx.db.delete(member._id);
+    });
+
+    ctx.db.delete(id);
+  }
+});
+
+export const updateOneById = mutation({
+  args: {
+    id: v.id("workspaces"),
+    name: v.string(),
+  },
+  handler: async (ctx, { id, name }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      return null;
+    }
+
+    const workspace = await ctx.db.get(id);
+
+    if (!workspace) {
+      throw new Error("Workspace not found");
+    }
+
+    const userMember = await ctx.db
+      .query("members")
+      .withIndex("by_user_id_and_workspace_id",
+        q => q
+          .eq("userId", userId)
+          .eq("workspaceId", id)
+      )
+      .first();
+
+    if (!userMember || userMember.role !== "admin") {
+      throw new Error("Unauthorized");
+    }
+
+    await ctx.db.patch(id, { name });
+
+    return id;
+  }
+})
+
+export const getCurrentUserRoleInWorkspace = query({
+  args: {
+    id: v.id("workspaces"),
+  },
+  handler: async (ctx, { id }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      return null;
+    }
+
+    const member = await ctx.db.query("members").withIndex("by_user_id_and_workspace_id", q => q.eq("userId", userId).eq("workspaceId", id)).first();
+    return member;
   }
 });

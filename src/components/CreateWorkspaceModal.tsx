@@ -9,12 +9,16 @@ import { useCreateWorkspaceModal } from "@/stores/useCreateWorkspaceModal";
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
@@ -31,8 +35,7 @@ import { api } from "../../convex/_generated/api";
 import { useMutation } from "@tanstack/react-query";
 import { useConvexMutation } from "@convex-dev/react-query";
 
-import { useEffect } from "react";
-import { useMediaQuery } from "@/hooks/useMediaQuery"; // 假设您有这个 hook
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const workspaceFormSchema = z.object({
   name: z.string().min(1, { message: 'Workspace name is required' }),
@@ -76,7 +79,7 @@ const CreateWorkspaceModal = () => {
   const ModalContent = (
     <>
       <Form {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
+        <form id="create-workspace-form" onSubmit={methods.handleSubmit(onSubmit)}>
           <FormField
             control={methods.control}
             name="name"
@@ -89,9 +92,6 @@ const CreateWorkspaceModal = () => {
               </FormItem>
             )}
           />
-          <div className="mt-4 flex justify-end">
-            <Button type="submit" isLoading={isPending}>Create</Button>
-          </div>
         </form>
       </Form>
     </>
@@ -103,9 +103,18 @@ const CreateWorkspaceModal = () => {
         <SheetContent side="bottom" className="space-y-4">
           <SheetHeader>
             <SheetTitle>Create a Workspace</SheetTitle>
+            <SheetDescription className="hidden">
+              Create a new workspace to start your project.
+            </SheetDescription>
           </SheetHeader>
+
           {ModalContent}
+
+          <SheetFooter className="mt-4">
+            <Button form="create-workspace-form" type="submit" isLoading={isPending}>Create</Button>
+          </SheetFooter>
         </SheetContent>
+
       </Sheet>
     )
   }
@@ -115,8 +124,16 @@ const CreateWorkspaceModal = () => {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create a Workspace</DialogTitle>
+          <DialogDescription className="hidden">
+            Create a new workspace to start your project.
+          </DialogDescription>
         </DialogHeader>
+
         {ModalContent}
+
+        <DialogFooter>
+          <Button form="create-workspace-form" type="submit" isLoading={isPending}>Create</Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

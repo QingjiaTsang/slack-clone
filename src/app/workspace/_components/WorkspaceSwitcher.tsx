@@ -18,12 +18,12 @@ import { useCreateWorkspaceModal } from "@/stores/useCreateWorkspaceModal"
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from "@/lib/utils"
 
-type TWorkspaceSideBarMenuProps = {
+type WorkspaceSideBarMenuProps = {
   currentWorkspace: Workspace | null
   otherWorkspaces: Workspace[] | undefined
 }
 
-const WorkspaceSwitcher = ({ currentWorkspace, otherWorkspaces }: TWorkspaceSideBarMenuProps) => {
+const WorkspaceSwitcher = ({ currentWorkspace, otherWorkspaces }: WorkspaceSideBarMenuProps) => {
   const router = useRouter()
   const { openModal } = useCreateWorkspaceModal()
   const isMobile = useMediaQuery('(max-width: 768px)');
@@ -32,7 +32,7 @@ const WorkspaceSwitcher = ({ currentWorkspace, otherWorkspaces }: TWorkspaceSide
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="ghost"
+          variant="text"
           size={isMobile ? "sm" : "icon"}
           className={cn(
             "capitalize text-xl bg-[#ABABAD] text-slate-700 font-semibold hover:bg-[#ABABAD]/80",
@@ -49,7 +49,7 @@ const WorkspaceSwitcher = ({ currentWorkspace, otherWorkspaces }: TWorkspaceSide
             <>
               <span className="ml-3">{currentWorkspace?.name}</span>
               <span className="ml-auto">
-                <ChevronDownIcon className="h-5 w-5" />
+                <ChevronDownIcon className="h-5 w-5 shrink-0" />
               </span>
             </>}
         </Button>

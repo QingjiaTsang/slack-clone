@@ -1,12 +1,12 @@
 import { Id } from "../../../../convex/_generated/dataModel";
 
-type TWorkspacePageProps = {
+type WorkspacePageProps = {
   params: {
     id: Id<"workspaces">
   }
 }
 
-const WorkspacePage = ({ params }: TWorkspacePageProps) => {
+const WorkspacePage = ({ params }: WorkspacePageProps) => {
   return (
     <div>
       <h1>Workspace</h1>

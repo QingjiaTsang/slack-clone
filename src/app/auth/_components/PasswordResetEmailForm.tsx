@@ -13,12 +13,12 @@ const emailSchema = z.object({
 
 type TEmailSchema = z.infer<typeof emailSchema>
 
-type TEmailFormProps = {
+type EmailFormProps = {
   onSubmit: (email: string) => void
   onCancel: () => void
 }
 
-const EmailForm = ({ onSubmit, onCancel }: TEmailFormProps) => {
+const EmailForm = ({ onSubmit, onCancel }: EmailFormProps) => {
   const methods = useForm<TEmailSchema>({
     resolver: zodResolver(emailSchema),
     defaultValues: {

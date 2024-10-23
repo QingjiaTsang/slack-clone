@@ -14,12 +14,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-type TSideNavBarProps = {
+type SideNavBarProps = {
   currentWorkspace: Workspace | null
   userWorkspaces: Workspace[] | null
 }
 
-const SideBar = ({ currentWorkspace, userWorkspaces }: TSideNavBarProps) => {
+const SideBar = ({ currentWorkspace, userWorkspaces }: SideNavBarProps) => {
   const pathname = usePathname();
   const filteredWorkspaces = userWorkspaces?.filter((userWorkspace) => userWorkspace?._id !== currentWorkspace?._id)
   const [isOpen, setIsOpen] = useState(false);
@@ -42,7 +42,7 @@ const SideBar = ({ currentWorkspace, userWorkspaces }: TSideNavBarProps) => {
               size="icon"
               className="fixed top-2 left-4 z-50 text-white"
             >
-              <MenuIcon className="h-6 w-6" />
+              <MenuIcon className="h-6 w-6 shrink-0" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-64 mt-2 p-2 bg-white">

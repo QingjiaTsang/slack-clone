@@ -9,11 +9,11 @@ import { useAuthActions } from "@convex-dev/auth/react"
 import { Loader } from 'lucide-react';
 import { cn } from "@/lib/utils"
 
-type TPasswordResetProps = {
+type PasswordResetProps = {
   onCancel: () => void
 }
 
-const PasswordReset = ({ onCancel }: TPasswordResetProps) => {
+const PasswordReset = ({ onCancel }: PasswordResetProps) => {
   const { signIn } = useAuthActions();
 
   const [stage, setStage] = useState<'forget' | { email: string }>('forget')
