@@ -43,7 +43,7 @@ const UserButton = () => {
     <DropdownMenu>
       <DropdownMenuTrigger >
         <div className="flex items-center">
-          <Avatar>
+          <Avatar className="rounded-md">
             <AvatarImage src={user!.image!} />
             <AvatarFallback className="bg-blue-500 text-white">{avatarFallback}</AvatarFallback>
           </Avatar>

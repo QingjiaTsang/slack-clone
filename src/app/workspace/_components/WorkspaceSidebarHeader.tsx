@@ -16,13 +16,14 @@ import {
 import { Button } from "@/components/ui/button";
 
 import PreferenceModal from "@/app/workspace/_components/PreferenceModal";
+import Hint from "@/components/Hint";
 
 type WorkspaceSidebarHeaderProps = {
-  currentWorkspace: Workspace | null;
+  workspace: Workspace | null;
   isAdmin: boolean;
 }
 
-const WorkspaceSidebarHeader = ({ currentWorkspace, isAdmin }: WorkspaceSidebarHeaderProps) => {
+const WorkspaceSidebarHeader = ({ workspace, isAdmin }: WorkspaceSidebarHeaderProps) => {
   const [isPreferenceModalOpen, setIsPreferenceModalOpen] = useState(false);
 
   return (
@@ -34,14 +35,18 @@ const WorkspaceSidebarHeader = ({ currentWorkspace, isAdmin }: WorkspaceSidebarH
               variant="text"
               className="w-full flex justify-start text-white hover:text-white gap-1 font-semibold text-xl"
             >
-              <span className="truncate"> {currentWorkspace?.name}</span>
+              <span className="truncate"> {workspace?.name}</span>
               <ChevronDownIcon className="h-4 w-4 shrink-0" />
             </Button>
           </DropdownMenuTrigger>
 
           <div className="flex items-center text-white gap-4 mx-2">
-            <ListFilterIcon className="h-4 w-4 shrink-0 cursor-pointer" />
-            <SquarePenIcon className="h-4 w-4 shrink-0 cursor-pointer" />
+            <Hint description="Filter">
+              <ListFilterIcon className="h-4 w-4 shrink-0 cursor-pointer" />
+            </Hint>
+            <Hint description="Edit">
+              <SquarePenIcon className="h-4 w-4 shrink-0 cursor-pointer" />
+            </Hint>
           </div>
         </div>
 
@@ -53,10 +58,10 @@ const WorkspaceSidebarHeader = ({ currentWorkspace, isAdmin }: WorkspaceSidebarH
                 size="icon"
                 className="capitalize mr-2 font-semibold text-xl text-white bg-[#616061] group-hover:bg-[#616061]/80"
               >
-                {currentWorkspace?.name[0]}
+                {workspace?.name[0]}
               </Button>
               <div className="flex flex-col">
-                <div className="truncate font-semibold text-lg"> {currentWorkspace?.name}</div>
+                <div className="truncate font-semibold text-lg"> {workspace?.name}</div>
                 <div className="text-xs text-gray-500">Active Workspace</div>
               </div>
             </div>
@@ -66,8 +71,11 @@ const WorkspaceSidebarHeader = ({ currentWorkspace, isAdmin }: WorkspaceSidebarH
             <>
               <DropdownMenuSeparator />
 
-              <DropdownMenuItem className="cursor-pointer">
-                Invite people to {currentWorkspace?.name}
+              <DropdownMenuItem
+                onClick={() => { }}
+                className="cursor-pointer"
+              >
+                Invite people to {workspace?.name}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
 
@@ -85,7 +93,7 @@ const WorkspaceSidebarHeader = ({ currentWorkspace, isAdmin }: WorkspaceSidebarH
       <PreferenceModal
         isOpen={isPreferenceModalOpen}
         onClose={() => setIsPreferenceModalOpen(false)}
-        currentWorkspace={currentWorkspace}
+        workspace={workspace}
       />
     </div>
   )

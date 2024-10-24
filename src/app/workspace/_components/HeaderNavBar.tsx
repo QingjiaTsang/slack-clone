@@ -14,15 +14,10 @@ const HeaderNavBar = () => {
 
   return (
     <nav className="flex items-center justify-between bg-[#481349] text-white px-4">
-      <div className="w-6" />
+      <div className="w-10" />
       <SearchInput />
-      <Button
-        asChild
-        variant="ghost"
-        size="icon"
-        className="p-2 hover:bg-accent/10 hover:text-white cursor-pointer"
-      >
-        <CircleAlert />
+      <Button variant="transparent" size="icon">
+        <CircleAlert className="size-5" />
       </Button>
     </nav>
   )

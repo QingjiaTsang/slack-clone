@@ -2,9 +2,9 @@
 
 import { Id } from "../../convex/_generated/dataModel";
 
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
-import { useCreateWorkspaceModal } from "@/stores/useCreateWorkspaceModal";
+import { useCreateChannelModal } from "@/stores/useCreateChannelModal";
 
 import {
   Sheet,
@@ -37,26 +37,31 @@ import { useConvexMutation } from "@convex-dev/react-query";
 
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
+
 const workspaceFormSchema = z.object({
-  name: z.string().min(1, { message: 'Workspace name is required' }),
+  name: z.string().max(80).min(3, { message: 'Channel name must be between 3 and 80 characters' }),
 })
 
 type TWorkspaceFormSchema = z.infer<typeof workspaceFormSchema>
 
 
-const CreateWorkspaceModal = () => {
+const CreateChannelModal = () => {
+  const params = useParams()
   const router = useRouter()
+
+  const workspaceId = params.id as Id<"workspaces">
+
   const isMobile = useMediaQuery("(max-width: 640px)");
 
   const { mutate, isPending } = useMutation({
-    mutationFn: useConvexMutation(api.workspaces.create),
-    onSuccess: (newWorkspaceId) => {
+    mutationFn: useConvexMutation(api.channels.create),
+    onSuccess: (newChannelId) => {
       closeModal()
-      toast.success('Workspace created')
-      router.push(`/workspace/${newWorkspaceId}`)
+      toast.success('Channel created')
+      router.push(`/workspace/${workspaceId}/channels/${newChannelId}`)
     },
     onError: (error) => {
-      toast.error('Failed to create workspace')
+      toast.error('Failed to create channel')
       console.error({ error })
     }
   });
@@ -66,23 +71,27 @@ const CreateWorkspaceModal = () => {
     defaultValues: { name: '' }
   })
 
-  const { isOpen, setIsOpen, closeModal } = useCreateWorkspaceModal();
+  const { isOpen, setIsOpen, closeModal } = useCreateChannelModal();
 
   const onSubmit = async (data: TWorkspaceFormSchema) => {
-    mutate({ name: data.name })
+    mutate({ workspaceId: workspaceId, name: data.name })
   }
 
   const ModalContent = (
     <>
       <Form {...methods}>
-        <form id="create-workspace-form" onSubmit={methods.handleSubmit(onSubmit)}>
+        <form id="create-channel-form" onSubmit={methods.handleSubmit(onSubmit)}>
           <FormField
             control={methods.control}
             name="name"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="Workspace name" {...field} />
+                  <Input
+                    {...field}
+                    placeholder="e.g. study-group"
+                    onChange={(e) => field.onChange(e.target.value.replace(/\s+/g, '-'))}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -98,16 +107,16 @@ const CreateWorkspaceModal = () => {
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetContent side="bottom" className="space-y-4">
           <SheetHeader>
-            <SheetTitle>Create a Workspace</SheetTitle>
+            <SheetTitle>Create a Channel</SheetTitle>
             <SheetDescription className="hidden">
-              Create a new workspace to start your project.
+              Create a new channel to start your project.
             </SheetDescription>
           </SheetHeader>
 
           {ModalContent}
 
           <SheetFooter className="mt-4">
-            <Button form="create-workspace-form" type="submit" isLoading={isPending}>Create</Button>
+            <Button form="create-channel-form" type="submit" isLoading={isPending}>Create</Button>
           </SheetFooter>
         </SheetContent>
 
@@ -119,20 +128,20 @@ const CreateWorkspaceModal = () => {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create a Workspace</DialogTitle>
+          <DialogTitle>Create a Channel</DialogTitle>
           <DialogDescription className="hidden">
-            Create a new workspace to start your project.
+            Create a new channel to start your project.
           </DialogDescription>
         </DialogHeader>
 
         {ModalContent}
 
         <DialogFooter>
-          <Button form="create-workspace-form" type="submit" isLoading={isPending}>Create</Button>
+          <Button form="create-channel-form" type="submit" isLoading={isPending}>Create</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   )
 }
 
-export default CreateWorkspaceModal
+export default CreateChannelModal

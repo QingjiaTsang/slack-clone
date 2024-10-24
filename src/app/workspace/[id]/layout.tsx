@@ -16,6 +16,7 @@ import SideBar from "@/app/workspace/_components/SideBar";
 import WorkspaceSidebar from "@/app/workspace/_components/WorkspaceSidebar";
 
 import CreateWorkspaceModal from "@/components/CreateWorkspaceModal";
+import CreateChannelModal from "@/components/CreateChannelModal";
 
 
 type WorkspaceLayoutProps = {
@@ -47,16 +48,28 @@ const WorkspaceLayout = async ({ children, params }: WorkspaceLayoutProps) => {
     { token: convexAuthNextjsToken() }
   );
 
-  const [workspace, userWorkspaces, currentUserRoleInfo] = await Promise.all([workspacePromise, userWorkspacesPromise, currentUserRoleInfoPromise]);
+  const channelsPromise = fetchQuery(
+    api.channels.getAllByWorkspaceId,
+    { workspaceId: params.id },
+    { token: convexAuthNextjsToken() }
+  )
+
+  const membersPromise = fetchQuery(
+    api.members.getAllByWorkspaceId,
+    { workspaceId: params.id },
+    { token: convexAuthNextjsToken() }
+  )
+
+  const [currentWorkspace, userWorkspaces, currentUserRoleInfo, channels, members] = await Promise.all([workspacePromise, userWorkspacesPromise, currentUserRoleInfoPromise, channelsPromise, membersPromise]);
 
   const isAdmin = currentUserRoleInfo?.role === "admin";
 
   return (
-    <WorkspaceProvider currentWorkspace={workspace}>
+    <WorkspaceProvider currentWorkspace={currentWorkspace}>
       <div>
         <HeaderNavBar />
         <div className="flex">
-          <SideBar currentWorkspace={workspace} userWorkspaces={userWorkspaces} />
+          <SideBar currentWorkspace={currentWorkspace} userWorkspaces={userWorkspaces} />
 
 
           <ResizablePanelGroup direction="horizontal" autoSaveId="workspace-layout">
@@ -65,7 +78,7 @@ const WorkspaceLayout = async ({ children, params }: WorkspaceLayoutProps) => {
               minSize={10}
               className="bg-[#5E2C5F] h-[calc(100svh-56px)]"
             >
-              <WorkspaceSidebar currentWorkspace={workspace} isAdmin={isAdmin} />
+              <WorkspaceSidebar isAdmin={isAdmin} workspace={currentWorkspace} channels={channels} members={members} />
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel>
@@ -75,7 +88,9 @@ const WorkspaceLayout = async ({ children, params }: WorkspaceLayoutProps) => {
 
         </div>
       </div>
+
       <CreateWorkspaceModal />
+      <CreateChannelModal />
     </WorkspaceProvider >
   )
 }

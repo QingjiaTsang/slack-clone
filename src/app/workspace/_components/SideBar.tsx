@@ -27,7 +27,7 @@ const SideBar = ({ currentWorkspace, userWorkspaces }: SideNavBarProps) => {
   const navItems = [
     { icon: HomeIcon, label: "Home", isActive: pathname.startsWith('/workspace') },
     { icon: MessageSquareIcon, label: "DMs", isActive: pathname === '/dm' },
-    { icon: BellIcon, label: "Notifications", isActive: pathname === '/notifications' },
+    { icon: BellIcon, label: "Activities", isActive: pathname === '/activities' },
     { icon: MoreHorizontalIcon, label: "More", isActive: pathname === '/more' },
   ];
 
@@ -58,7 +58,7 @@ const SideBar = ({ currentWorkspace, userWorkspaces }: SideNavBarProps) => {
       </div>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex h-[calc(100vh-56px)] w-24 bg-[#481349] flex-col justify-between items-center p-2">
+      <aside className="hidden md:flex h-[calc(100vh-56px)] w-20 bg-[#481349] flex-col justify-between items-center p-2">
         <div className="flex flex-col items-center h-full text-gray-200 gap-4">
           <WorkspaceSwitcher currentWorkspace={currentWorkspace} otherWorkspaces={filteredWorkspaces} />
 

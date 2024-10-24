@@ -48,10 +48,10 @@ import { useRouter } from "next/navigation";
 type PreferenceModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  currentWorkspace: Workspace | null;
+  workspace: Workspace | null;
 }
 
-const PreferenceModal = ({ isOpen, onClose, currentWorkspace }: PreferenceModalProps) => {
+const PreferenceModal = ({ isOpen, onClose, workspace }: PreferenceModalProps) => {
   const router = useRouter();
 
   const { mutate, isPending } = useMutation({
@@ -80,7 +80,7 @@ const PreferenceModal = ({ isOpen, onClose, currentWorkspace }: PreferenceModalP
       return;
     }
 
-    mutate({ id: currentWorkspace!._id! });
+    mutate({ id: workspace!._id! });
   }
 
   return (
@@ -88,7 +88,7 @@ const PreferenceModal = ({ isOpen, onClose, currentWorkspace }: PreferenceModalP
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="p-0 bg-gray-100 h-auto">
           <DialogHeader className="p-4 border-b border-slate-200">
-            <DialogTitle>{currentWorkspace?.name}</DialogTitle>
+            <DialogTitle>{workspace?.name}</DialogTitle>
             <DialogDescription className="hidden">
               Manage your workspace preferences.
             </DialogDescription>
@@ -99,7 +99,7 @@ const PreferenceModal = ({ isOpen, onClose, currentWorkspace }: PreferenceModalP
                 Workspace Name
               </div>
               <div className="text-sm">
-                {currentWorkspace?.name}
+                {workspace?.name}
               </div>
             </div>
             <div
@@ -127,7 +127,7 @@ const PreferenceModal = ({ isOpen, onClose, currentWorkspace }: PreferenceModalP
       <EditWorkspaceModal
         isOpen={isEditWorkspaceModalOpen}
         onClose={() => setIsEditWorkspaceModalOpen(false)}
-        currentWorkspace={currentWorkspace}
+        workspace={workspace}
       />
     </>
   )
@@ -144,10 +144,10 @@ type EditWorkspaceFormSchema = z.infer<typeof editWorkspaceFormSchema>
 type EditWorkspaceModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  currentWorkspace: Workspace | null;
+  workspace: Workspace | null;
 }
 
-const EditWorkspaceModal = ({ isOpen, onClose, currentWorkspace }: EditWorkspaceModalProps) => {
+const EditWorkspaceModal = ({ isOpen, onClose, workspace }: EditWorkspaceModalProps) => {
   const router = useRouter();
 
   const isMobile = useMediaQuery("(max-width: 640px)");
@@ -167,11 +167,11 @@ const EditWorkspaceModal = ({ isOpen, onClose, currentWorkspace }: EditWorkspace
 
   const methods = useForm<EditWorkspaceFormSchema>({
     resolver: zodResolver(editWorkspaceFormSchema),
-    defaultValues: { name: currentWorkspace?.name }
+    defaultValues: { name: workspace?.name }
   })
 
   const handleSubmit = async (data: EditWorkspaceFormSchema) => {
-    mutate({ id: currentWorkspace!._id!, name: data.name });
+    mutate({ id: workspace!._id!, name: data.name });
   }
 
   const formContent = (
@@ -183,7 +183,7 @@ const EditWorkspaceModal = ({ isOpen, onClose, currentWorkspace }: EditWorkspace
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input {...field} />
+                <Input placeholder={`Workspace Name e.g. "Personal Workspace"`} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

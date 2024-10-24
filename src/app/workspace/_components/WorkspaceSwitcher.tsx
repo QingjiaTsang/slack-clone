@@ -35,7 +35,7 @@ const WorkspaceSwitcher = ({ currentWorkspace, otherWorkspaces }: WorkspaceSideB
           variant="text"
           size={isMobile ? "sm" : "icon"}
           className={cn(
-            "capitalize text-xl bg-[#ABABAD] text-slate-700 font-semibold hover:bg-[#ABABAD]/80",
+            "capitalize text-xl bg-[#ABABAD] text-slate-700 font-semibold hover:bg-[#ABABAD]/80 mb-1",
             {
               "w-full justify-start mb-2": isMobile,
               "flex items-center justify-center": !isMobile
