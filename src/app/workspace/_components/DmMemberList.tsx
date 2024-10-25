@@ -1,23 +1,39 @@
 'use client'
 
+import { Id } from "../../../../convex/_generated/dataModel";
 import { User } from "@auth/core/types";
 import { Member } from "@/types/docs";
 
 import Link from "next/link";
 
+import { useQuery } from "@tanstack/react-query";
+import { convexQuery } from "@convex-dev/react-query";
+import { api } from "../../../../convex/_generated/api";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 import WorkspaceSection from "@/app/workspace/_components/WorkspaceSection";
 
+import { Loader2Icon } from "lucide-react";
+
+
 interface DmMemberListProps {
-  members: (Member & { user: User })[] | null;
+  workspaceId: Id<'workspaces'>;
 }
 
-const DmMemberList = ({ members }: DmMemberListProps) => {
+const DmMemberList = ({ workspaceId }: DmMemberListProps) => {
+  const { data: members, isPending } = useQuery(
+    convexQuery(api.members.getAllByWorkspaceId, { workspaceId }),
+  );
 
   return (
     <WorkspaceSection label="Direct Messages" hint="Create a new direct message" onNew={() => { }}>
-      {members?.map((member) => (
+      {isPending &&
+        <div className="flex items-center justify-center py-1 px-2 text-sm text-muted-foreground">
+          <Loader2Icon className="size-4 animate-spin" />
+        </div>
+      }
+      {members?.map((member: any) => (
         <DmMemberItem key={member._id} member={member} />
       ))}
     </WorkspaceSection>

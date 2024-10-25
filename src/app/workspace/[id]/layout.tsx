@@ -48,19 +48,7 @@ const WorkspaceLayout = async ({ children, params }: WorkspaceLayoutProps) => {
     { token: convexAuthNextjsToken() }
   );
 
-  const channelsPromise = fetchQuery(
-    api.channels.getAllByWorkspaceId,
-    { workspaceId: params.id },
-    { token: convexAuthNextjsToken() }
-  )
-
-  const membersPromise = fetchQuery(
-    api.members.getAllByWorkspaceId,
-    { workspaceId: params.id },
-    { token: convexAuthNextjsToken() }
-  )
-
-  const [currentWorkspace, userWorkspaces, currentUserRoleInfo, channels, members] = await Promise.all([workspacePromise, userWorkspacesPromise, currentUserRoleInfoPromise, channelsPromise, membersPromise]);
+  const [currentWorkspace, userWorkspaces, currentUserRoleInfo] = await Promise.all([workspacePromise, userWorkspacesPromise, currentUserRoleInfoPromise]);
 
   const isAdmin = currentUserRoleInfo?.role === "admin";
 
@@ -78,7 +66,7 @@ const WorkspaceLayout = async ({ children, params }: WorkspaceLayoutProps) => {
               minSize={10}
               className="bg-[#5E2C5F] h-[calc(100svh-56px)]"
             >
-              <WorkspaceSidebar isAdmin={isAdmin} workspace={currentWorkspace} channels={channels} members={members} />
+              <WorkspaceSidebar isAdmin={isAdmin} workspace={currentWorkspace} />
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel>

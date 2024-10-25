@@ -11,12 +11,9 @@ import DmMemberList from '@/app/workspace/_components/DmMemberList';
 type WorkspaceSidebarProps = {
   isAdmin: boolean;
   workspace: Workspace | null;
-  channels: Channel[] | null;
-  members: (Member & { user: User })[] | null;
 }
 
-const WorkspaceSidebar = async ({ isAdmin, workspace, channels, members }: WorkspaceSidebarProps) => {
-
+const WorkspaceSidebar = async ({ isAdmin, workspace }: WorkspaceSidebarProps) => {
   if (!workspace) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
@@ -36,9 +33,9 @@ const WorkspaceSidebar = async ({ isAdmin, workspace, channels, members }: Works
         <WorkspaceSidebarItem id="threads" label="Threads" icon={MessageSquareTextIcon} workspace={workspace} />
         <WorkspaceSidebarItem id="drafts & sent" label="Drafts & Sent" icon={SendHorizonalIcon} workspace={workspace} />
 
-        <ChannelList isAdmin={isAdmin} channels={channels} workspace={workspace} />
+        <ChannelList isAdmin={isAdmin} workspace={workspace} />
 
-        <DmMemberList members={members} />
+        <DmMemberList workspaceId={workspace._id} />
       </div>
     </div>
   )
