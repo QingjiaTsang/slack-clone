@@ -11,11 +11,9 @@ import { convexQuery } from "@convex-dev/react-query";
 import { api } from "../../../../convex/_generated/api";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Skeleton } from "@/components/ui/skeleton"
 
 import WorkspaceSection from "@/app/workspace/_components/WorkspaceSection";
-
-import { Loader2Icon } from "lucide-react";
-
 
 interface DmMemberListProps {
   workspaceId: Id<'workspaces'>;
@@ -29,14 +27,21 @@ const DmMemberList = ({ workspaceId }: DmMemberListProps) => {
   return (
     <WorkspaceSection label="Direct Messages" hint="Create a new direct message" onNew={() => { }}>
       {isPending &&
-        <div className="flex items-center justify-center py-1 px-2 text-sm text-muted-foreground">
-          <Loader2Icon className="size-4 animate-spin" />
-        </div>
+        <>
+          {Array.from({ length: 5 }).map((_, index) => (
+            <div key={index} className="flex items-center gap-2 rounded-md my-1 px-2">
+              <Skeleton className="size-5 bg-white/10" />
+              <Skeleton className="flex-1 h-5 bg-white/10" />
+            </div>
+          ))
+          }
+        </>
       }
+
       {members?.map((member: any) => (
         <DmMemberItem key={member._id} member={member} />
       ))}
-    </WorkspaceSection>
+    </WorkspaceSection >
   )
 }
 

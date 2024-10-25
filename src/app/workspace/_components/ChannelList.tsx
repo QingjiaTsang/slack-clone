@@ -8,6 +8,8 @@ import { useQuery } from "@tanstack/react-query";
 import { convexQuery } from "@convex-dev/react-query";
 import { api } from "../../../../convex/_generated/api";
 
+import { Skeleton } from "@/components/ui/skeleton"
+
 import { useCreateChannelModal } from "@/stores/useCreateChannelModal";
 
 import WorkspaceSection from "@/app/workspace/_components/WorkspaceSection";
@@ -26,14 +28,18 @@ const ChannelList = ({ isAdmin, workspace }: ChannelListProps) => {
     convexQuery(api.channels.getAllByWorkspaceId, { workspaceId: workspace._id }),
   );
 
-
   return (
     <WorkspaceSection label="Channels" hint="Create a new channel" onNew={openModal}>
       {isPending &&
-        <div className="flex items-center justify-center py-1 px-2 text-sm text-muted-foreground">
-          <Loader2Icon className="size-4 animate-spin" />
-        </div>
+        <>
+          {Array.from({ length: 5 }).map((_, index) => (
+            <div key={index} className="flex items-center gap-2 rounded-md my-0.5 px-2">
+              <Skeleton className="w-full h-5 bg-white/10" />
+            </div>
+          ))}
+        </>
       }
+
       {channels?.map((channel) => (
         <ChannelItem key={channel._id} channel={channel} workspace={workspace} />
       ))}
