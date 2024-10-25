@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { useAuthActions } from "@convex-dev/auth/react"
 
 import { useQuery } from "@tanstack/react-query";
@@ -19,6 +21,8 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 
 const UserButton = () => {
+  const router = useRouter();
+
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   const { signOut } = useAuthActions()
@@ -52,7 +56,15 @@ const UserButton = () => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent>
-        <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer">Log out</DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={async () => {
+            await signOut();
+            router.refresh()
+          }}
+          className="cursor-pointer"
+        >
+          Log out
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

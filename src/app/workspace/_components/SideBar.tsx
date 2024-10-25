@@ -38,7 +38,7 @@ const SideBar = ({ currentWorkspace, userWorkspaces }: SideNavBarProps) => {
         <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
           <DropdownMenuTrigger asChild>
             <Button
-              variant="ghost"
+              variant="transparent"
               size="icon"
               className="fixed top-2 left-4 z-50 text-white"
             >

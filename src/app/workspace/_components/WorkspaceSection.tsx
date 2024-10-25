@@ -8,6 +8,7 @@ import Hint from "@/components/Hint";
 import { useToggle } from "react-use";
 
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 type WorkspaceSectionProps = {
   label: string;
@@ -33,10 +34,12 @@ const WorkspaceSection = ({ label, hint, onNew, children }: WorkspaceSectionProp
         </Hint>
 
         <Hint description={`new ${label.toLowerCase()}`}>
-          <PlusIcon
-            onClick={onNew}
-            className={cn("size-4 text-[#f9edffcc] cursor-pointer shrink-0 hidden", { "group-hover:block": !!onNew })}
-          />
+          <Button variant="transparent" className="p-0 size-4">
+            <PlusIcon
+              onClick={onNew}
+              className={cn("size-4 text-[#f9edffcc] cursor-pointer shrink-0 hidden", { "group-hover:block": !!onNew })}
+            />
+          </Button>
         </Hint>
       </div>
 

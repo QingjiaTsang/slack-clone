@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 
 import PreferenceModal from "@/app/workspace/_components/PreferenceModal";
 import Hint from "@/components/Hint";
+import InviteMemberModal from "@/components/InviteMemberModal";
 
 type WorkspaceSidebarHeaderProps = {
   workspace: Workspace | null;
@@ -25,6 +26,7 @@ type WorkspaceSidebarHeaderProps = {
 
 const WorkspaceSidebarHeader = ({ workspace, isAdmin }: WorkspaceSidebarHeaderProps) => {
   const [isPreferenceModalOpen, setIsPreferenceModalOpen] = useState(false);
+  const [isInviteMemberModalOpen, setIsInviteMemberModalOpen] = useState(false);
 
   return (
     <div className="p-2">
@@ -72,7 +74,7 @@ const WorkspaceSidebarHeader = ({ workspace, isAdmin }: WorkspaceSidebarHeaderPr
               <DropdownMenuSeparator />
 
               <DropdownMenuItem
-                onClick={() => { }}
+                onClick={() => setIsInviteMemberModalOpen(true)}
                 className="cursor-pointer"
               >
                 Invite people to {workspace?.name}
@@ -92,8 +94,13 @@ const WorkspaceSidebarHeader = ({ workspace, isAdmin }: WorkspaceSidebarHeaderPr
 
       <PreferenceModal
         isOpen={isPreferenceModalOpen}
-        onClose={() => setIsPreferenceModalOpen(false)}
-        workspace={workspace}
+        setIsOpen={setIsPreferenceModalOpen}
+        workspace={workspace!}
+      />
+      <InviteMemberModal
+        isOpen={isInviteMemberModalOpen}
+        setIsOpen={setIsInviteMemberModalOpen}
+        workspace={workspace!}
       />
     </div>
   )

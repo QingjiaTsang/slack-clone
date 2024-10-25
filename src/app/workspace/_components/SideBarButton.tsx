@@ -19,7 +19,7 @@ const SideBarButton = ({ icon: Icon, label, isActive, onClick }: SideBarButtonsP
       onClick={onClick}
     >
       <Button
-        variant="ghost"
+        variant="transparent"
         size={isMobile ? "sm" : "icon"}
         className={cn(
           "font-medium group-hover:bg-accent/20",

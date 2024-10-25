@@ -47,19 +47,19 @@ import { useRouter } from "next/navigation";
 
 type PreferenceModalProps = {
   isOpen: boolean;
-  onClose: () => void;
-  workspace: Workspace | null;
+  setIsOpen: (isOpen: boolean) => void;
+  workspace: Workspace;
 }
 
-const PreferenceModal = ({ isOpen, onClose, workspace }: PreferenceModalProps) => {
+const PreferenceModal = ({ isOpen, setIsOpen, workspace }: PreferenceModalProps) => {
   const router = useRouter();
 
   const { mutate, isPending } = useMutation({
     mutationFn: useConvexMutation(api.workspaces.deleteOneById),
     onSuccess: () => {
-      router.refresh();
       toast.success('Workspace deleted');
-      onClose();
+      setIsOpen(false);
+      router.replace('/');
     },
     onError: (error) => {
       toast.error('Failed to delete workspace');
@@ -85,7 +85,7 @@ const PreferenceModal = ({ isOpen, onClose, workspace }: PreferenceModalProps) =
 
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={onClose}>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="p-0 bg-gray-100 h-auto">
           <DialogHeader className="p-4 border-b border-slate-200">
             <DialogTitle>{workspace?.name}</DialogTitle>
@@ -171,7 +171,7 @@ const EditWorkspaceModal = ({ isOpen, onClose, workspace }: EditWorkspaceModalPr
   })
 
   const handleSubmit = async (data: EditWorkspaceFormSchema) => {
-    mutate({ id: workspace!._id!, name: data.name });
+    mutate({ id: workspace!._id!, joinCode: workspace!.joinCode, name: data.name });
   }
 
   const formContent = (

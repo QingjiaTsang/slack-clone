@@ -32,7 +32,7 @@ const DmMemberItem = ({ member }: { member: Member & { user: User } }) => {
       <div className="flex items-center lowercase text-[#f9edffcc] gap-2 cursor-pointer hover:bg-white/10 rounded-md py-1 px-2">
         <Avatar className="rounded-md size-5">
           <AvatarImage src={member.user.image!} />
-          <AvatarFallback>{member.user.name?.[0].toUpperCase()}</AvatarFallback>
+          <AvatarFallback className="rounded-md bg-blue-500 text-white capitalize">{member.user.name?.[0]}</AvatarFallback>
         </Avatar>
         <div className="truncate">{member.user.name}</div>
       </div>
