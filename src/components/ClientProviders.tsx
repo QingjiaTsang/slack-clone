@@ -10,7 +10,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from "@/components/shadcnUI/sonner"
 
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 

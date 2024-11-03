@@ -1,6 +1,6 @@
 'use client'
 
-import { Id } from "../../convex/_generated/dataModel";
+import { Id } from "@/convex/_generated/dataModel";
 
 import { useParams, useRouter } from "next/navigation";
 
@@ -13,7 +13,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet"
+} from "@/components/shadcnUI/sheet"
 import {
   Dialog,
   DialogContent,
@@ -21,17 +21,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+} from "@/components/shadcnUI/dialog"
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/shadcnUI/form"
+import { Input } from "@/components/shadcnUI/input"
+import { Button } from "@/components/shadcnUI/button"
 import { toast } from "sonner";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { api } from "../../convex/_generated/api";
+import { api } from "@/convex/_generated/api";
 import { useMutation } from "@tanstack/react-query";
 import { useConvexMutation } from "@convex-dev/react-query";
 
@@ -49,7 +49,7 @@ const CreateChannelModal = () => {
   const params = useParams()
   const router = useRouter()
 
-  const workspaceId = params.id as Id<"workspaces">
+  const workspaceId = params.workspaceId as Id<"workspaces">
 
   const isMobile = useMediaQuery("(max-width: 640px)");
 
@@ -58,7 +58,7 @@ const CreateChannelModal = () => {
     onSuccess: (newChannelId) => {
       closeModal()
       toast.success('Channel created')
-      router.push(`/workspace/${workspaceId}/channels/${newChannelId}`)
+      router.push(`/workspace/${workspaceId}/channel/${newChannelId}`)
     },
     onError: (error) => {
       toast.error('Failed to create channel')

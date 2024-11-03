@@ -3,7 +3,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from "@/components/shadcnUI/tooltip"
 
 type HintProps = {
   children: React.ReactNode;

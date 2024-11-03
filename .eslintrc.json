@@ -1,8 +1,115 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript", "prettier"],
+  "extends": ["next/core-web-vitals", "next/typescript", "plugin:@typescript-eslint/recommended"],
+  "plugins": ["boundaries", "@typescript-eslint"],
+  "settings": {
+    "boundaries/include": ["src/**/*"],
+    "boundaries/elements": [
+      {
+        "mode": "full",
+        "type": "shared",
+        "pattern": [
+          "src/convex/**",
+          "src/components/**/*",
+          "src/hooks/**/*",
+          "src/stores/**",
+          "src/types/**",
+          "src/lib/**/*"
+          // "src/data/**/*",
+          // "src/drizzle/**/*",
+          // "src/server/**/*"
+        ]
+      },
+      {
+        "mode": "full",
+        "type": "feature",
+        "capture": ["featureName"],
+        "pattern": ["src/features/*/**/*"]
+      },
+      {
+        "mode": "full",
+        "type": "app",
+        "capture": ["_", "fileName"],
+        "pattern": ["src/app/**/*"]
+      },
+      {
+        "mode": "full",
+        "type": "neverImport",
+        "pattern": ["src/*", "src/tasks/**/*"]
+      }
+    ]
+  },
+  "ignorePatterns": [".eslintrc.json", "node_modules", "src/convex/_generated/**/*"],
+  "overrides": [
+    {
+      "env": {
+        "node": true
+      },
+      "files": [".eslintrc.{js,cjs,ts,tsx,mjs,json}"],
+      "parserOptions": {
+        "sourceType": "script"
+      }
+    }
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "project": true,
+    "sourceType": "module"
+  },
   "rules": {
+    // based on personal preference
     "react/no-unescaped-entities": "off",
-    "@typescript-eslint/no-unused-vars": "off",
-    "@typescript-eslint/no-unused-expressions": "off"
+    "@typescript-eslint/no-unused-expressions": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      { "varsIgnorePattern": "^_", "argsIgnorePattern": "^_" }
+    ],
+
+    // based on convex recommended rules: https://stack.convex.dev/eslint-setup
+    "@typescript-eslint/no-floating-promises": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["*/_generated/server"],
+            "importNames": ["query", "mutation", "action"],
+            "message": "Use functions.ts for query, mutation, or action"
+          }
+        ]
+      }
+    ],
+
+    // for folder structure restrictions rules
+    // based on https://github.com/WebDevSimplified/parity-deals-clone/tree/feature-folder-structure
+    "boundaries/no-unknown": ["error"],
+    "boundaries/no-unknown-files": ["error"],
+    "boundaries/element-types": [
+      "error",
+      {
+        "default": "disallow",
+        "rules": [
+          {
+            "from": ["shared"],
+            "allow": ["shared"]
+          },
+          {
+            "from": ["feature"],
+            "allow": [
+              "shared",
+              ["feature", { "featureName": "${from.featureName}" }]
+            ]
+          },
+          {
+            "from": ["app", "neverImport"],
+            "allow": ["shared", "feature"]
+          },
+          {
+            "from": ["app"],
+            "allow": [["app", { "fileName": "*.css" }]]
+          }
+        ]
+      }
+    ]
   }
 }

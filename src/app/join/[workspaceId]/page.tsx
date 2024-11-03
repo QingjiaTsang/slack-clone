@@ -1,11 +1,11 @@
-import { Id } from '../../../../convex/_generated/dataModel'
+import { Id } from '@/convex/_generated/dataModel'
 
 import { redirect } from 'next/navigation'
 
-import { api } from '../../../../convex/_generated/api'
+import { api } from '@/convex/_generated/api'
 import { fetchQuery } from 'convex/nextjs'
 
-import JoinCodeVerificationForm from '@/app/join/_components/JoinCodeVerificationForm'
+import JoinCodeVerificationForm from '@/features/join/_components/JoinCodeVerificationForm'
 import { convexAuthNextjsToken } from '@convex-dev/auth/nextjs/server'
 
 

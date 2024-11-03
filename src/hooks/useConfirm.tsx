@@ -7,8 +7,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Button } from '@/components/ui/button';
+} from "@/components/shadcnUI/dialog"
+import { Button } from '@/components/shadcnUI/button';
 
 type UseConfirmProps = {
   title: string;
@@ -18,7 +18,7 @@ type UseConfirmProps = {
 const useConfirm = ({ title, message }: UseConfirmProps) => {
   const [promise, setPromise] = useState<{ resolve: (value: boolean) => void } | null>(null);
 
-  const confirm = () => new Promise((resolve, reject) => {
+  const confirm = () => new Promise((resolve) => {
     setPromise({ resolve });
   });
 
