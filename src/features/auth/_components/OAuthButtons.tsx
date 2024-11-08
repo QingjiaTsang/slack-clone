@@ -8,7 +8,7 @@ type OAuthButtonsProps = {
 
 const OAuthButtons = ({ onSignInWithOAuth }: OAuthButtonsProps) => {
   return (
-    <div className="flex flex-col w-full gap-4">
+    <div className="flex flex-col w-full gap-4 mt-4">
       <Button variant="outline" className="gap-2" onClick={() => onSignInWithOAuth('google')}>
         <FcGoogle size={18} />
         <div>Continue with Google</div>

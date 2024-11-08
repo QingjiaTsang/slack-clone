@@ -46,12 +46,13 @@ import { useConvexMutation } from "@convex-dev/react-query";
 import { useRouter } from "next/navigation";
 
 type ChannelOperationsModalProps = {
+  isAdmin: boolean;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   channel: Channel;
 }
 
-const ChannelOperationsModal = ({ isOpen, setIsOpen, channel }: ChannelOperationsModalProps) => {
+const ChannelOperationsModal = ({ isAdmin, isOpen, setIsOpen, channel }: ChannelOperationsModalProps) => {
   const router = useRouter();
 
   const { mutate, isPending } = useMutation({
@@ -97,33 +98,39 @@ const ChannelOperationsModal = ({ isOpen, setIsOpen, channel }: ChannelOperation
               Manage your channel preferences.
             </DialogDescription>
           </DialogHeader>
-          <div className="mx-4 p-4 bg-white rounded-lg flex justify-between">
-            <div>
-              <div className="text-sm font-semibold">
-                Channel Name
+          <div className="flex flex-col gap-4 mb-4">
+            <div className="mx-4 p-4 bg-white rounded-lg flex justify-between">
+              <div>
+                <div className="text-sm font-semibold">
+                  Channel Name
+                </div>
+                <div className="text-sm">
+                  {channel.name}
+                </div>
               </div>
-              <div className="text-sm">
-                {channel.name}
-              </div>
+              {isAdmin && (
+                <div
+                  onClick={() => setIsEditChannelModalOpen(true)}
+                  className="text-sm text-blue-500 cursor-pointer hover:underline"
+                >
+                  Edit
+                </div>
+              )}
             </div>
-            <div
-              onClick={() => setIsEditChannelModalOpen(true)}
-              className="text-sm text-blue-500 cursor-pointer hover:underline"
-            >
-              Edit
-            </div>
-          </div>
 
-          <Button
-            isLoading={isPending}
-            onClick={handleDeleteChannel}
-            className="text-destructive h-14 flex justify-start items-center gap-2 bg-white rounded-lg p-4 mx-4 mb-4 hover:bg-red-50 transition-colors duration-300"
-          >
-            <TrashIcon className="size-4 shrink-0" />
-            <div className="text-sm font-semibold">
-              Delete Channel
-            </div>
-          </Button>
+            {isAdmin && (
+              <Button
+                isLoading={isPending}
+                onClick={handleDeleteChannel}
+                className="text-destructive h-14 flex justify-start items-center gap-2 bg-white rounded-lg p-4 mx-4 hover:bg-red-50 transition-colors duration-300"
+              >
+                <TrashIcon className="size-4 shrink-0" />
+                <div className="text-sm font-semibold">
+                  Delete Channel
+                </div>
+              </Button>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
 
@@ -161,6 +168,7 @@ const EditChannelModal = ({ isOpen, onClose, channel }: EditChannelModalProps) =
     onSuccess: () => {
       router.refresh();
       toast.success('Channel updated');
+      methods.reset()
       onClose();
     },
     onError: (error) => {
@@ -190,7 +198,17 @@ const EditChannelModal = ({ isOpen, onClose, channel }: EditChannelModalProps) =
                 <Input
                   {...field}
                   placeholder={`Channel Name e.g. "General"`}
-                  onChange={(e) => field.onChange(e.target.value.replace(/\s+/g, '-'))}
+                  onCompositionEnd={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    field.onChange(target.value.replace(/\s+/g, '-'));
+                  }}
+                  onChange={(e) => {
+                    if (!(e.nativeEvent as InputEvent).isComposing) {
+                      field.onChange(e.target.value.replace(/\s+/g, '-'));
+                    } else {
+                      field.onChange(e.target.value);
+                    }
+                  }}
                 />
               </FormControl>
               <FormMessage />

@@ -56,7 +56,7 @@ const ChannelItem = ({ channel, workspace }: { channel: Channel, workspace: Work
     <Link href={`/workspace/${workspace._id}/channel/${channel._id}`}>
       <div
         className={cn(
-          "flex items-center lowercase text-[#f9edffcc] gap-2 cursor-pointer hover:bg-white/10 rounded-md py-0.5 px-2",
+          "flex items-center lowercase text-[#f9edffcc] gap-2 cursor-pointer hover:bg-white/10 rounded-md py-0.5 px-3",
           { "bg-white/30 hover:bg-white/30": pathname === `/workspace/${workspace._id}/channel/${channel._id}` }
         )}
       >

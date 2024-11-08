@@ -29,29 +29,32 @@ const WorkspaceSidebarHeader = ({ workspace, isAdmin }: WorkspaceSidebarHeaderPr
   const [isInviteMemberModalOpen, setIsInviteMemberModalOpen] = useState(false);
 
   return (
-    <div className="p-2">
+    <div className="py-2">
       <DropdownMenu>
-        <div className="flex items-center justify-center gap-2">
+        <div className="group relative flex items-center min-w-0">
           <DropdownMenuTrigger asChild>
             <Button
               variant="text"
-              className="w-full flex justify-start text-white hover:text-white gap-1 font-semibold text-xl"
+              className="w-full flex items-center justify-start text-white hover:text-white gap-1 font-semibold text-xl"
             >
-              <span className="truncate"> {workspace?.name}</span>
+              <span className="truncate">{workspace?.name}</span>
               <ChevronDownIcon className="h-4 w-4 shrink-0" />
             </Button>
           </DropdownMenuTrigger>
 
-          <div className="flex items-center text-white gap-4 mx-2">
+          <div className="flex items-center text-white/80 hover:text-white shrink-0 gap-1 max-w-[72px] overflow-hidden transition-all duration-200 group-hover:max-w-0">
             <Hint description="Filter">
-              <ListFilterIcon className="h-4 w-4 shrink-0 cursor-pointer" />
+              <Button variant="transparent" size="icon" className="h-8 w-8">
+                <ListFilterIcon className="h-4 w-4" />
+              </Button>
             </Hint>
             <Hint description="Edit">
-              <SquarePenIcon className="h-4 w-4 shrink-0 cursor-pointer" />
+              <Button variant="transparent" size="icon" className="h-8 w-8">
+                <SquarePenIcon className="h-4 w-4" />
+              </Button>
             </Hint>
           </div>
         </div>
-
 
         <DropdownMenuContent side="bottom" align="start">
           <DropdownMenuItem>

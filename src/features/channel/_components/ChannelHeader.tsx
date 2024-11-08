@@ -13,9 +13,10 @@ import { ChevronDownIcon } from "lucide-react"
 
 type ChannelHeaderProps = {
   channel: Channel
+  isAdmin: boolean
 }
 
-const ChannelHeader = ({ channel }: ChannelHeaderProps) => {
+const ChannelHeader = ({ channel, isAdmin }: ChannelHeaderProps) => {
   const [isChannelOperationsModalOpen, setIsChannelOperationsModalOpen] = useState(false);
 
   return (
@@ -31,6 +32,7 @@ const ChannelHeader = ({ channel }: ChannelHeaderProps) => {
       </Button>
 
       <ChannelOperationsModal
+        isAdmin={isAdmin}
         isOpen={isChannelOperationsModalOpen}
         setIsOpen={setIsChannelOperationsModalOpen}
         channel={channel}

@@ -7,6 +7,7 @@ import { fetchQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 import ChannelHeader from "@/features/channel/_components/ChannelHeader";
+import ChatInput from "@/features/channel/_components/ChatInput";
 
 type ChannelPageProps = {
   params: {
@@ -39,7 +40,11 @@ const ChannelPage = async ({ params }: ChannelPageProps) => {
   const isAdmin = currentUserRoleInfo?.role === "admin";
 
   return (
-    <ChannelHeader channel={channel} />
+    <div className="flex flex-col h-full">
+      <ChannelHeader channel={channel} isAdmin={isAdmin} />
+      <div className="flex-1" />
+      <ChatInput placeholder={`Message #${channel?.name}`} />
+    </div>
   )
 }
 

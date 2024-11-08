@@ -52,6 +52,7 @@ const CreateWorkspaceModal = () => {
       closeModal()
       toast.success('Workspace created')
       router.push(`/workspace/${newWorkspaceId}`)
+      methods.reset()
     },
     onError: (error) => {
       toast.error('Failed to create workspace')

@@ -69,7 +69,7 @@ const WorkspaceLayout = async ({ children, params }: WorkspaceLayoutProps) => {
               <WorkspaceSidebar isAdmin={isAdmin} workspace={currentWorkspace} />
             </ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel>
+            <ResizablePanel defaultSize={80}>
               {children}
             </ResizablePanel>
           </ResizablePanelGroup>

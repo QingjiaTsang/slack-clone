@@ -26,10 +26,10 @@ const WorkspaceSection = ({ label, hint, onNew, children }: WorkspaceSectionProp
         <Hint description={hint} align="start">
           <div
             onClick={toggle}
-            className="flex items-center gap-2 text-[#f9edffcc] cursor-pointer capitalize"
+            className="flex items-center gap-2 text-[#f9edffcc] cursor-pointer capitalize w-full"
           >
             <RiArrowRightSFill className={cn("size-5 shrink-0", { "rotate-90": on })} />
-            <div>{label}</div>
+            <div className="truncate">{label}</div>
           </div>
         </Hint>
 

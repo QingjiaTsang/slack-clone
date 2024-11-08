@@ -1,12 +1,13 @@
 'use client'
 
+import { useState } from 'react';
+
 import { Workspace } from '@/types/docs'
 import { usePathname } from 'next/navigation';
 import UserButton from '@/features/workspace/_components/UserButton'
 import WorkspaceSwitcher from '@/features/workspace/_components/WorkspaceSwitcher'
 import SideBarButton from '@/features/workspace/_components/SideBarButton';
 import { BellIcon, HomeIcon, MessageSquareIcon, MoreHorizontalIcon, MenuIcon } from 'lucide-react';
-import { useState } from 'react';
 import { Button } from "@/components/shadcnUI/button"
 import {
   DropdownMenu,

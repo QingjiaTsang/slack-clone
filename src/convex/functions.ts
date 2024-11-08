@@ -12,7 +12,6 @@ import { ConvexError } from "convex/values";
 import { customAction, customCtx, customMutation, customQuery } from "convex-helpers/server/customFunctions";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
-
 // Note: consistent error handling practice in this project:
 // for query, it doesn't throws error in order to avoid error handling in RSC and RCC for code briefness
 // but for mutation, it's allowed to throw errors because it's always using react-query to handle error in client side

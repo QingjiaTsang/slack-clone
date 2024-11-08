@@ -59,6 +59,7 @@ const CreateChannelModal = () => {
       closeModal()
       toast.success('Channel created')
       router.push(`/workspace/${workspaceId}/channel/${newChannelId}`)
+      methods.reset()
     },
     onError: (error) => {
       toast.error('Failed to create channel')
@@ -90,7 +91,17 @@ const CreateChannelModal = () => {
                   <Input
                     {...field}
                     placeholder="e.g. study-group"
-                    onChange={(e) => field.onChange(e.target.value.replace(/\s+/g, '-'))}
+                    onCompositionEnd={(e) => {
+                      const target = e.target as HTMLInputElement;
+                      field.onChange(target.value.replace(/\s+/g, '-'));
+                    }}
+                    onChange={(e) => {
+                      if (!(e.nativeEvent as InputEvent).isComposing) {
+                        field.onChange(e.target.value.replace(/\s+/g, '-'));
+                      } else {
+                        field.onChange(e.target.value);
+                      }
+                    }}
                   />
                 </FormControl>
                 <FormMessage />
