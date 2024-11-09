@@ -15,13 +15,10 @@ import { toast } from "sonner";
 
 import { CopyIcon, LinkIcon, RefreshCcw } from "lucide-react";
 
-import { api } from "@/convex/_generated/api";
-import { useMutation } from "@tanstack/react-query";
-import { useConvexMutation } from "@convex-dev/react-query";
-
 import { generateJoinCode } from "@/lib/generateJoinCode";
 
 import useConfirm from "@/hooks/useConfirm";
+import { updateWorkspace } from "@/features/workspace/api";
 
 type InviteMemberModalProps = {
   isOpen: boolean;
@@ -37,16 +34,7 @@ const InviteMemberModal = ({ isOpen, setIsOpen, workspace }: InviteMemberModalPr
     message: "This will invalidate the current Join Code and generate a new one.",
   }) as [React.FC, () => Promise<boolean>];
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: useConvexMutation(api.workspaces.updateOneById),
-    onSuccess: () => {
-      router.refresh();
-      toast.success("Join Code updated");
-    },
-    onError: () => {
-      toast.error("Failed to update Join Code");
-    }
-  });
+  const { mutate, isPending } = updateWorkspace()
 
   const handleCopyLink = async () => {
     await window.navigator.clipboard.writeText(`${window.location.origin}/join/${workspace._id}?joinCode=${workspace.joinCode}`);
@@ -61,7 +49,15 @@ const InviteMemberModal = ({ isOpen, setIsOpen, workspace }: InviteMemberModalPr
   const handleNewJoinCode = async () => {
     const confirmed = await confirm()
     if (confirmed) {
-      mutate({ id: workspace._id!, joinCode: generateJoinCode(), name: workspace.name });
+      mutate({ id: workspace._id!, joinCode: generateJoinCode(), name: workspace.name }, {
+        onSuccess: () => {
+          router.refresh();
+          toast.success("Join Code updated");
+        },
+        onError: () => {
+          toast.error("Failed to update Join Code");
+        }
+      });
     }
   }
 

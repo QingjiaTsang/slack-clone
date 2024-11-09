@@ -40,10 +40,8 @@ import { TrashIcon } from "lucide-react";
 import useConfirm from "@/hooks/useConfirm";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
-import { api } from "@/convex/_generated/api";
-import { useMutation } from "@tanstack/react-query";
-import { useConvexMutation } from "@convex-dev/react-query";
 import { useRouter } from "next/navigation";
+import { deleteWorkspace, updateWorkspace } from "@/features/workspace/api";
 
 type PreferenceModalProps = {
   isOpen: boolean;
@@ -55,18 +53,7 @@ const PreferenceModal = ({ isOpen, setIsOpen, workspace }: PreferenceModalProps)
   const router = useRouter();
 
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: useConvexMutation(api.workspaces.deleteOneById),
-    onSuccess: () => {
-      toast.success('Workspace deleted');
-      setIsOpen(false);
-      router.replace('/');
-    },
-    onError: (error) => {
-      toast.error('Failed to delete workspace');
-      console.error({ error });
-    }
-  });
+  const { mutate, isPending } = deleteWorkspace()
 
   const [DeleteWorkspaceDialog, confirm] = useConfirm({
     title: "Delete Workspace",
@@ -81,7 +68,17 @@ const PreferenceModal = ({ isOpen, setIsOpen, workspace }: PreferenceModalProps)
       return;
     }
 
-    mutate({ id: workspace!._id! });
+    mutate({ id: workspace!._id! }, {
+      onSuccess: () => {
+        toast.success('Workspace deleted');
+        setIsOpen(false);
+        router.replace('/');
+      },
+      onError: (error) => {
+        toast.error('Failed to delete workspace');
+        console.error({ error });
+      }
+    });
   }
 
   return (
@@ -153,18 +150,7 @@ const EditWorkspaceModal = ({ isOpen, onClose, workspace }: EditWorkspaceModalPr
 
   const isMobile = useMediaQuery("(max-width: 640px)");
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: useConvexMutation(api.workspaces.updateOneById),
-    onSuccess: () => {
-      router.refresh();
-      toast.success('Workspace updated');
-      onClose();
-    },
-    onError: (error) => {
-      toast.error('Failed to update workspace');
-      console.error({ error });
-    }
-  });
+  const { mutate, isPending } = updateWorkspace()
 
   const methods = useForm<EditWorkspaceFormSchema>({
     resolver: zodResolver(editWorkspaceFormSchema),
@@ -172,7 +158,17 @@ const EditWorkspaceModal = ({ isOpen, onClose, workspace }: EditWorkspaceModalPr
   })
 
   const handleSubmit = async (data: EditWorkspaceFormSchema) => {
-    mutate({ id: workspace!._id!, joinCode: workspace!.joinCode, name: data.name });
+    mutate({ id: workspace!._id!, joinCode: workspace!.joinCode, name: data.name }, {
+      onSuccess: () => {
+        router.refresh();
+        toast.success('Workspace updated');
+        onClose();
+      },
+      onError: (error) => {
+        toast.error('Failed to update workspace');
+        console.error({ error });
+      }
+    });
   }
 
   const formContent = (

@@ -3,6 +3,7 @@
 import { Channel } from "@/types/docs";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -40,10 +41,7 @@ import useConfirm from "@/hooks/useConfirm";
 import { Button } from "@/components/shadcnUI/button";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
-import { api } from "@/convex/_generated/api";
-import { useMutation } from "@tanstack/react-query";
-import { useConvexMutation } from "@convex-dev/react-query";
-import { useRouter } from "next/navigation";
+import { deleteChannel, updateChannel } from "@/features/channel/api";
 
 type ChannelOperationsModalProps = {
   isAdmin: boolean;
@@ -55,18 +53,7 @@ type ChannelOperationsModalProps = {
 const ChannelOperationsModal = ({ isAdmin, isOpen, setIsOpen, channel }: ChannelOperationsModalProps) => {
   const router = useRouter();
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: useConvexMutation(api.channels.deleteOneById),
-    onSuccess: () => {
-      toast.success('Channel deleted');
-      setIsOpen(false);
-      router.replace(`/workspace/${channel.workspaceId}`);
-    },
-    onError: (error) => {
-      toast.error('Failed to delete channel');
-      console.error({ error });
-    }
-  });
+  const { mutate, isPending } = deleteChannel()
 
   const [DeleteChannelDialog, confirm] = useConfirm({
     title: "Delete Channel",
@@ -82,7 +69,17 @@ const ChannelOperationsModal = ({ isAdmin, isOpen, setIsOpen, channel }: Channel
       return;
     }
 
-    mutate({ id: channel._id! });
+    mutate({ id: channel._id! }, {
+      onSuccess: () => {
+        toast.success('Channel deleted');
+        setIsOpen(false);
+        router.replace(`/workspace/${channel.workspaceId}`);
+      },
+      onError: (error) => {
+        toast.error('Failed to delete channel');
+        console.error({ error });
+      }
+    });
   }
 
   return (
@@ -163,19 +160,7 @@ const EditChannelModal = ({ isOpen, onClose, channel }: EditChannelModalProps) =
 
   const isMobile = useMediaQuery("(max-width: 640px)");
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: useConvexMutation(api.channels.updateOneById),
-    onSuccess: () => {
-      router.refresh();
-      toast.success('Channel updated');
-      methods.reset()
-      onClose();
-    },
-    onError: (error) => {
-      toast.error('Failed to update channel');
-      console.error({ error });
-    }
-  });
+  const { mutate, isPending } = updateChannel()
 
   const methods = useForm<EditChannelFormSchema>({
     resolver: zodResolver(editChannelFormSchema),
@@ -183,7 +168,18 @@ const EditChannelModal = ({ isOpen, onClose, channel }: EditChannelModalProps) =
   })
 
   const handleSubmit = async (data: EditChannelFormSchema) => {
-    mutate({ id: channel!._id!, name: data.name });
+    mutate({ id: channel!._id!, name: data.name }, {
+      onSuccess: () => {
+        router.refresh();
+        toast.success('Channel updated');
+        methods.reset()
+        onClose();
+      },
+      onError: (error) => {
+        toast.error('Failed to update channel');
+        console.error({ error });
+      }
+    });
   }
 
   const formContent = (

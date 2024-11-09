@@ -31,11 +31,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { api } from "@/convex/_generated/api";
-import { useMutation } from "@tanstack/react-query";
-import { useConvexMutation } from "@convex-dev/react-query";
-
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { createChannel } from "@/features/channel/api";
 
 
 const workspaceFormSchema = z.object({
@@ -53,19 +50,7 @@ const CreateChannelModal = () => {
 
   const isMobile = useMediaQuery("(max-width: 640px)");
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: useConvexMutation(api.channels.create),
-    onSuccess: (newChannelId) => {
-      closeModal()
-      toast.success('Channel created')
-      router.push(`/workspace/${workspaceId}/channel/${newChannelId}`)
-      methods.reset()
-    },
-    onError: (error) => {
-      toast.error('Failed to create channel')
-      console.error({ error })
-    }
-  });
+  const { mutate, isPending } = createChannel()
 
   const methods = useForm<TWorkspaceFormSchema>({
     resolver: zodResolver(workspaceFormSchema),
@@ -75,7 +60,18 @@ const CreateChannelModal = () => {
   const { isOpen, setIsOpen, closeModal } = useCreateChannelModal();
 
   const onSubmit = async (data: TWorkspaceFormSchema) => {
-    mutate({ workspaceId: workspaceId, name: data.name })
+    mutate({ workspaceId: workspaceId, name: data.name }, {
+      onSuccess: (newChannelId) => {
+        closeModal()
+        toast.success('Channel created')
+        router.push(`/workspace/${workspaceId}/channel/${newChannelId}`)
+        methods.reset()
+      },
+      onError: (error) => {
+        toast.error('Failed to create channel')
+        console.error({ error })
+      }
+    })
   }
 
   const ModalContent = (

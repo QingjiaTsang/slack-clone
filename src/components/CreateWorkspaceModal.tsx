@@ -29,11 +29,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { api } from "@/convex/_generated/api";
-import { useMutation } from "@tanstack/react-query";
-import { useConvexMutation } from "@convex-dev/react-query";
-
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { createWorkspace } from "@/features/workspace/api";
 
 const workspaceFormSchema = z.object({
   name: z.string().min(1, { message: 'Workspace name is required' }),
@@ -46,19 +43,7 @@ const CreateWorkspaceModal = () => {
   const router = useRouter()
   const isMobile = useMediaQuery("(max-width: 640px)");
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: useConvexMutation(api.workspaces.create),
-    onSuccess: (newWorkspaceId) => {
-      closeModal()
-      toast.success('Workspace created')
-      router.push(`/workspace/${newWorkspaceId}`)
-      methods.reset()
-    },
-    onError: (error) => {
-      toast.error('Failed to create workspace')
-      console.error({ error })
-    }
-  });
+  const { mutate, isPending } = createWorkspace()
 
   const methods = useForm<TWorkspaceFormSchema>({
     resolver: zodResolver(workspaceFormSchema),
@@ -68,7 +53,18 @@ const CreateWorkspaceModal = () => {
   const { isOpen, setIsOpen, closeModal } = useCreateWorkspaceModal();
 
   const onSubmit = async (data: TWorkspaceFormSchema) => {
-    mutate({ name: data.name })
+    mutate({ name: data.name }, {
+      onSuccess: (newWorkspaceId) => {
+        closeModal()
+        toast.success('Workspace created')
+        router.push(`/workspace/${newWorkspaceId}`)
+        methods.reset()
+      },
+      onError: (error) => {
+        toast.error('Failed to create workspace')
+        console.error({ error })
+      }
+    })
   }
 
   const ModalContent = (

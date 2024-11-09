@@ -199,7 +199,7 @@ const Editor = ({
                   <Hint description='Remove image'>
                     <button
                       onClick={removeImage}
-                      className='hidden absolute -top-2 -right-2 size-6 bg-black/70 hover:bg-black text-white rounded-full group-hover/image:flex items-center justify-center z-10'
+                      className='absolute -top-2 -right-2 size-6 bg-black/70 hover:bg-black text-white rounded-full md:hidden flex md:group-hover/image:flex items-center justify-center z-10'
                     >
                       <XIcon className='size-4' />
                     </button>

@@ -5,10 +5,6 @@ import { Workspace } from "@/types/docs"
 import Link from "next/link"
 import { useRouter } from "next/navigation";
 
-import { api } from "@/convex/_generated/api";
-import { useMutation } from "@tanstack/react-query";
-import { useConvexMutation } from "@convex-dev/react-query";
-
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -22,6 +18,7 @@ import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp'
 import { ArrowRightIcon, HomeIcon, TriangleAlertIcon } from "lucide-react"
 
 import { useQueryState } from 'nuqs'
+import { joinWorkspace } from "@/features/workspace/api";
 
 
 const joinCodeVerificationSchema = z.object({
@@ -39,16 +36,7 @@ const JoinCodeVerificationForm = ({ workspace }: JoinCodeVerificationFormProps) 
 
   const [joinCode] = useQueryState('joinCode')
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: useConvexMutation(api.workspaces.join),
-    onSuccess: () => {
-      toast.success("Joined workspace")
-      router.replace(`/workspace/${workspace!._id}`)
-    },
-    onError: () => {
-      toast.error("Invalid code")
-    }
-  })
+  const { mutate, isPending } = joinWorkspace()
 
 
   const methods = useForm<TJoinCodeVerificationSchema>({
@@ -59,7 +47,15 @@ const JoinCodeVerificationForm = ({ workspace }: JoinCodeVerificationFormProps) 
   })
 
   const handleSubmit = (data: TJoinCodeVerificationSchema) => {
-    mutate({ workspaceId: workspace!._id, joinCode: data.joinCode })
+    mutate({ workspaceId: workspace!._id, joinCode: data.joinCode }, {
+      onSuccess: () => {
+        toast.success("Joined workspace")
+        router.replace(`/workspace/${workspace!._id}`)
+      },
+      onError: () => {
+        toast.error("Invalid code")
+      }
+    })
   }
 
 

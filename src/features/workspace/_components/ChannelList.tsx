@@ -3,10 +3,7 @@
 import { Channel, Workspace } from "@/types/docs";
 
 import Link from "next/link";
-
-import { useQuery } from "@tanstack/react-query";
-import { convexQuery } from "@convex-dev/react-query";
-import { api } from "@/convex/_generated/api";
+import { usePathname } from "next/navigation";
 
 import { Skeleton } from "@/components/shadcnUI/skeleton"
 
@@ -15,7 +12,7 @@ import { useCreateChannelModal } from "@/stores/useCreateChannelModal";
 import WorkspaceSection from "@/features/workspace/_components/WorkspaceSection";
 
 import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
+import { getAllChannelsByWorkspaceId } from "@/features/channel/api";
 
 type ChannelListProps = {
   workspace: Workspace;
@@ -24,9 +21,7 @@ type ChannelListProps = {
 const ChannelList = ({ workspace }: ChannelListProps) => {
   const { openModal } = useCreateChannelModal()
 
-  const { data: channels, isPending } = useQuery(
-    convexQuery(api.channels.getAllByWorkspaceId, { workspaceId: workspace._id }),
-  );
+  const { data: channels, isPending } = getAllChannelsByWorkspaceId(workspace._id)
 
   return (
     <WorkspaceSection label="Channels" hint="Create a new channel" onNew={openModal}>

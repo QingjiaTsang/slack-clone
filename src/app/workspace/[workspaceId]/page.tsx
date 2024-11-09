@@ -13,6 +13,8 @@ import { api } from "@/convex/_generated/api";
 import { useCreateChannelModal } from "@/stores/useCreateChannelModal";
 
 import { Loader2Icon, TriangleAlertIcon } from "lucide-react";
+import { getCurrentUserRoleInWorkspace, getWorkspaceById } from "@/features/workspace/api";
+import { getAllChannelsByWorkspaceId } from "@/features/channel/api";
 
 type WorkspacePageProps = {
   params: {
@@ -25,17 +27,11 @@ const WorkspacePage = ({ params }: WorkspacePageProps) => {
 
   const { isOpen, openModal } = useCreateChannelModal()
 
-  const { data: workspace, isPending: isWorkspacePending } = useQuery(
-    convexQuery(api.workspaces.getOneById, { id: params.workspaceId }),
-  );
+  const { data: workspace, isPending: isWorkspacePending } = getWorkspaceById(params.workspaceId)
 
-  const { data: channels, isPending: isChannelsPending } = useQuery(
-    convexQuery(api.channels.getAllByWorkspaceId, { workspaceId: params.workspaceId }),
-  );
+  const { data: channels, isPending: isChannelsPending } = getAllChannelsByWorkspaceId(params.workspaceId)
 
-  const { data: currentUserRoleInfo, isPending: isCurrentUserRoleInfoPending } = useQuery(
-    convexQuery(api.workspaces.getCurrentUserRoleInWorkspace, { id: params.workspaceId }),
-  );
+  const { data: currentUserRoleInfo, isPending: isCurrentUserRoleInfoPending } = getCurrentUserRoleInWorkspace(params.workspaceId)
 
   useEffect(() => {
     if (channels && channels.length > 0) {
