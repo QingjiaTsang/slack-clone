@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 import {
   Dialog,
@@ -7,20 +7,23 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/shadcnUI/dialog"
-import { Button } from '@/components/shadcnUI/button';
+} from "@/components/shadcnUI/dialog";
+import { Button } from "@/components/shadcnUI/button";
 
 type UseConfirmProps = {
   title: string;
   message: string;
-}
+};
 
 const useConfirm = ({ title, message }: UseConfirmProps) => {
-  const [promise, setPromise] = useState<{ resolve: (value: boolean) => void } | null>(null);
+  const [promise, setPromise] = useState<{
+    resolve: (value: boolean) => void;
+  } | null>(null);
 
-  const confirm = () => new Promise((resolve) => {
-    setPromise({ resolve });
-  });
+  const confirm = () =>
+    new Promise((resolve) => {
+      setPromise({ resolve });
+    });
 
   const handleClose = () => {
     setPromise(null);
@@ -38,23 +41,20 @@ const useConfirm = ({ title, message }: UseConfirmProps) => {
 
   const ConfirmationDialog = () => (
     <Dialog open={promise !== null} onOpenChange={handleClose}>
-      <DialogContent onKeyDown={(e) => e.key === 'Enter' && handleConfirm()}>
+      <DialogContent onKeyDown={(e) => e.key === "Enter" && handleConfirm()}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription className='hidden'>
-            {message}
-          </DialogDescription>
+          <DialogDescription className="hidden">{message}</DialogDescription>
         </DialogHeader>
 
-        <>
-          {message}
-        </>
+        <>{message}</>
 
         <DialogFooter>
-          <Button variant="outline" onClick={handleCancel}>Cancel</Button>
+          <Button variant="outline" onClick={handleCancel}>
+            Cancel
+          </Button>
           <Button onClick={handleConfirm}>Confirm</Button>
         </DialogFooter>
-
       </DialogContent>
     </Dialog>
   );

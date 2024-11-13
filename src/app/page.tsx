@@ -2,8 +2,7 @@ import { api } from "@/convex/_generated/api";
 import { fetchQuery } from "convex/nextjs";
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 
-import InitialWorkspaceRedirect from "@/components/InitialWorkspaceRedirect";
-
+import InitialWorkspaceRedirect from "@/features/workspace/_components/InitialWorkspaceRedirect";
 
 export default async function Home() {
   const currentUserWorkspaces = await fetchQuery(
@@ -14,7 +13,7 @@ export default async function Home() {
     // https://labs.convex.dev/auth/authz/nextjs#preloading-and-loading-data
     // https://docs.convex.dev/client/react/nextjs/server-rendering#server-side-authentication
     {
-      token: convexAuthNextjsToken()
+      token: convexAuthNextjsToken(),
     }
   );
 

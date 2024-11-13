@@ -1,23 +1,23 @@
-'use client'
+"use client";
 
-import { Channel } from "@/types/docs"
+import { Channel } from "@/types/docs";
 
-import { useState } from "react"
+import { useState } from "react";
 
-import { Button } from "@/components/shadcnUI/button"
+import { Button } from "@/components/shadcnUI/button";
 
-import ChannelOperationsModal from "@/features/channel/_components/ChannelOperationsModal"
+import ChannelOperationsModal from "@/features/channel/_components/ChannelOperationsModal";
 
-import { ChevronDownIcon } from "lucide-react"
-
+import { ChevronDownIcon } from "lucide-react";
 
 type ChannelHeaderProps = {
-  channel: Channel
-  isAdmin: boolean
-}
+  channel: Channel;
+  isAdmin: boolean;
+};
 
 const ChannelHeader = ({ channel, isAdmin }: ChannelHeaderProps) => {
-  const [isChannelOperationsModalOpen, setIsChannelOperationsModalOpen] = useState(false);
+  const [isChannelOperationsModalOpen, setIsChannelOperationsModalOpen] =
+    useState(false);
 
   return (
     <div className="p-2 border-b border-b-gray-100 shadow-sm">
@@ -38,7 +38,7 @@ const ChannelHeader = ({ channel, isAdmin }: ChannelHeaderProps) => {
         channel={channel}
       />
     </div>
-  )
-}
+  );
+};
 
-export default ChannelHeader
+export default ChannelHeader;

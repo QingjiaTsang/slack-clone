@@ -1,63 +1,75 @@
-'use client'
+"use client";
 
-import { Workspace } from "@/types/docs"
+import { Workspace } from "@/types/docs";
 
-import Link from "next/link"
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 import { toast } from "sonner";
-import { Button } from "@/components/shadcnUI/button"
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/shadcnUI/input-otp"
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/shadcnUI/form"
-import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp'
+import { Button } from "@/components/shadcnUI/button";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/shadcnUI/input-otp";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/shadcnUI/form";
+import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
 
-import { ArrowRightIcon, HomeIcon, TriangleAlertIcon } from "lucide-react"
+import { ArrowRightIcon, HomeIcon, TriangleAlertIcon } from "lucide-react";
 
-import { useQueryState } from 'nuqs'
-import { joinWorkspace } from "@/features/workspace/api";
-
+import { useQueryState } from "nuqs";
+import { useJoinWorkspace } from "@/features/join/api/join";
 
 const joinCodeVerificationSchema = z.object({
   joinCode: z.string().min(6, { message: "Code must be 6 digits" }),
-})
+});
 
-type TJoinCodeVerificationSchema = z.infer<typeof joinCodeVerificationSchema>
+type TJoinCodeVerificationSchema = z.infer<typeof joinCodeVerificationSchema>;
 
 type JoinCodeVerificationFormProps = {
-  workspace: Workspace | null
-}
+  workspace: Workspace | null;
+};
 
-const JoinCodeVerificationForm = ({ workspace }: JoinCodeVerificationFormProps) => {
+const JoinCodeVerificationForm = ({
+  workspace,
+}: JoinCodeVerificationFormProps) => {
   const router = useRouter();
 
-  const [joinCode] = useQueryState('joinCode')
+  const [joinCode] = useQueryState("joinCode");
 
-  const { mutate, isPending } = joinWorkspace()
-
+  const { mutate, isPending } = useJoinWorkspace();
 
   const methods = useForm<TJoinCodeVerificationSchema>({
     resolver: zodResolver(joinCodeVerificationSchema),
     defaultValues: {
-      joinCode: joinCode ?? '',
+      joinCode: joinCode ?? "",
     },
-  })
+  });
 
   const handleSubmit = (data: TJoinCodeVerificationSchema) => {
-    mutate({ workspaceId: workspace!._id, joinCode: data.joinCode }, {
-      onSuccess: () => {
-        toast.success("Joined workspace")
-        router.replace(`/workspace/${workspace!._id}`)
-      },
-      onError: () => {
-        toast.error("Invalid code")
+    mutate(
+      { workspaceId: workspace!._id, joinCode: data.joinCode },
+      {
+        onSuccess: () => {
+          toast.success("Joined workspace");
+          router.replace(`/workspace/${workspace!._id}`);
+        },
+        onError: () => {
+          toast.error("Invalid code");
+        },
       }
-    })
-  }
-
+    );
+  };
 
   if (!workspace) {
     return (
@@ -66,19 +78,23 @@ const JoinCodeVerificationForm = ({ workspace }: JoinCodeVerificationFormProps) 
         <div className="text-destructive text-lg font-semibold">
           No workspace found
         </div>
-        <Button variant="outline" onClick={() => router.replace('/')}>
+        <Button variant="outline" onClick={() => router.replace("/")}>
           <HomeIcon className="mr-2 h-4 w-4" />
           Back to Home
         </Button>
       </div>
-    )
+    );
   }
 
   return (
     <>
-      <div className='flex flex-col items-center justify-center space-y-2'>
-        <div className="text-3xl font-bold tracking-tight text-[#1D1C1D]">Join {workspace.name}</div>
-        <div className='text-sm text-muted-foreground'>Enter the code to join the workspace</div>
+      <div className="flex flex-col items-center justify-center space-y-2">
+        <div className="text-3xl font-bold tracking-tight text-[#1D1C1D]">
+          Join {workspace.name}
+        </div>
+        <div className="text-sm text-muted-foreground">
+          Enter the code to join the workspace
+        </div>
         <div>
           <Form {...methods}>
             <form
@@ -141,7 +157,7 @@ const JoinCodeVerificationForm = ({ workspace }: JoinCodeVerificationFormProps) 
         </Button>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default JoinCodeVerificationForm
+export default JoinCodeVerificationForm;

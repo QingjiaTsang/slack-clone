@@ -2,54 +2,50 @@
 
 import { useRouter } from "next/navigation";
 
-import { useAuthActions } from "@convex-dev/auth/react"
-
-import { useQuery } from "@tanstack/react-query";
-import { convexQuery } from "@convex-dev/react-query";
-import { api } from "@/convex/_generated/api";
+import { useAuthActions } from "@convex-dev/auth/react";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/shadcnUI/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/shadcnUI/avatar"
+} from "@/components/shadcnUI/dropdown-menu";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/shadcnUI/avatar";
 
-import { Loader } from 'lucide-react';
+import { Loader } from "lucide-react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-
+import { useGetCurrentUser } from "@/api/user";
 
 const UserButton = () => {
   const router = useRouter();
 
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
-  const { signOut } = useAuthActions()
+  const { signOut } = useAuthActions();
 
-  const { data: user, isPending } = useQuery(
-    convexQuery(api.users.getCurrentUser, {}),
-  );
+  const { data: user, isPending } = useGetCurrentUser();
 
-  const avatarFallback = user?.name?.[0].toUpperCase()
+  const avatarFallback = user?.name?.[0].toUpperCase();
 
   if (isPending) {
-    return (
-      <Loader className="animate-spin text-2xl" />
-    )
+    return <Loader className="animate-spin text-2xl" />;
   }
 
   if (!user) {
-    return null
+    return null;
   }
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger >
+      <DropdownMenuTrigger>
         <div className="flex items-center">
-          <Avatar className="rounded-md">
+          <Avatar>
             <AvatarImage src={user!.image!} />
-            <AvatarFallback className="bg-blue-500 text-white">{avatarFallback}</AvatarFallback>
+            <AvatarFallback>{avatarFallback}</AvatarFallback>
           </Avatar>
           {isMobile && <span className="ml-2">{user!.name}</span>}
         </div>
@@ -59,7 +55,7 @@ const UserButton = () => {
         <DropdownMenuItem
           onClick={async () => {
             await signOut();
-            router.refresh()
+            router.refresh();
           }}
           className="cursor-pointer"
         >
@@ -67,7 +63,7 @@ const UserButton = () => {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
-}
+  );
+};
 
-export default UserButton
+export default UserButton;

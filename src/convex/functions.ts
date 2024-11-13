@@ -9,7 +9,12 @@ import {
 } from "./_generated/server";
 /* eslint-enable no-restricted-imports */
 import { ConvexError } from "convex/values";
-import { customAction, customCtx, customMutation, customQuery } from "convex-helpers/server/customFunctions";
+import {
+  customAction,
+  customCtx,
+  customMutation,
+  customQuery,
+} from "convex-helpers/server/customFunctions";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
 // Note: consistent error handling practice in this project:

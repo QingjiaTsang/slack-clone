@@ -1,35 +1,39 @@
-import { Id } from '@/convex/_generated/dataModel'
+import { Id } from "@/convex/_generated/dataModel";
 
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation";
 
-import { api } from '@/convex/_generated/api'
-import { fetchQuery } from 'convex/nextjs'
+import { api } from "@/convex/_generated/api";
+import { fetchQuery } from "convex/nextjs";
 
-import JoinCodeVerificationForm from '@/features/join/_components/JoinCodeVerificationForm'
-import { convexAuthNextjsToken } from '@convex-dev/auth/nextjs/server'
-
+import JoinCodeVerificationForm from "@/features/join/_components/JoinCodeVerificationForm";
+import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 
 type JoinWorkspacePageProps = {
   params: {
-    workspaceId: Id<'workspaces'>
-  }
-}
+    workspaceId: Id<"workspaces">;
+  };
+};
 
 const JoinWorkspacePage = async ({ params }: JoinWorkspacePageProps) => {
-  const workspacePromise = fetchQuery(api.workspaces.getPublicInfoById,
+  const workspacePromise = fetchQuery(
+    api.workspaces.getPublicInfoById,
     { id: params.workspaceId },
     { token: convexAuthNextjsToken() }
-  )
+  );
 
-  const userMemberPromise = fetchQuery(api.workspaces.getCurrentUserRoleInWorkspace,
+  const userMemberPromise = fetchQuery(
+    api.workspaces.getCurrentUserRoleInWorkspace,
     { id: params.workspaceId },
     { token: convexAuthNextjsToken() }
-  )
+  );
 
-  const [workspace, userMember] = await Promise.all([workspacePromise, userMemberPromise])
+  const [workspace, userMember] = await Promise.all([
+    workspacePromise,
+    userMemberPromise,
+  ]);
 
   if (userMember) {
-    redirect(`/workspace/${workspace!._id}`)
+    redirect(`/workspace/${workspace!._id}`);
   }
 
   return (
@@ -38,7 +42,7 @@ const JoinWorkspacePage = async ({ params }: JoinWorkspacePageProps) => {
         <JoinCodeVerificationForm workspace={workspace} />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default JoinWorkspacePage
+export default JoinWorkspacePage;

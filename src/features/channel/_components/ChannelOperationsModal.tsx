@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
 import { Channel } from "@/types/docs";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 import {
   Dialog,
@@ -16,7 +16,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/shadcnUI/dialog"
+} from "@/components/shadcnUI/dialog";
 import {
   Sheet,
   SheetContent,
@@ -24,15 +24,15 @@ import {
   SheetTitle,
   SheetFooter,
   SheetDescription,
-} from "@/components/shadcnUI/sheet"
+} from "@/components/shadcnUI/sheet";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormMessage
-} from "@/components/shadcnUI/form"
-import { Input } from "@/components/shadcnUI/input"
+  FormMessage,
+} from "@/components/shadcnUI/form";
+import { Input } from "@/components/shadcnUI/input";
 import { toast } from "sonner";
 
 import { TrashIcon } from "lucide-react";
@@ -41,19 +41,27 @@ import useConfirm from "@/hooks/useConfirm";
 import { Button } from "@/components/shadcnUI/button";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
-import { deleteChannel, updateChannel } from "@/features/channel/api";
+import {
+  useDeleteChannel,
+  useUpdateChannel,
+} from "@/features/channel/api/channel";
 
 type ChannelOperationsModalProps = {
   isAdmin: boolean;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   channel: Channel;
-}
+};
 
-const ChannelOperationsModal = ({ isAdmin, isOpen, setIsOpen, channel }: ChannelOperationsModalProps) => {
+const ChannelOperationsModal = ({
+  isAdmin,
+  isOpen,
+  setIsOpen,
+  channel,
+}: ChannelOperationsModalProps) => {
   const router = useRouter();
 
-  const { mutate, isPending } = deleteChannel()
+  const { mutate, isPending } = useDeleteChannel();
 
   const [DeleteChannelDialog, confirm] = useConfirm({
     title: "Delete Channel",
@@ -62,25 +70,27 @@ const ChannelOperationsModal = ({ isAdmin, isOpen, setIsOpen, channel }: Channel
 
   const [isEditChannelModalOpen, setIsEditChannelModalOpen] = useState(false);
 
-
   const handleDeleteChannel = async () => {
     const confirmed = await confirm();
     if (!confirmed) {
       return;
     }
 
-    mutate({ id: channel._id! }, {
-      onSuccess: () => {
-        toast.success('Channel deleted');
-        setIsOpen(false);
-        router.replace(`/workspace/${channel.workspaceId}`);
-      },
-      onError: (error) => {
-        toast.error('Failed to delete channel');
-        console.error({ error });
+    mutate(
+      { id: channel._id! },
+      {
+        onSuccess: () => {
+          toast.success("Channel deleted");
+          setIsOpen(false);
+          router.replace(`/workspace/${channel.workspaceId}`);
+        },
+        onError: (error) => {
+          toast.error("Failed to delete channel");
+          console.error({ error });
+        },
       }
-    });
-  }
+    );
+  };
 
   return (
     <>
@@ -98,12 +108,8 @@ const ChannelOperationsModal = ({ isAdmin, isOpen, setIsOpen, channel }: Channel
           <div className="flex flex-col gap-4 mb-4">
             <div className="mx-4 p-4 bg-white rounded-lg flex justify-between">
               <div>
-                <div className="text-sm font-semibold">
-                  Channel Name
-                </div>
-                <div className="text-sm">
-                  {channel.name}
-                </div>
+                <div className="text-sm font-semibold">Channel Name</div>
+                <div className="text-sm">{channel.name}</div>
               </div>
               {isAdmin && (
                 <div
@@ -122,9 +128,7 @@ const ChannelOperationsModal = ({ isAdmin, isOpen, setIsOpen, channel }: Channel
                 className="text-destructive h-14 flex justify-start items-center gap-2 bg-white rounded-lg p-4 mx-4 hover:bg-red-50 transition-colors duration-300"
               >
                 <TrashIcon className="size-4 shrink-0" />
-                <div className="text-sm font-semibold">
-                  Delete Channel
-                </div>
+                <div className="text-sm font-semibold">Delete Channel</div>
               </Button>
             )}
           </div>
@@ -138,53 +142,63 @@ const ChannelOperationsModal = ({ isAdmin, isOpen, setIsOpen, channel }: Channel
         channel={channel}
       />
     </>
-  )
-}
+  );
+};
 
-export default ChannelOperationsModal
+export default ChannelOperationsModal;
 
 const editChannelFormSchema = z.object({
-  name: z.string().min(1, { message: 'Name is required' }),
-})
+  name: z.string().min(1, { message: "Name is required" }),
+});
 
-type EditChannelFormSchema = z.infer<typeof editChannelFormSchema>
+type EditChannelFormSchema = z.infer<typeof editChannelFormSchema>;
 
 type EditChannelModalProps = {
   isOpen: boolean;
   onClose: () => void;
   channel: Channel;
-}
+};
 
-const EditChannelModal = ({ isOpen, onClose, channel }: EditChannelModalProps) => {
+const EditChannelModal = ({
+  isOpen,
+  onClose,
+  channel,
+}: EditChannelModalProps) => {
   const router = useRouter();
 
   const isMobile = useMediaQuery("(max-width: 640px)");
 
-  const { mutate, isPending } = updateChannel()
+  const { mutate, isPending } = useUpdateChannel();
 
   const methods = useForm<EditChannelFormSchema>({
     resolver: zodResolver(editChannelFormSchema),
-    defaultValues: { name: channel.name }
-  })
+    defaultValues: { name: channel.name },
+  });
 
   const handleSubmit = async (data: EditChannelFormSchema) => {
-    mutate({ id: channel!._id!, name: data.name }, {
-      onSuccess: () => {
-        router.refresh();
-        toast.success('Channel updated');
-        methods.reset()
-        onClose();
-      },
-      onError: (error) => {
-        toast.error('Failed to update channel');
-        console.error({ error });
+    mutate(
+      { id: channel!._id!, name: data.name },
+      {
+        onSuccess: () => {
+          router.refresh();
+          toast.success("Channel updated");
+          methods.reset();
+          onClose();
+        },
+        onError: (error) => {
+          toast.error("Failed to update channel");
+          console.error({ error });
+        },
       }
-    });
-  }
+    );
+  };
 
   const formContent = (
     <Form {...methods}>
-      <form id="edit-channel-form" onSubmit={methods.handleSubmit(handleSubmit)}>
+      <form
+        id="edit-channel-form"
+        onSubmit={methods.handleSubmit(handleSubmit)}
+      >
         <FormField
           control={methods.control}
           name="name"
@@ -196,11 +210,11 @@ const EditChannelModal = ({ isOpen, onClose, channel }: EditChannelModalProps) =
                   placeholder={`Channel Name e.g. "General"`}
                   onCompositionEnd={(e) => {
                     const target = e.target as HTMLInputElement;
-                    field.onChange(target.value.replace(/\s+/g, '-'));
+                    field.onChange(target.value.replace(/\s+/g, "-"));
                   }}
                   onChange={(e) => {
                     if (!(e.nativeEvent as InputEvent).isComposing) {
-                      field.onChange(e.target.value.replace(/\s+/g, '-'));
+                      field.onChange(e.target.value.replace(/\s+/g, "-"));
                     } else {
                       field.onChange(e.target.value);
                     }
@@ -217,8 +231,8 @@ const EditChannelModal = ({ isOpen, onClose, channel }: EditChannelModalProps) =
 
   if (isMobile) {
     return (
-      <Sheet open={isOpen} onOpenChange={onClose} >
-        <SheetContent side="bottom" >
+      <Sheet open={isOpen} onOpenChange={onClose}>
+        <SheetContent side="bottom">
           <SheetHeader>
             <SheetTitle>Rename Channel</SheetTitle>
             <SheetDescription className="hidden">
@@ -229,7 +243,11 @@ const EditChannelModal = ({ isOpen, onClose, channel }: EditChannelModalProps) =
           {formContent}
 
           <SheetFooter className="mt-4">
-            <Button form="edit-channel-form" type="submit" isLoading={isPending}>
+            <Button
+              form="edit-channel-form"
+              type="submit"
+              isLoading={isPending}
+            >
               Save
             </Button>
           </SheetFooter>
@@ -258,4 +276,4 @@ const EditChannelModal = ({ isOpen, onClose, channel }: EditChannelModalProps) =
       </DialogContent>
     </Dialog>
   );
-}
+};

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { Workspace } from "@/types/docs";
 
@@ -6,13 +6,15 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { useCreateWorkspaceModal } from "@/stores/useCreateWorkspaceModal";
-import CreateWorkspaceModal from "@/components/CreateWorkspaceModal";
+import CreateWorkspaceModal from "@/features/workspace/_components/CreateWorkspaceModal";
 
 type InitialWorkspaceRedirectProps = {
-  initialWorkspaces: Workspace[] | null
-}
+  initialWorkspaces: Workspace[] | null;
+};
 
-const InitialWorkspaceRedirect = ({ initialWorkspaces }: InitialWorkspaceRedirectProps) => {
+const InitialWorkspaceRedirect = ({
+  initialWorkspaces,
+}: InitialWorkspaceRedirectProps) => {
   const router = useRouter();
   const { openModal, closeModal } = useCreateWorkspaceModal();
 
@@ -26,8 +28,7 @@ const InitialWorkspaceRedirect = ({ initialWorkspaces }: InitialWorkspaceRedirec
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialWorkspaces, openModal, closeModal, router]);
 
-  return <CreateWorkspaceModal />
+  return <CreateWorkspaceModal />;
 };
 
 export default InitialWorkspaceRedirect;
-

@@ -1,34 +1,95 @@
-"use client"
+"use client";
 
-import { useRef } from "react"
+import { Id } from "@/convex/_generated/dataModel";
 
-import ReactQuill from "react-quill"
+import { useRef, useState } from "react";
 
-import Editor from "@/components/Editor"
+import { useParams } from "next/navigation";
+
+import ReactQuill from "react-quill";
+
+import Editor from "@/components/Editor";
+
+import { useCreateMessage } from "@/api/message";
+
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
 
 type ChatInputProps = {
-  placeholder: string
-}
+  placeholder: string;
+};
 const ChatInput = ({ placeholder }: ChatInputProps) => {
-  const editorRef = useRef<ReactQuill>(null)
+  const { channelId, workspaceId } = useParams();
 
-  const handleSubmit = (data: { body: string, image: File | null }) => {
-    console.log({ data })
-  }
+  const generateUploadUrl = useMutation(api.messages.generateUploadUrl);
+
+  const { mutate } = useCreateMessage();
+
+  const editorRef = useRef<ReactQuill>(null);
+
+  const [rerenderFlag, setRerenderFlag] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (data: { body: string; image: File | null }) => {
+    const editor = editorRef.current?.getEditor();
+    try {
+      editor?.enable(false);
+      setIsSubmitting(true);
+      const postUrl = await generateUploadUrl();
+
+      let storageId;
+
+      if (data.image) {
+        const result = await fetch(postUrl, {
+          method: "POST",
+          headers: { "Content-Type": data.image!.type },
+          body: data.image,
+        });
+        if (!result.ok) {
+          throw new Error("Failed to upload image");
+        }
+        const res = await result.json();
+        storageId = res.storageId;
+      }
+
+      const res = await mutate({
+        body: data.body,
+        ...(storageId && { image: storageId }),
+        channelId: channelId as Id<"channels">,
+        workspaceId: workspaceId as Id<"workspaces">,
+      });
+
+      toast.success("Message sent");
+      setRerenderFlag((prev) => prev + 1);
+
+      const messageContainer = document.querySelector(".scrollbar-thin");
+      if (messageContainer) {
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+      }
+    } catch (_error) {
+      console.log({ _error });
+      toast.error("Failed to send message");
+    } finally {
+      editor?.enable(true);
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="px-5 w-full">
       <Editor
-        innerRef={editorRef}
+        key={rerenderFlag}
+        quillRef={editorRef}
         // variant="update"
         defaultValue={""}
-        disabled={false}
+        disabled={isSubmitting}
         placeholder={placeholder}
-        onCancel={() => { }}
+        onCancel={() => {}}
         onSubmit={handleSubmit}
       />
     </div>
-  )
-}
+  );
+};
 
-export default ChatInput
+export default ChatInput;

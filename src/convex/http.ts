@@ -6,5 +6,3 @@ const http = httpRouter();
 auth.addHttpRoutes(http);
 
 export default http;
-
-

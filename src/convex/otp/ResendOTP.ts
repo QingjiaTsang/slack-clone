@@ -10,7 +10,12 @@ export const ResendOTP = Email({
   async generateVerificationToken() {
     return generateRandomString(8, alphabet("0-9"));
   },
-  async sendVerificationRequest({ identifier: email, provider, token, expires }) {
+  async sendVerificationRequest({
+    identifier: email,
+    provider,
+    token,
+    expires,
+  }) {
     const resend = new ResendAPI(provider.apiKey);
     const { error } = await resend.emails.send({
       from: "Slack <no-reply@slack.rest>",

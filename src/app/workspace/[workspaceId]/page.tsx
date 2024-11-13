@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { Id } from "@/convex/_generated/dataModel";
 
@@ -6,50 +6,61 @@ import { useEffect } from "react";
 
 import { useRouter } from "next/navigation";
 
-import { useQuery } from "@tanstack/react-query";
-import { convexQuery } from "@convex-dev/react-query";
-import { api } from "@/convex/_generated/api";
-
 import { useCreateChannelModal } from "@/stores/useCreateChannelModal";
 
 import { Loader2Icon, TriangleAlertIcon } from "lucide-react";
-import { getCurrentUserRoleInWorkspace, getWorkspaceById } from "@/features/workspace/api";
-import { getAllChannelsByWorkspaceId } from "@/features/channel/api";
+import {
+  useGetCurrentUserRoleInWorkspace,
+  useGetWorkspaceById,
+} from "@/features/workspace/api/workspace";
+import { useGetAllChannelsByWorkspaceId } from "@/features/workspace/api/workspace";
 
 type WorkspacePageProps = {
   params: {
-    workspaceId: Id<"workspaces">
-  }
-}
+    workspaceId: Id<"workspaces">;
+  };
+};
 
 const WorkspacePage = ({ params }: WorkspacePageProps) => {
-  const router = useRouter()
+  const router = useRouter();
 
-  const { isOpen, openModal } = useCreateChannelModal()
+  const { isOpen, openModal } = useCreateChannelModal();
 
-  const { data: workspace, isPending: isWorkspacePending } = getWorkspaceById(params.workspaceId)
+  const { data: workspace, isPending: isWorkspacePending } =
+    useGetWorkspaceById(params.workspaceId);
 
-  const { data: channels, isPending: isChannelsPending } = getAllChannelsByWorkspaceId(params.workspaceId)
+  const { data: channels, isPending: isChannelsPending } =
+    useGetAllChannelsByWorkspaceId(params.workspaceId);
 
-  const { data: currentUserRoleInfo, isPending: isCurrentUserRoleInfoPending } = getCurrentUserRoleInWorkspace(params.workspaceId)
+  const { data: currentUserRoleInfo, isPending: isCurrentUserRoleInfoPending } =
+    useGetCurrentUserRoleInWorkspace(params.workspaceId);
 
   useEffect(() => {
     if (channels && channels.length > 0) {
-      router.replace(`/workspace/${params.workspaceId}/channel/${channels[0]._id}`)
-      return
+      router.replace(
+        `/workspace/${params.workspaceId}/channel/${channels[0]._id}`
+      );
+      return;
     }
 
     if (currentUserRoleInfo?.role === "admin") {
-      openModal()
+      openModal();
     }
-  }, [isOpen, channels, currentUserRoleInfo, router, params.workspaceId, openModal])
+  }, [
+    isOpen,
+    channels,
+    currentUserRoleInfo,
+    router,
+    params.workspaceId,
+    openModal,
+  ]);
 
   if (isWorkspacePending || isChannelsPending || isCurrentUserRoleInfoPending) {
     return (
       <div className="flex items-center justify-center h-full">
         <Loader2Icon className="animate-spin" />
       </div>
-    )
+    );
   }
 
   if (!workspace) {
@@ -60,7 +71,7 @@ const WorkspacePage = ({ params }: WorkspacePageProps) => {
           No workspace found
         </div>
       </div>
-    )
+    );
   }
 
   if (!channels || channels.length === 0) {
@@ -71,10 +82,10 @@ const WorkspacePage = ({ params }: WorkspacePageProps) => {
           No channels found
         </div>
       </div>
-    )
+    );
   }
 
-  return null
-}
+  return null;
+};
 
-export default WorkspacePage
+export default WorkspacePage;

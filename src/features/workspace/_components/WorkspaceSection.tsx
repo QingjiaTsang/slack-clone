@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { RiArrowRightSFill } from "react-icons/ri";
 import { PlusIcon } from "lucide-react";
@@ -15,9 +15,14 @@ type WorkspaceSectionProps = {
   hint: string;
   onNew?: () => void;
   children: React.ReactNode;
-}
+};
 
-const WorkspaceSection = ({ label, hint, onNew, children }: WorkspaceSectionProps) => {
+const WorkspaceSection = ({
+  label,
+  hint,
+  onNew,
+  children,
+}: WorkspaceSectionProps) => {
   const [on, toggle] = useToggle(false);
 
   return (
@@ -28,7 +33,9 @@ const WorkspaceSection = ({ label, hint, onNew, children }: WorkspaceSectionProp
             onClick={toggle}
             className="flex items-center gap-2 text-[#f9edffcc] cursor-pointer capitalize w-full"
           >
-            <RiArrowRightSFill className={cn("size-5 shrink-0", { "rotate-90": on })} />
+            <RiArrowRightSFill
+              className={cn("size-5 shrink-0", { "rotate-90": on })}
+            />
             <div className="truncate">{label}</div>
           </div>
         </Hint>
@@ -37,17 +44,20 @@ const WorkspaceSection = ({ label, hint, onNew, children }: WorkspaceSectionProp
           <Button variant="transparent" className="p-0 size-4">
             <PlusIcon
               onClick={onNew}
-              className={cn("size-4 text-[#f9edffcc] cursor-pointer shrink-0 hidden", { "group-hover:block": !!onNew })}
+              className={cn(
+                "size-4 text-[#f9edffcc] cursor-pointer shrink-0 hidden",
+                { "group-hover:block": !!onNew }
+              )}
             />
           </Button>
         </Hint>
       </div>
 
-      <div className={cn('flex flex-col gap-0.5', { "hidden": !on })}>
+      <div className={cn("flex flex-col gap-0.5", { hidden: !on })}>
         {children}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default WorkspaceSection
+export default WorkspaceSection;

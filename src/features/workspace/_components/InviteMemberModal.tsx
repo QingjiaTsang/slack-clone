@@ -9,7 +9,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/shadcnUI/dialog"
+} from "@/components/shadcnUI/dialog";
 import { Button } from "@/components/shadcnUI/button";
 import { toast } from "sonner";
 
@@ -18,49 +18,62 @@ import { CopyIcon, LinkIcon, RefreshCcw } from "lucide-react";
 import { generateJoinCode } from "@/lib/generateJoinCode";
 
 import useConfirm from "@/hooks/useConfirm";
-import { updateWorkspace } from "@/features/workspace/api";
+import { useUpdateWorkspace } from "@/features/workspace/api/workspace";
 
 type InviteMemberModalProps = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   workspace: Workspace;
-}
+};
 
-const InviteMemberModal = ({ isOpen, setIsOpen, workspace }: InviteMemberModalProps) => {
+const InviteMemberModal = ({
+  isOpen,
+  setIsOpen,
+  workspace,
+}: InviteMemberModalProps) => {
   const router = useRouter();
 
   const [GenerateNewJoinCodeDialog, confirm] = useConfirm({
     title: "Generate a new Join Code?",
-    message: "This will invalidate the current Join Code and generate a new one.",
+    message:
+      "This will invalidate the current Join Code and generate a new one.",
   }) as [React.FC, () => Promise<boolean>];
 
-  const { mutate, isPending } = updateWorkspace()
+  const { mutate, isPending } = useUpdateWorkspace();
 
   const handleCopyLink = async () => {
-    await window.navigator.clipboard.writeText(`${window.location.origin}/join/${workspace._id}?joinCode=${workspace.joinCode}`);
+    await window.navigator.clipboard.writeText(
+      `${window.location.origin}/join/${workspace._id}?joinCode=${workspace.joinCode}`
+    );
     toast.success("Link copied to clipboard");
-  }
+  };
 
   const handleCopyJoinCode = async () => {
     await window.navigator.clipboard.writeText(workspace.joinCode);
     toast.success("Join Code copied to clipboard");
-  }
+  };
 
   const handleNewJoinCode = async () => {
-    const confirmed = await confirm()
+    const confirmed = await confirm();
     if (confirmed) {
-      mutate({ id: workspace._id!, joinCode: generateJoinCode(), name: workspace.name }, {
-        onSuccess: () => {
-          router.refresh();
-          toast.success("Join Code updated");
+      mutate(
+        {
+          id: workspace._id!,
+          joinCode: generateJoinCode(),
+          name: workspace.name,
         },
-        onError: () => {
-          toast.error("Failed to update Join Code");
+        {
+          onSuccess: () => {
+            router.refresh();
+            toast.success("Join Code updated");
+          },
+          onError: () => {
+            toast.error("Failed to update Join Code");
+          },
         }
-      });
+      );
     }
-  }
-
+  };
 
   return (
     <>
@@ -76,7 +89,12 @@ const InviteMemberModal = ({ isOpen, setIsOpen, workspace }: InviteMemberModalPr
           <div className="my-12">
             <div className="flex items-baseline justify-center gap-2 uppercase text-4xl font-bold tracking-widest">
               {workspace.joinCode}
-              <Button variant="ghost" size="iconSm" disabled={isPending} onClick={handleCopyJoinCode}>
+              <Button
+                variant="ghost"
+                size="iconSm"
+                disabled={isPending}
+                onClick={handleCopyJoinCode}
+              >
                 <CopyIcon className="size-4" />
               </Button>
             </div>
@@ -87,11 +105,21 @@ const InviteMemberModal = ({ isOpen, setIsOpen, workspace }: InviteMemberModalPr
               <Button variant="outline">Cancel</Button>
             </DialogClose>
             <div>
-              <Button variant="ghost" className="gap-2" disabled={isPending} onClick={handleNewJoinCode}>
+              <Button
+                variant="ghost"
+                className="gap-2"
+                disabled={isPending}
+                onClick={handleNewJoinCode}
+              >
                 <RefreshCcw className="size-4" />
                 New Join Code
               </Button>
-              <Button variant="ghost" className="gap-2" disabled={isPending} onClick={handleCopyLink}>
+              <Button
+                variant="ghost"
+                className="gap-2"
+                disabled={isPending}
+                onClick={handleCopyLink}
+              >
                 <LinkIcon className="size-4" />
                 Copy Link
               </Button>
@@ -101,7 +129,7 @@ const InviteMemberModal = ({ isOpen, setIsOpen, workspace }: InviteMemberModalPr
       </Dialog>
       <GenerateNewJoinCodeDialog />
     </>
-  )
-}
+  );
+};
 
-export default InviteMemberModal
+export default InviteMemberModal;

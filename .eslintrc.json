@@ -13,7 +13,8 @@
           "src/hooks/**/*",
           "src/stores/**",
           "src/types/**",
-          "src/lib/**/*"
+          "src/lib/**/*",
+          "src/api/**/*"
           // "src/data/**/*",
           // "src/drizzle/**/*",
           // "src/server/**/*"
@@ -62,7 +63,7 @@
     "@typescript-eslint/no-unused-expressions": "off",
     "@typescript-eslint/no-unused-vars": [
       "warn",
-      { "varsIgnorePattern": "^_", "argsIgnorePattern": "^_" }
+      { "varsIgnorePattern": "^_", "argsIgnorePattern": "^_", "caughtErrorsIgnorePattern": "^_" }
     ],
 
     // based on convex recommended rules: https://stack.convex.dev/eslint-setup

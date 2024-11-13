@@ -8,23 +8,22 @@ import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@/components/shadcnUI/resizable"
+} from "@/components/shadcnUI/resizable";
 
 import WorkspaceProvider from "@/features/workspace/_components/WorkspaceProvider";
-import HeaderNavBar from '@/features/workspace/_components/HeaderNavBar'
+import HeaderNavBar from "@/features/workspace/_components/HeaderNavBar";
 import SideBar from "@/features/workspace/_components/SideBar";
 import WorkspaceSidebar from "@/features/workspace/_components/WorkspaceSidebar";
 
-import CreateWorkspaceModal from "@/components/CreateWorkspaceModal";
-import CreateChannelModal from "@/components/CreateChannelModal";
-
+import CreateWorkspaceModal from "@/features/workspace/_components/CreateWorkspaceModal";
+import CreateChannelModal from "@/features/channel/_components/CreateChannelModal";
 
 type WorkspaceLayoutProps = {
-  children: React.ReactNode,
+  children: React.ReactNode;
   params: {
-    workspaceId: Id<"workspaces">
-  }
-}
+    workspaceId: Id<"workspaces">;
+  };
+};
 
 const WorkspaceLayout = async ({ children, params }: WorkspaceLayoutProps) => {
   // Note: Data fetched from the React Server Component (RSC) will be cached and won't update immediately when Convex data changes.
@@ -48,7 +47,12 @@ const WorkspaceLayout = async ({ children, params }: WorkspaceLayoutProps) => {
     { token: convexAuthNextjsToken() }
   );
 
-  const [currentWorkspace, userWorkspaces, currentUserRoleInfo] = await Promise.all([workspacePromise, userWorkspacesPromise, currentUserRoleInfoPromise]);
+  const [currentWorkspace, userWorkspaces, currentUserRoleInfo] =
+    await Promise.all([
+      workspacePromise,
+      userWorkspacesPromise,
+      currentUserRoleInfoPromise,
+    ]);
 
   const isAdmin = currentUserRoleInfo?.role === "admin";
 
@@ -57,29 +61,35 @@ const WorkspaceLayout = async ({ children, params }: WorkspaceLayoutProps) => {
       <div>
         <HeaderNavBar />
         <div className="flex">
-          <SideBar currentWorkspace={currentWorkspace} userWorkspaces={userWorkspaces} />
+          <SideBar
+            currentWorkspace={currentWorkspace}
+            userWorkspaces={userWorkspaces}
+          />
 
-
-          <ResizablePanelGroup direction="horizontal" autoSaveId="workspace-layout">
+          <ResizablePanelGroup
+            direction="horizontal"
+            autoSaveId="workspace-layout"
+          >
             <ResizablePanel
               defaultSize={20}
               minSize={10}
               className="bg-[#5E2C5F] h-[calc(100svh-56px)]"
             >
-              <WorkspaceSidebar isAdmin={isAdmin} workspace={currentWorkspace} />
+              <WorkspaceSidebar
+                isAdmin={isAdmin}
+                workspace={currentWorkspace}
+              />
             </ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={80}>
-              {children}
-            </ResizablePanel>
+            <ResizablePanel defaultSize={80}>{children}</ResizablePanel>
           </ResizablePanelGroup>
         </div>
       </div>
 
       <CreateWorkspaceModal />
       <CreateChannelModal />
-    </WorkspaceProvider >
-  )
-}
+    </WorkspaceProvider>
+  );
+};
 
-export default WorkspaceLayout
+export default WorkspaceLayout;

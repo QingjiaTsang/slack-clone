@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { Id } from "@/convex/_generated/dataModel";
 
@@ -13,7 +13,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-} from "@/components/shadcnUI/sheet"
+} from "@/components/shadcnUI/sheet";
 import {
   Dialog,
   DialogContent,
@@ -21,10 +21,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/shadcnUI/dialog"
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/shadcnUI/form"
-import { Input } from "@/components/shadcnUI/input"
-import { Button } from "@/components/shadcnUI/button"
+} from "@/components/shadcnUI/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/shadcnUI/form";
+import { Input } from "@/components/shadcnUI/input";
+import { Button } from "@/components/shadcnUI/button";
 import { toast } from "sonner";
 
 import { z } from "zod";
@@ -32,52 +38,59 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { createChannel } from "@/features/channel/api";
-
+import { useCreateChannel } from "@/features/channel/api/channel";
 
 const workspaceFormSchema = z.object({
-  name: z.string().max(80).min(3, { message: 'Channel name must be between 3 and 80 characters' }),
-})
+  name: z
+    .string()
+    .max(80)
+    .min(3, { message: "Channel name must be between 3 and 80 characters" }),
+});
 
-type TWorkspaceFormSchema = z.infer<typeof workspaceFormSchema>
-
+type TWorkspaceFormSchema = z.infer<typeof workspaceFormSchema>;
 
 const CreateChannelModal = () => {
-  const params = useParams()
-  const router = useRouter()
+  const params = useParams();
+  const router = useRouter();
 
-  const workspaceId = params.workspaceId as Id<"workspaces">
+  const workspaceId = params.workspaceId as Id<"workspaces">;
 
   const isMobile = useMediaQuery("(max-width: 640px)");
 
-  const { mutate, isPending } = createChannel()
+  const { mutate, isPending } = useCreateChannel();
 
   const methods = useForm<TWorkspaceFormSchema>({
     resolver: zodResolver(workspaceFormSchema),
-    defaultValues: { name: '' }
-  })
+    defaultValues: { name: "" },
+  });
 
   const { isOpen, setIsOpen, closeModal } = useCreateChannelModal();
 
   const onSubmit = async (data: TWorkspaceFormSchema) => {
-    mutate({ workspaceId: workspaceId, name: data.name }, {
-      onSuccess: (newChannelId) => {
-        closeModal()
-        toast.success('Channel created')
-        router.push(`/workspace/${workspaceId}/channel/${newChannelId}`)
-        methods.reset()
-      },
-      onError: (error) => {
-        toast.error('Failed to create channel')
-        console.error({ error })
+    mutate(
+      { workspaceId: workspaceId, name: data.name },
+      {
+        onSuccess: (newChannelId) => {
+          closeModal();
+          toast.success("Channel created");
+          router.push(`/workspace/${workspaceId}/channel/${newChannelId}`);
+          methods.reset();
+        },
+        onError: (error) => {
+          toast.error("Failed to create channel");
+          console.error({ error });
+        },
       }
-    })
-  }
+    );
+  };
 
   const ModalContent = (
     <>
       <Form {...methods}>
-        <form id="create-channel-form" onSubmit={methods.handleSubmit(onSubmit)}>
+        <form
+          id="create-channel-form"
+          onSubmit={methods.handleSubmit(onSubmit)}
+        >
           <FormField
             control={methods.control}
             name="name"
@@ -89,11 +102,11 @@ const CreateChannelModal = () => {
                     placeholder="e.g. study-group"
                     onCompositionEnd={(e) => {
                       const target = e.target as HTMLInputElement;
-                      field.onChange(target.value.replace(/\s+/g, '-'));
+                      field.onChange(target.value.replace(/\s+/g, "-"));
                     }}
                     onChange={(e) => {
                       if (!(e.nativeEvent as InputEvent).isComposing) {
-                        field.onChange(e.target.value.replace(/\s+/g, '-'));
+                        field.onChange(e.target.value.replace(/\s+/g, "-"));
                       } else {
                         field.onChange(e.target.value);
                       }
@@ -107,7 +120,7 @@ const CreateChannelModal = () => {
         </form>
       </Form>
     </>
-  )
+  );
 
   if (isMobile) {
     return (
@@ -123,12 +136,17 @@ const CreateChannelModal = () => {
           {ModalContent}
 
           <SheetFooter className="mt-4">
-            <Button form="create-channel-form" type="submit" isLoading={isPending}>Create</Button>
+            <Button
+              form="create-channel-form"
+              type="submit"
+              isLoading={isPending}
+            >
+              Create
+            </Button>
           </SheetFooter>
         </SheetContent>
-
       </Sheet>
-    )
+    );
   }
 
   return (
@@ -144,11 +162,17 @@ const CreateChannelModal = () => {
         {ModalContent}
 
         <DialogFooter>
-          <Button form="create-channel-form" type="submit" isLoading={isPending}>Create</Button>
+          <Button
+            form="create-channel-form"
+            type="submit"
+            isLoading={isPending}
+          >
+            Create
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
 
-export default CreateChannelModal
+export default CreateChannelModal;

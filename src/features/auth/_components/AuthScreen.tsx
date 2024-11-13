@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
 import { useState } from "react";
 
-import SignIn from "@/features/auth/_components/SignIn"
-import SignUp from "@/features/auth/_components/SignUp"
+import SignIn from "@/features/auth/_components/SignIn";
+import SignUp from "@/features/auth/_components/SignUp";
 
 const AuthScreen = () => {
   // Note: different flow indicator for sign in and sign up in convex:
@@ -12,14 +12,18 @@ const AuthScreen = () => {
   const [flow, setFlow] = useState<"signUp" | "signIn">("signUp");
 
   const onToggleAuthCard = () => {
-    setFlow(prev => prev === "signIn" ? "signUp" : "signIn")
-  }
+    setFlow((prev) => (prev === "signIn" ? "signUp" : "signIn"));
+  };
 
   return (
     <>
-      {flow === "signIn" ? <SignIn onToggleAuthCard={onToggleAuthCard} /> : <SignUp onToggleAuthCard={onToggleAuthCard} />}
+      {flow === "signIn" ? (
+        <SignIn onToggleAuthCard={onToggleAuthCard} />
+      ) : (
+        <SignUp onToggleAuthCard={onToggleAuthCard} />
+      )}
     </>
-  )
-}
+  );
+};
 
-export default AuthScreen
+export default AuthScreen;

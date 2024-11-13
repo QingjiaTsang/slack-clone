@@ -1,0 +1,35 @@
+import { api } from "@/convex/_generated/api";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { convexQuery } from "@convex-dev/react-query";
+import { useConvexMutation } from "@convex-dev/react-query";
+import { Id } from "@/convex/_generated/dataModel";
+
+export const useGetWorkspaceById = (workspaceId: Id<"workspaces">) =>
+  useQuery(convexQuery(api.workspaces.getOneById, { id: workspaceId }));
+
+export const useGetCurrentUserRoleInWorkspace = (
+  workspaceId: Id<"workspaces">
+) =>
+  useQuery(
+    convexQuery(api.workspaces.getCurrentUserRoleInWorkspace, {
+      id: workspaceId,
+    })
+  );
+
+export const useCreateWorkspace = () =>
+  useMutation({
+    mutationFn: useConvexMutation(api.workspaces.create),
+  });
+
+export const useUpdateWorkspace = () =>
+  useMutation({
+    mutationFn: useConvexMutation(api.workspaces.updateOneById),
+  });
+
+export const useDeleteWorkspace = () =>
+  useMutation({
+    mutationFn: useConvexMutation(api.workspaces.deleteOneById),
+  });
+
+export const useGetAllChannelsByWorkspaceId = (workspaceId: Id<"workspaces">) =>
+  useQuery(convexQuery(api.channels.getAllByWorkspaceId, { workspaceId }));

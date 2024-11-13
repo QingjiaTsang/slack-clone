@@ -1,35 +1,35 @@
-import { useState } from "react"
+import { useState } from "react";
 
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/shadcnUI/popover"
+} from "@/components/shadcnUI/popover";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/shadcnUI/tooltip"
+} from "@/components/shadcnUI/tooltip";
 
-import data from '@emoji-mart/data'
-import Picker from '@emoji-mart/react'
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 
 type EmojiPopoverProps = {
-  hint: string
-  onSelect: (emoji: string) => void
-  children: React.ReactNode
-}
+  hint: string;
+  onSelect: (emoji: string) => void;
+  children: React.ReactNode;
+};
 
 const EmojiPopover = ({ hint, onSelect, children }: EmojiPopoverProps) => {
-  const [isTooltipOpen, setIsTooltipOpen] = useState(false)
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false)
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   const handleSelect = (emoji: { native: string }) => {
-    onSelect(emoji.native)
-    setIsPopoverOpen(false)
-    setIsTooltipOpen(false)
-  }
+    onSelect(emoji.native);
+    setIsPopoverOpen(false);
+    setIsTooltipOpen(false);
+  };
 
   return (
     <TooltipProvider>
@@ -41,15 +41,12 @@ const EmojiPopover = ({ hint, onSelect, children }: EmojiPopoverProps) => {
           <TooltipContent>{hint}</TooltipContent>
         </Tooltip>
 
-        <PopoverContent>
-          <Picker
-            data={data}
-            onEmojiSelect={handleSelect}
-          />
+        <PopoverContent className="size-fit">
+          <Picker data={data} onEmojiSelect={handleSelect} />
         </PopoverContent>
       </Popover>
     </TooltipProvider>
-  )
-}
+  );
+};
 
-export default EmojiPopover
+export default EmojiPopover;

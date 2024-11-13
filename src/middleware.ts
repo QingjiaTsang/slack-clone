@@ -1,7 +1,7 @@
 import {
   convexAuthNextjsMiddleware,
   createRouteMatcher,
-  nextjsMiddlewareRedirect
+  nextjsMiddlewareRedirect,
 } from "@convex-dev/auth/nextjs/server";
 
 // docs: https://labs.convex.dev/auth/authz/nextjs#require-authentication-for-certain-routes

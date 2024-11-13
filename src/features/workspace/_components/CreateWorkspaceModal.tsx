@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { useRouter } from "next/navigation";
 
@@ -11,7 +11,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-} from "@/components/shadcnUI/sheet"
+} from "@/components/shadcnUI/sheet";
 import {
   Dialog,
   DialogContent,
@@ -19,10 +19,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/shadcnUI/dialog"
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/shadcnUI/form"
-import { Input } from "@/components/shadcnUI/input"
-import { Button } from "@/components/shadcnUI/button"
+} from "@/components/shadcnUI/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/shadcnUI/form";
+import { Input } from "@/components/shadcnUI/input";
+import { Button } from "@/components/shadcnUI/button";
 import { toast } from "sonner";
 
 import { z } from "zod";
@@ -30,47 +36,52 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { createWorkspace } from "@/features/workspace/api";
+import { useCreateWorkspace } from "@/features/workspace/api/workspace";
 
 const workspaceFormSchema = z.object({
-  name: z.string().min(1, { message: 'Workspace name is required' }),
-})
+  name: z.string().min(1, { message: "Workspace name is required" }),
+});
 
-type TWorkspaceFormSchema = z.infer<typeof workspaceFormSchema>
-
+type TWorkspaceFormSchema = z.infer<typeof workspaceFormSchema>;
 
 const CreateWorkspaceModal = () => {
-  const router = useRouter()
+  const router = useRouter();
   const isMobile = useMediaQuery("(max-width: 640px)");
 
-  const { mutate, isPending } = createWorkspace()
+  const { mutate, isPending } = useCreateWorkspace();
 
   const methods = useForm<TWorkspaceFormSchema>({
     resolver: zodResolver(workspaceFormSchema),
-    defaultValues: { name: '' }
-  })
+    defaultValues: { name: "" },
+  });
 
   const { isOpen, setIsOpen, closeModal } = useCreateWorkspaceModal();
 
   const onSubmit = async (data: TWorkspaceFormSchema) => {
-    mutate({ name: data.name }, {
-      onSuccess: (newWorkspaceId) => {
-        closeModal()
-        toast.success('Workspace created')
-        router.push(`/workspace/${newWorkspaceId}`)
-        methods.reset()
-      },
-      onError: (error) => {
-        toast.error('Failed to create workspace')
-        console.error({ error })
+    mutate(
+      { name: data.name },
+      {
+        onSuccess: (newWorkspaceId) => {
+          closeModal();
+          toast.success("Workspace created");
+          router.push(`/workspace/${newWorkspaceId}`);
+          methods.reset();
+        },
+        onError: (error) => {
+          toast.error("Failed to create workspace");
+          console.error({ error });
+        },
       }
-    })
-  }
+    );
+  };
 
   const ModalContent = (
     <>
       <Form {...methods}>
-        <form id="create-workspace-form" onSubmit={methods.handleSubmit(onSubmit)}>
+        <form
+          id="create-workspace-form"
+          onSubmit={methods.handleSubmit(onSubmit)}
+        >
           <FormField
             control={methods.control}
             name="name"
@@ -86,7 +97,7 @@ const CreateWorkspaceModal = () => {
         </form>
       </Form>
     </>
-  )
+  );
 
   if (isMobile) {
     return (
@@ -102,12 +113,17 @@ const CreateWorkspaceModal = () => {
           {ModalContent}
 
           <SheetFooter className="mt-4">
-            <Button form="create-workspace-form" type="submit" isLoading={isPending}>Create</Button>
+            <Button
+              form="create-workspace-form"
+              type="submit"
+              isLoading={isPending}
+            >
+              Create
+            </Button>
           </SheetFooter>
         </SheetContent>
-
       </Sheet>
-    )
+    );
   }
 
   return (
@@ -123,11 +139,17 @@ const CreateWorkspaceModal = () => {
         {ModalContent}
 
         <DialogFooter>
-          <Button form="create-workspace-form" type="submit" isLoading={isPending}>Create</Button>
+          <Button
+            form="create-workspace-form"
+            type="submit"
+            isLoading={isPending}
+          >
+            Create
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
 
-export default CreateWorkspaceModal
+export default CreateWorkspaceModal;

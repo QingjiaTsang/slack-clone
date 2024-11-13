@@ -10,16 +10,21 @@ export const getAllByWorkspaceId = query({
   handler: async (ctx, { workspaceId }) => {
     const { userId } = ctx;
     if (!userId) {
-      return null
+      return null;
     }
 
-    const members = await ctx.db.query("members").filter(q => q.eq(q.field("workspaceId"), workspaceId)).collect();
+    const members = await ctx.db
+      .query("members")
+      .filter((q) => q.eq(q.field("workspaceId"), workspaceId))
+      .collect();
 
-    const membersWithUser = await Promise.all(members.map(async (member) => {
-      const user = await ctx.db.get(member.userId) as User;
-      return { ...member, user };
-    }));
+    const membersWithUser = await Promise.all(
+      members.map(async (member) => {
+        const user = (await ctx.db.get(member.userId)) as User;
+        return { ...member, user };
+      })
+    );
 
     return membersWithUser;
-  }
-})
+  },
+});

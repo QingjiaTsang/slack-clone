@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./functions";
-import { generateJoinCode } from '../lib/generateJoinCode';
+import { generateJoinCode } from "../lib/generateJoinCode";
 
 export const create = mutation({
   args: {
@@ -15,7 +15,7 @@ export const create = mutation({
       name: name,
       creatorId: userId,
       joinCode: joinCode,
-    })
+    });
 
     await ctx.db.insert("members", {
       workspaceId: newWorkspaceId,
@@ -24,7 +24,7 @@ export const create = mutation({
     });
 
     return newWorkspaceId;
-  }
+  },
 });
 
 export const join = mutation({
@@ -35,14 +35,17 @@ export const join = mutation({
   handler: async (ctx, { workspaceId, joinCode }) => {
     const { userId } = ctx;
 
-    const workspace = await ctx.db.get(workspaceId)
+    const workspace = await ctx.db.get(workspaceId);
 
     if (!workspace) {
       throw new Error("Workspace not found");
     }
 
-    const member = await ctx.db.query("members")
-      .withIndex("by_user_id_and_workspace_id", q => q.eq("userId", userId).eq("workspaceId", workspaceId))
+    const member = await ctx.db
+      .query("members")
+      .withIndex("by_user_id_and_workspace_id", (q) =>
+        q.eq("userId", userId).eq("workspaceId", workspaceId)
+      )
       .first();
 
     if (member) {
@@ -60,7 +63,7 @@ export const join = mutation({
     });
 
     return newMemberId;
-  }
+  },
 });
 
 export const getAllByAuth = query({
@@ -68,18 +71,20 @@ export const getAllByAuth = query({
   handler: async (ctx) => {
     const { userId } = ctx;
     if (!userId) {
-      return null
+      return null;
     }
 
-    const members = await ctx.db.query("members").filter(q => q.eq(q.field("userId"), userId)).collect();
+    const members = await ctx.db
+      .query("members")
+      .filter((q) => q.eq(q.field("userId"), userId))
+      .collect();
 
-    const workspaces = (await Promise.all(members.map((member) =>
-      ctx.db.get(member.workspaceId)
-    ))).filter((workspace) => !!workspace);
-
+    const workspaces = (
+      await Promise.all(members.map((member) => ctx.db.get(member.workspaceId)))
+    ).filter((workspace) => !!workspace);
 
     return workspaces;
-  }
+  },
 });
 
 export const getOneById = query({
@@ -94,16 +99,22 @@ export const getOneById = query({
 
     const workspacePromise = ctx.db.get(id);
 
-    const memberPromise = ctx.db.query("members").filter(q => q.eq(q.field("userId"), userId)).first();
+    const memberPromise = ctx.db
+      .query("members")
+      .filter((q) => q.eq(q.field("userId"), userId))
+      .first();
 
-    const [workspace, member] = await Promise.all([workspacePromise, memberPromise]);
+    const [workspace, member] = await Promise.all([
+      workspacePromise,
+      memberPromise,
+    ]);
 
     if (!workspace || !member) {
       return null;
     }
 
     return workspace;
-  }
+  },
 });
 
 export const getPublicInfoById = query({
@@ -122,7 +133,7 @@ export const getPublicInfoById = query({
     }
 
     return workspace;
-  }
+  },
 });
 
 export const deleteOneById = mutation({
@@ -140,10 +151,8 @@ export const deleteOneById = mutation({
 
     const userMember = await ctx.db
       .query("members")
-      .withIndex("by_user_id_and_workspace_id",
-        q => q
-          .eq("userId", userId)
-          .eq("workspaceId", id)
+      .withIndex("by_user_id_and_workspace_id", (q) =>
+        q.eq("userId", userId).eq("workspaceId", id)
       )
       .first();
 
@@ -151,13 +160,16 @@ export const deleteOneById = mutation({
       throw new Error("Unauthorized");
     }
 
-    const members = await ctx.db.query("members").withIndex("by_workspace_id", q => q.eq("workspaceId", id)).collect();
+    const members = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id", (q) => q.eq("workspaceId", id))
+      .collect();
     members.forEach(async (member) => {
       await ctx.db.delete(member._id);
     });
 
     await ctx.db.delete(id);
-  }
+  },
 });
 
 export const updateOneById = mutation({
@@ -181,10 +193,8 @@ export const updateOneById = mutation({
 
     const userMember = await ctx.db
       .query("members")
-      .withIndex("by_user_id_and_workspace_id",
-        q => q
-          .eq("userId", userId)
-          .eq("workspaceId", id)
+      .withIndex("by_user_id_and_workspace_id", (q) =>
+        q.eq("userId", userId).eq("workspaceId", id)
       )
       .first();
 
@@ -195,8 +205,8 @@ export const updateOneById = mutation({
     await ctx.db.patch(id, { name, joinCode });
 
     return id;
-  }
-})
+  },
+});
 
 export const getCurrentUserRoleInWorkspace = query({
   args: {
@@ -208,7 +218,12 @@ export const getCurrentUserRoleInWorkspace = query({
       return null;
     }
 
-    const member = await ctx.db.query("members").withIndex("by_user_id_and_workspace_id", q => q.eq("userId", userId).eq("workspaceId", id)).first();
+    const member = await ctx.db
+      .query("members")
+      .withIndex("by_user_id_and_workspace_id", (q) =>
+        q.eq("userId", userId).eq("workspaceId", id)
+      )
+      .first();
     return member;
-  }
+  },
 });

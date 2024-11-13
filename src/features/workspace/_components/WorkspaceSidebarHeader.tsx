@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
 import { Workspace } from "@/types/docs";
 
 import { useState } from "react";
 
-import { ListFilterIcon, SquarePenIcon, ChevronDownIcon } from 'lucide-react';
+import { ListFilterIcon, SquarePenIcon, ChevronDownIcon } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -12,19 +12,22 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/shadcnUI/dropdown-menu"
+} from "@/components/shadcnUI/dropdown-menu";
 import { Button } from "@/components/shadcnUI/button";
 
 import PreferenceModal from "@/features/workspace/_components/PreferenceModal";
 import Hint from "@/components/Hint";
-import InviteMemberModal from "@/components/InviteMemberModal";
+import InviteMemberModal from "@/features/workspace/_components/InviteMemberModal";
 
 type WorkspaceSidebarHeaderProps = {
   workspace: Workspace | null;
   isAdmin: boolean;
-}
+};
 
-const WorkspaceSidebarHeader = ({ workspace, isAdmin }: WorkspaceSidebarHeaderProps) => {
+const WorkspaceSidebarHeader = ({
+  workspace,
+  isAdmin,
+}: WorkspaceSidebarHeaderProps) => {
   const [isPreferenceModalOpen, setIsPreferenceModalOpen] = useState(false);
   const [isInviteMemberModalOpen, setIsInviteMemberModalOpen] = useState(false);
 
@@ -66,7 +69,10 @@ const WorkspaceSidebarHeader = ({ workspace, isAdmin }: WorkspaceSidebarHeaderPr
                 {workspace?.name[0]}
               </Button>
               <div className="flex flex-col">
-                <div className="truncate font-semibold text-lg"> {workspace?.name}</div>
+                <div className="truncate font-semibold text-lg">
+                  {" "}
+                  {workspace?.name}
+                </div>
                 <div className="text-xs text-gray-500">Active Workspace</div>
               </div>
             </div>
@@ -106,7 +112,7 @@ const WorkspaceSidebarHeader = ({ workspace, isAdmin }: WorkspaceSidebarHeaderPr
         workspace={workspace!}
       />
     </div>
-  )
-}
+  );
+};
 
-export default WorkspaceSidebarHeader
+export default WorkspaceSidebarHeader;

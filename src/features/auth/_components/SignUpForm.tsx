@@ -1,31 +1,44 @@
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/shadcnUI/form"
-import { Input } from "@/components/shadcnUI/input"
-import { Button } from "@/components/shadcnUI/button"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/shadcnUI/form";
+import { Input } from "@/components/shadcnUI/input";
+import { Button } from "@/components/shadcnUI/button";
 
-const signUpFormSchema = z.object({
-  email: z.string().email({ message: 'Email is not valid' }),
-  name: z.string().min(1, { message: 'Full name is required' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
-  confirmPassword: z.string().min(6, { message: 'Password must be at least 6 characters' }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'Passwords must match',
-  path: ['confirmPassword'],
-})
+const signUpFormSchema = z
+  .object({
+    email: z.string().email({ message: "Email is not valid" }),
+    name: z.string().min(1, { message: "Full name is required" }),
+    password: z
+      .string()
+      .min(6, { message: "Password must be at least 6 characters" }),
+    confirmPassword: z
+      .string()
+      .min(6, { message: "Password must be at least 6 characters" }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords must match",
+    path: ["confirmPassword"],
+  });
 
-type TSignUpFormSchema = z.infer<typeof signUpFormSchema>
+type TSignUpFormSchema = z.infer<typeof signUpFormSchema>;
 
 type SignUpFormProps = {
-  onSubmit: (data: TSignUpFormSchema) => Promise<void>
-}
+  onSubmit: (data: TSignUpFormSchema) => Promise<void>;
+};
 
 const SignUpForm = ({ onSubmit }: SignUpFormProps) => {
   const methods = useForm<TSignUpFormSchema>({
     resolver: zodResolver(signUpFormSchema),
-    defaultValues: { email: '', name: '', password: '', confirmPassword: '' }
-  })
+    defaultValues: { email: "", name: "", password: "", confirmPassword: "" },
+  });
 
   return (
     <Form {...methods}>
@@ -79,7 +92,11 @@ const SignUpForm = ({ onSubmit }: SignUpFormProps) => {
             <FormItem>
               <FormLabel>Confirm Password</FormLabel>
               <FormControl>
-                <Input placeholder="Confirm Password" type="password" {...field} />
+                <Input
+                  placeholder="Confirm Password"
+                  type="password"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -87,11 +104,13 @@ const SignUpForm = ({ onSubmit }: SignUpFormProps) => {
         />
 
         <div className="pt-2">
-          <Button type="submit" className="w-full">Continue</Button>
+          <Button type="submit" className="w-full">
+            Continue
+          </Button>
         </div>
       </form>
     </Form>
-  )
-}
+  );
+};
 
-export default SignUpForm
+export default SignUpForm;

@@ -18,6 +18,7 @@ import type * as channels from "../channels.js";
 import type * as functions from "../functions.js";
 import type * as http from "../http.js";
 import type * as members from "../members.js";
+import type * as messages from "../messages.js";
 import type * as otp_ResendOTP from "../otp/ResendOTP.js";
 import type * as otp_VerificationCodeEmail from "../otp/VerificationCodeEmail.js";
 import type * as passwordReset_PasswordResetEmail from "../passwordReset/PasswordResetEmail.js";
@@ -39,6 +40,7 @@ declare const fullApi: ApiFromModules<{
   functions: typeof functions;
   http: typeof http;
   members: typeof members;
+  messages: typeof messages;
   "otp/ResendOTP": typeof otp_ResendOTP;
   "otp/VerificationCodeEmail": typeof otp_VerificationCodeEmail;
   "passwordReset/PasswordResetEmail": typeof passwordReset_PasswordResetEmail;

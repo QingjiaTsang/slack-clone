@@ -1,43 +1,57 @@
-"use client"
+"use client";
 
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Button } from "@/components/shadcnUI/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/shadcnUI/form"
-import { Input } from "@/components/shadcnUI/input"
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/shadcnUI/input-otp"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "@/components/shadcnUI/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/shadcnUI/form";
+import { Input } from "@/components/shadcnUI/input";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/shadcnUI/input-otp";
 
-const resetSchema = z.object({
-  code: z.string().min(8, { message: "Code must be 8 digits" }),
-  password: z.string().min(8, { message: "Password must be at least 8 characters" }),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-})
+const resetSchema = z
+  .object({
+    code: z.string().min(8, { message: "Code must be 8 digits" }),
+    password: z
+      .string()
+      .min(8, { message: "Password must be at least 8 characters" }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
-type TResetSchema = z.infer<typeof resetSchema>
+type TResetSchema = z.infer<typeof resetSchema>;
 
 type ResetFormProps = {
-  onSubmit: (data: { code: string, password: string }) => void
-  onBack: () => void
-}
-
+  onSubmit: (data: { code: string; password: string }) => void;
+  onBack: () => void;
+};
 
 const ResetForm = ({ onSubmit, onBack }: ResetFormProps) => {
   const methods = useForm<TResetSchema>({
     resolver: zodResolver(resetSchema),
     defaultValues: {
-      code: '',
-      password: '',
-      confirmPassword: '',
-    }
-  })
+      code: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
   const handleSubmit = (data: TResetSchema) => {
-    onSubmit({ code: data.code, password: data.password })
-  }
+    onSubmit({ code: data.code, password: data.password });
+  };
 
   return (
     <Form {...methods}>
@@ -87,19 +101,25 @@ const ResetForm = ({ onSubmit, onBack }: ResetFormProps) => {
             <FormItem>
               <FormLabel>Confirm Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Confirm Password" {...field} />
+                <Input
+                  type="password"
+                  placeholder="Confirm Password"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
         <div className="flex justify-between">
-          <Button type="button" variant="outline" onClick={onBack}>Back</Button>
+          <Button type="button" variant="outline" onClick={onBack}>
+            Back
+          </Button>
           <Button type="submit">Continue</Button>
         </div>
       </form>
     </Form>
-  )
-}
+  );
+};
 
-export default ResetForm
+export default ResetForm;

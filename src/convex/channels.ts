@@ -14,8 +14,11 @@ export const create = mutation({
       throw new Error("Workspace not found");
     }
 
-    const currentUserMember = await ctx.db.query("members")
-      .withIndex("by_user_id_and_workspace_id", (q) => q.eq("userId", userId).eq("workspaceId", workspaceId))
+    const currentUserMember = await ctx.db
+      .query("members")
+      .withIndex("by_user_id_and_workspace_id", (q) =>
+        q.eq("userId", userId).eq("workspaceId", workspaceId)
+      )
       .first();
 
     if (!currentUserMember || currentUserMember.role !== "admin") {
@@ -28,8 +31,8 @@ export const create = mutation({
     });
 
     return newChannelId;
-  }
-})
+  },
+});
 
 export const getAllByWorkspaceId = query({
   args: {
@@ -38,26 +41,32 @@ export const getAllByWorkspaceId = query({
   handler: async (ctx, { workspaceId }) => {
     const { userId } = ctx;
     if (!userId) {
-      return null
+      return null;
     }
 
     const workspace = await ctx.db.get(workspaceId);
     if (!workspace) {
-      return null
+      return null;
     }
 
-    const currentUserMember = await ctx.db.query("members")
-      .withIndex("by_user_id_and_workspace_id", (q) => q.eq("userId", userId).eq("workspaceId", workspaceId))
+    const currentUserMember = await ctx.db
+      .query("members")
+      .withIndex("by_user_id_and_workspace_id", (q) =>
+        q.eq("userId", userId).eq("workspaceId", workspaceId)
+      )
       .first();
 
     if (!currentUserMember) {
-      return null
+      return null;
     }
 
-    const channels = await ctx.db.query("channels").withIndex("by_workspace_id", (q) => q.eq("workspaceId", workspaceId)).collect();
+    const channels = await ctx.db
+      .query("channels")
+      .withIndex("by_workspace_id", (q) => q.eq("workspaceId", workspaceId))
+      .collect();
     return channels;
-  }
-})
+  },
+});
 
 export const getOneById = query({
   args: {
@@ -66,26 +75,29 @@ export const getOneById = query({
   handler: async (ctx, { id }) => {
     const { userId } = ctx;
     if (!userId) {
-      return null
+      return null;
     }
 
     const channel = await ctx.db.get(id);
 
     if (!channel) {
-      return null
+      return null;
     }
 
-    const currentUserMember = await ctx.db.query("members")
-      .withIndex("by_user_id_and_workspace_id", (q) => q.eq("userId", userId).eq("workspaceId", channel.workspaceId))
+    const currentUserMember = await ctx.db
+      .query("members")
+      .withIndex("by_user_id_and_workspace_id", (q) =>
+        q.eq("userId", userId).eq("workspaceId", channel.workspaceId)
+      )
       .first();
 
     if (!currentUserMember) {
-      return null
+      return null;
     }
 
     return channel;
-  }
-})
+  },
+});
 
 export const updateOneById = mutation({
   args: {
@@ -109,8 +121,11 @@ export const updateOneById = mutation({
       throw new Error("Workspace not found");
     }
 
-    const currentUserMember = await ctx.db.query("members")
-      .withIndex("by_user_id_and_workspace_id", (q) => q.eq("userId", userId).eq("workspaceId", channel.workspaceId))
+    const currentUserMember = await ctx.db
+      .query("members")
+      .withIndex("by_user_id_and_workspace_id", (q) =>
+        q.eq("userId", userId).eq("workspaceId", channel.workspaceId)
+      )
       .first();
 
     if (!currentUserMember || currentUserMember.role !== "admin") {
@@ -120,8 +135,8 @@ export const updateOneById = mutation({
     await ctx.db.patch(id, { name });
 
     return id;
-  }
-})
+  },
+});
 
 export const deleteOneById = mutation({
   args: {
@@ -140,8 +155,11 @@ export const deleteOneById = mutation({
       throw new Error("Workspace not found");
     }
 
-    const currentUserMember = await ctx.db.query("members")
-      .withIndex("by_user_id_and_workspace_id", (q) => q.eq("userId", userId).eq("workspaceId", channel.workspaceId))
+    const currentUserMember = await ctx.db
+      .query("members")
+      .withIndex("by_user_id_and_workspace_id", (q) =>
+        q.eq("userId", userId).eq("workspaceId", channel.workspaceId)
+      )
       .first();
 
     if (!currentUserMember || currentUserMember.role !== "admin") {
@@ -149,5 +167,5 @@ export const deleteOneById = mutation({
     }
 
     await ctx.db.delete(id);
-  }
-})
+  },
+});

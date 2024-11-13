@@ -1,27 +1,38 @@
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/shadcnUI/form"
-import { Input } from "@/components/shadcnUI/input"
-import { Button } from "@/components/shadcnUI/button"
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/shadcnUI/input-otp"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/shadcnUI/form";
+import { Input } from "@/components/shadcnUI/input";
+import { Button } from "@/components/shadcnUI/button";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/shadcnUI/input-otp";
 
 const otpFormSchema = z.object({
-  code: z.string().min(8, { message: 'Code must be 8 digits' }),
-})
+  code: z.string().min(8, { message: "Code must be 8 digits" }),
+});
 
-type TOTPFormSchema = z.infer<typeof otpFormSchema>
+type TOTPFormSchema = z.infer<typeof otpFormSchema>;
 
 type OTPVerificationFormProps = {
-  onSubmit: (data: TOTPFormSchema) => Promise<void>
-  email: string
-}
+  onSubmit: (data: TOTPFormSchema) => Promise<void>;
+  email: string;
+};
 
 const OTPVerificationForm = ({ onSubmit, email }: OTPVerificationFormProps) => {
   const methods = useForm<TOTPFormSchema>({
     resolver: zodResolver(otpFormSchema),
-    defaultValues: { code: '' }
-  })
+    defaultValues: { code: "" },
+  });
 
   return (
     <Form {...methods}>
@@ -56,11 +67,12 @@ const OTPVerificationForm = ({ onSubmit, email }: OTPVerificationFormProps) => {
           )}
         />
 
-
-        <Button type="submit" className="w-full mt-4">Verify</Button>
+        <Button type="submit" className="w-full mt-4">
+          Verify
+        </Button>
       </form>
     </Form>
-  )
-}
+  );
+};
 
-export default OTPVerificationForm
+export default OTPVerificationForm;

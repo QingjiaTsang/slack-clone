@@ -1,13 +1,12 @@
-'use client'
+"use client";
 
 import { useState } from "react";
 
-import SearchInput from "@/features/workspace/_components/SearchInput"
+import SearchInput from "@/features/workspace/_components/SearchInput";
 
-import { CircleAlert } from 'lucide-react';
+import { CircleAlert } from "lucide-react";
 
 import { Button } from "@/components/shadcnUI/button";
-
 
 const HeaderNavBar = () => {
   const [search, setSearch] = useState(false);
@@ -20,7 +19,7 @@ const HeaderNavBar = () => {
         <CircleAlert className="size-5" />
       </Button>
     </nav>
-  )
-}
+  );
+};
 
-export default HeaderNavBar
+export default HeaderNavBar;
