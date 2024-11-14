@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  useRef,
-  MutableRefObject,
-  LegacyRef,
-  useEffect,
-  useState,
-  useMemo,
-  useCallback,
-} from "react";
+import { useRef, useEffect, useState, useMemo } from "react";
 
 import type ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";

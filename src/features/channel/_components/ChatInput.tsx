@@ -1,6 +1,7 @@
 "use client";
 
 import { Id } from "@/convex/_generated/dataModel";
+import { type EditorSubmitData } from "@/components/Editor";
 
 import { useRef, useState } from "react";
 
@@ -8,13 +9,12 @@ import { useParams } from "next/navigation";
 
 import ReactQuill from "react-quill";
 
-import Editor from "@/components/Editor";
-
 import { useCreateMessage } from "@/api/message";
 
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
+import Editor from "@/components/Editor";
 
 type ChatInputProps = {
   placeholder: string;
@@ -31,7 +31,7 @@ const ChatInput = ({ placeholder }: ChatInputProps) => {
   const [rerenderFlag, setRerenderFlag] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (data: { body: string; image: File | null }) => {
+  const handleSubmit = async (data: EditorSubmitData) => {
     const editor = editorRef.current?.getEditor();
     try {
       editor?.enable(false);
@@ -40,7 +40,7 @@ const ChatInput = ({ placeholder }: ChatInputProps) => {
 
       let storageId;
 
-      if (data.image) {
+      if (data.image instanceof File) {
         const result = await fetch(postUrl, {
           method: "POST",
           headers: { "Content-Type": data.image!.type },
@@ -53,14 +53,14 @@ const ChatInput = ({ placeholder }: ChatInputProps) => {
         storageId = res.storageId;
       }
 
-      const res = await mutate({
+      await mutate({
         body: data.body,
         ...(storageId && { image: storageId }),
         channelId: channelId as Id<"channels">,
         workspaceId: workspaceId as Id<"workspaces">,
       });
 
-      toast.success("Message sent");
+      // toast.success("Message sent");
       setRerenderFlag((prev) => prev + 1);
 
       const messageContainer = document.querySelector(".scrollbar-thin");

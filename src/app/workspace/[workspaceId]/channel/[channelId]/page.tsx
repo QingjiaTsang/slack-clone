@@ -10,7 +10,6 @@ import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 import ChannelHeader from "@/features/channel/_components/ChannelHeader";
 import ChatInput from "@/features/channel/_components/ChatInput";
 import ChannelMessageView from "@/features/channel/_components/ChannelMessageView";
-import ChannelHero from "@/components/ChannelHero";
 
 type ChannelPageProps = {
   params: {

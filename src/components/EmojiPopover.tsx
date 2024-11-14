@@ -41,7 +41,7 @@ const EmojiPopover = ({ hint, onSelect, children }: EmojiPopoverProps) => {
           <TooltipContent>{hint}</TooltipContent>
         </Tooltip>
 
-        <PopoverContent className="size-fit">
+        <PopoverContent className="size-fit bg-transparent border-none shadow-none  p-0">
           <Picker data={data} onEmojiSelect={handleSelect} />
         </PopoverContent>
       </Popover>

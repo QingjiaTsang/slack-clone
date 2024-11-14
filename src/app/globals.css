@@ -107,14 +107,14 @@ body {
   font-size: 14px !important;
 }
 
-/* add padding only in Editor component */
-.editor-container .ql-editor {
-  padding: 8px 12px !important;
-}
-
 /* remove padding in Message component */
 .message-container .ql-editor {
   padding: 0 !important;
+}
+
+/* add padding only in Editor component */
+.editor-container .ql-editor {
+  padding: 8px 12px !important;
 }
 
 .ql-editor a {
@@ -137,4 +137,26 @@ body {
   font-size: 14px !important;
   font-weight: 400 !important;
   @apply truncate;
+}
+
+@keyframes reaction-bounce {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  75% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.reaction-active {
+  animation: reaction-bounce 0.4s ease-in-out;
 }

@@ -45,7 +45,7 @@ const WorkspaceSidebarHeader = ({
             </Button>
           </DropdownMenuTrigger>
 
-          <div className="flex items-center text-white/80 hover:text-white shrink-0 gap-1 max-w-[72px] overflow-hidden transition-all duration-200 group-hover:max-w-0">
+          <div className="flex items-center text-white/80 hover:text-white shrink-0 gap-1 max-w-[72px] overflow-hidden transition-all duration-200">
             <Hint description="Filter">
               <Button variant="transparent" size="icon" className="h-8 w-8">
                 <ListFilterIcon className="h-4 w-4" />

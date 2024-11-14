@@ -33,7 +33,7 @@ const InviteMemberModal = ({
 }: InviteMemberModalProps) => {
   const router = useRouter();
 
-  const [GenerateNewJoinCodeDialog, confirm] = useConfirm({
+  const [GenerateNewJoinCodeConfirmDialog, confirm] = useConfirm({
     title: "Generate a new Join Code?",
     message:
       "This will invalidate the current Join Code and generate a new one.",
@@ -127,7 +127,7 @@ const InviteMemberModal = ({
           </div>
         </DialogContent>
       </Dialog>
-      <GenerateNewJoinCodeDialog />
+      <GenerateNewJoinCodeConfirmDialog />
     </>
   );
 };

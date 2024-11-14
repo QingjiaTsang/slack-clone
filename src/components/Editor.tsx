@@ -1,5 +1,6 @@
 "use client";
 
+import { Id } from "@/convex/_generated/dataModel";
 import type ReactQuill from "react-quill";
 
 import {
@@ -24,8 +25,8 @@ import { cn } from "@/lib/utils";
 
 import ReactQuillBase from "@/components/ReactQuillBase";
 
-type EditorSubmitData = {
-  image: File | null;
+export type EditorSubmitData = {
+  image: File | Id<"_storage"> | null;
   body: string;
 };
 type EditorProps = {
@@ -126,6 +127,12 @@ const Editor = ({
             key: "Enter",
             handler: () => {
               handleSubmit();
+            },
+          },
+          escape: {
+            key: "Escape",
+            handler: () => {
+              onCancel?.();
             },
           },
         },

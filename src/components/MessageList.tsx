@@ -1,9 +1,12 @@
-import { GetMessagesType } from "@/api/message";
+import { Id } from "@/convex/_generated/dataModel";
+import { type GetMessagesType } from "@/api/message";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
+import { Skeleton } from "@/components/shadcnUI/skeleton";
 import Message from "@/components/Message";
+import { useGetCurrentUser } from "../api/user";
 
 const MESSAGE_GROUPING_THRESHOLD_MINUTES = 5;
 
@@ -14,6 +17,8 @@ const formatDate = (date: string) => {
 };
 
 type MessageListProps = {
+  workspaceId: Id<"workspaces">;
+  channelId: Id<"channels">;
   memberName?: string;
   memberImage?: string;
   channelName?: string;
@@ -26,6 +31,8 @@ type MessageListProps = {
 };
 
 const MessageList = ({
+  workspaceId,
+  channelId,
   memberName,
   memberImage,
   channelName,
@@ -34,6 +41,10 @@ const MessageList = ({
   messages,
   loadMore,
 }: MessageListProps) => {
+  const [editingId, setEditingId] = useState<Id<"messages"> | null>(null);
+
+  const { data: currentUser } = useGetCurrentUser();
+
   const groupedMessages = useMemo(() => {
     return messages.reduce(
       (acc, message) => {
@@ -87,11 +98,13 @@ const MessageList = ({
                   threadCount={message.threadCount}
                   threadImage={message.threadImage}
                   threadTimestamp={message.threadTimestamp}
-                  isAuthor={false}
-                  isEditing={false}
-                  setEditing={() => {}}
+                  // todo: a bit difference
+                  isAuthor={message.member.userId === currentUser?._id}
+                  isEditing={editingId === message._id}
+                  setEditing={setEditingId}
                   isCompact={isCompact}
-                  hideThreadButton={false}
+                  // todo: figure out
+                  hideThreadButton={variant === "thread"}
                   createdAt={message._creationTime}
                   updateAt={message.updatedAt}
                 />
@@ -102,5 +115,23 @@ const MessageList = ({
     </>
   );
 };
+
+const MessageSkeleton = () => {
+  return (
+    <div className="flex items-start gap-2 p-4">
+      <Skeleton className="w-10 h-10 rounded-full" />
+      <div className="flex-1 space-y-2">
+        <div className="flex items-center gap-2">
+          <Skeleton className="w-24 h-4" />
+          <Skeleton className="w-12 h-4" />
+        </div>
+        <Skeleton className="w-3/4 h-4" />
+        <Skeleton className="w-1/2 h-4" />
+      </div>
+    </div>
+  );
+};
+
+MessageList.Skeleton = MessageSkeleton;
 
 export default MessageList;

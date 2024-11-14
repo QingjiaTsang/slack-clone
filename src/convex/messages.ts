@@ -126,10 +126,13 @@ const enrichMessageWithDetails = async (
     throw new Error("Member or user not found");
   }
 
-  const messageWithoutMemberId = { ...message, memberId: undefined };
+  const { memberId, ...messageWithoutMemberId } = message;
   const thread = await populateThread(ctx, message._id);
   const image = message.image
-    ? (await ctx.storage.getUrl(message.image)) || undefined
+    ? {
+        url: (await ctx.storage.getUrl(message.image)) || undefined,
+        storageId: message.image,
+      }
     : undefined;
   const reactions = await populateReactions(ctx, message._id);
   const formattedReactions = formatReactions(reactions);
@@ -140,7 +143,10 @@ const enrichMessageWithDetails = async (
   //   "_id": "kh7bses4bn7t2ez02f7sv5j309749p98",
   //   "body": "{\"ops\":[{\"insert\":\"新图\\n\"}]}",
   //   "channelId": "kd7bx3jpg14xn43pz3teg46y9573nhtz",
-  //   "image": "https://next-horse-726.convex.cloud/api/storage/cd19209d-1c12-4725-975b-2d64164b1374",
+  //   "image": {
+  //     "url": "https://next-horse-726.convex.cloud/api/storage/cd19209d-1c12-4725-975b-2d64164b1374",
+  //     "storageId": "cd19209d-1c12-4725-975b-2d64164b1374"
+  //   },
   //   "member": {
   //     "_creationTime": 1729670977660.7295,
   //     "_id": "k97dykhf9x84k174jk0qtmamxh736y3n",
@@ -189,7 +195,6 @@ const enrichMessageWithDetails = async (
 
 export const getMessages = query({
   args: {
-    workspaceId: v.id("workspaces"),
     messageId: v.optional(v.id("messages")),
     channelId: v.optional(v.id("channels")),
     parentMessageId: v.optional(v.id("messages")),
@@ -198,14 +203,7 @@ export const getMessages = query({
   },
   handler: async (
     ctx,
-    {
-      messageId,
-      channelId,
-      parentMessageId,
-      conversationId,
-      workspaceId,
-      paginationOpts,
-    }
+    { channelId, parentMessageId, conversationId, paginationOpts }
   ) => {
     if (!ctx.userId) {
       throw new Error("User Unauthorized");
@@ -291,5 +289,61 @@ export const create = mutation({
     });
 
     return newMessageId;
+  },
+});
+
+export const updateOneById = mutation({
+  args: {
+    messageId: v.id("messages"),
+    body: v.string(),
+    image: v.optional(v.id("_storage")),
+  },
+  handler: async (ctx, { messageId, body, image }) => {
+    const message = await ctx.db.get(messageId);
+
+    if (!message) {
+      throw new Error("Message not found");
+    }
+
+    const member = await getMember(ctx, message.workspaceId, ctx.userId);
+
+    if (!member || member._id !== message.memberId) {
+      throw new Error("Unauthorized");
+    }
+
+    await ctx.db.patch(messageId, {
+      body,
+      image,
+      updatedAt: Date.now(),
+    });
+
+    return messageId;
+  },
+});
+
+export const deleteOneById = mutation({
+  args: {
+    messageId: v.id("messages"),
+    imageStorageId: v.optional(v.id("_storage")),
+  },
+  handler: async (ctx, { messageId, imageStorageId }) => {
+    const message = await ctx.db.get(messageId);
+
+    if (!message) {
+      throw new Error("Message not found");
+    }
+
+    const member = await getMember(ctx, message.workspaceId, ctx.userId);
+
+    if (!member || member._id !== message.memberId) {
+      throw new Error("Unauthorized");
+    }
+
+    if (imageStorageId) {
+      await ctx.storage.delete(imageStorageId);
+    }
+    await ctx.db.delete(messageId);
+
+    return messageId;
   },
 });

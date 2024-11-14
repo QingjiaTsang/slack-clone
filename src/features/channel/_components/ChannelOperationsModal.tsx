@@ -63,7 +63,7 @@ const ChannelOperationsModal = ({
 
   const { mutate, isPending } = useDeleteChannel();
 
-  const [DeleteChannelDialog, confirm] = useConfirm({
+  const [DeleteChannelConfirmDialog, confirm] = useConfirm({
     title: "Delete Channel",
     message: "Are you sure you want to delete this channel?",
   }) as [React.FC, () => Promise<boolean>];
@@ -135,7 +135,7 @@ const ChannelOperationsModal = ({
         </DialogContent>
       </Dialog>
 
-      <DeleteChannelDialog />
+      <DeleteChannelConfirmDialog />
       <EditChannelModal
         isOpen={isEditChannelModalOpen}
         onClose={() => setIsEditChannelModalOpen(false)}

@@ -9,11 +9,9 @@ import { useRouter } from "next/navigation";
 import { useCreateChannelModal } from "@/stores/useCreateChannelModal";
 
 import { Loader2Icon, TriangleAlertIcon } from "lucide-react";
-import {
-  useGetCurrentUserRoleInWorkspace,
-  useGetWorkspaceById,
-} from "@/features/workspace/api/workspace";
+import { useGetWorkspaceById } from "@/features/workspace/api/workspace";
 import { useGetAllChannelsByWorkspaceId } from "@/features/workspace/api/workspace";
+import { useGetCurrentUserRoleInWorkspace } from "@/api/user";
 
 type WorkspacePageProps = {
   params: {

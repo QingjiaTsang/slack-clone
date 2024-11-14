@@ -9,7 +9,6 @@ import MessageList from "@/components/MessageList";
 import { useGetMessages } from "@/api/message";
 import { Channel } from "@/types/docs";
 import ChannelHero from "@/components/ChannelHero";
-import { Skeleton } from "@/components/shadcnUI/skeleton";
 
 type ChannelMessageViewProps = {
   workspaceId: Id<"workspaces">;
@@ -29,7 +28,6 @@ const ChannelMessageView = ({
     status,
     loadMore,
   } = useGetMessages({
-    workspaceId,
     channelId: channel._id,
   });
 
@@ -62,10 +60,10 @@ const ChannelMessageView = ({
       <div className="flex flex-col-reverse flex-1 overflow-y-auto mb-2">
         <div>
           {Array.from({ length: 5 }).map((_, index) => (
-            <MessageSkeleton key={index} />
+            <MessageList.Skeleton key={index} />
           ))}
         </div>
-        <ChannelHeroSkeleton />
+        <ChannelHero.Skeleton />
       </div>
     );
   }
@@ -76,6 +74,8 @@ const ChannelMessageView = ({
       className="flex flex-col-reverse flex-1 overflow-y-auto mb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 scrollbar-thumb-rounded-full"
     >
       <MessageList
+        workspaceId={workspaceId}
+        channelId={channel!._id}
         channelName={channel?.name}
         channelCreationTime={channel?._creationTime}
         variant="channel"
@@ -93,28 +93,3 @@ const ChannelMessageView = ({
 };
 
 export default ChannelMessageView;
-
-const MessageSkeleton = () => {
-  return (
-    <div className="flex items-start gap-2 p-4">
-      <Skeleton className="w-10 h-10 rounded-full" />
-      <div className="flex-1 space-y-2">
-        <div className="flex items-center gap-2">
-          <Skeleton className="w-24 h-4" />
-          <Skeleton className="w-12 h-4" />
-        </div>
-        <Skeleton className="w-3/4 h-4" />
-        <Skeleton className="w-1/2 h-4" />
-      </div>
-    </div>
-  );
-};
-
-const ChannelHeroSkeleton = () => {
-  return (
-    <div className="mt-20 mx-5 mb-4 p-8 rounded-lg">
-      <Skeleton className="w-48 h-8 mb-2" />
-      <Skeleton className="w-96 h-4" />
-    </div>
-  );
-};

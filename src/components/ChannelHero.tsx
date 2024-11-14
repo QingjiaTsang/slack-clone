@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/shadcnUI/skeleton";
 import { format } from "date-fns";
 
 type ChannelHeroProps = {
@@ -19,5 +20,16 @@ const ChannelHero = ({ channelName, createdAt }: ChannelHeroProps) => {
     </div>
   );
 };
+
+const ChannelHeroSkeleton = () => {
+  return (
+    <div className="mt-20 mx-5 mb-4 p-8 rounded-lg">
+      <Skeleton className="w-48 h-8 mb-2" />
+      <Skeleton className="w-96 h-4" />
+    </div>
+  );
+};
+
+ChannelHero.Skeleton = ChannelHeroSkeleton;
 
 export default ChannelHero;

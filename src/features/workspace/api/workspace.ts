@@ -7,15 +7,6 @@ import { Id } from "@/convex/_generated/dataModel";
 export const useGetWorkspaceById = (workspaceId: Id<"workspaces">) =>
   useQuery(convexQuery(api.workspaces.getOneById, { id: workspaceId }));
 
-export const useGetCurrentUserRoleInWorkspace = (
-  workspaceId: Id<"workspaces">
-) =>
-  useQuery(
-    convexQuery(api.workspaces.getCurrentUserRoleInWorkspace, {
-      id: workspaceId,
-    })
-  );
-
 export const useCreateWorkspace = () =>
   useMutation({
     mutationFn: useConvexMutation(api.workspaces.create),

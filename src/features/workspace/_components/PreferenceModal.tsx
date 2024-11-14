@@ -61,7 +61,7 @@ const PreferenceModal = ({
 
   const { mutate, isPending } = useDeleteWorkspace();
 
-  const [DeleteWorkspaceDialog, confirm] = useConfirm({
+  const [DeleteWorkspaceConfirmDialog, confirm] = useConfirm({
     title: "Delete Workspace",
     message: "Are you sure you want to delete this workspace?",
   }) as [React.FC, () => Promise<boolean>];
@@ -125,7 +125,7 @@ const PreferenceModal = ({
         </DialogContent>
       </Dialog>
 
-      <DeleteWorkspaceDialog />
+      <DeleteWorkspaceConfirmDialog />
       <EditWorkspaceModal
         isOpen={isEditWorkspaceModalOpen}
         onClose={() => setIsEditWorkspaceModalOpen(false)}

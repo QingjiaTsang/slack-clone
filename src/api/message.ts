@@ -18,10 +18,23 @@ export const useCreateMessage = () =>
   });
 
 export const useGetMessages = (args: {
-  workspaceId: Id<"workspaces">;
-  messageId?: Id<"messages">;
   channelId?: Id<"channels">;
   parentMessageId?: Id<"messages">;
   conversationId?: Id<"conversations">;
 }) =>
   usePaginatedQuery(api.messages.getMessages, args, DEFAULT_PAGINATION_OPTS);
+
+export const useUpdateMessage = () =>
+  useMutation({
+    mutationFn: useConvexMutation(api.messages.updateOneById),
+  });
+
+export const useDeleteMessage = () =>
+  useMutation({
+    mutationFn: useConvexMutation(api.messages.deleteOneById),
+  });
+
+export const useToggleReaction = () =>
+  useMutation({
+    mutationFn: useConvexMutation(api.reactions.toggle),
+  });

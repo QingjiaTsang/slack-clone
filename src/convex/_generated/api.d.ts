@@ -23,6 +23,7 @@ import type * as otp_ResendOTP from "../otp/ResendOTP.js";
 import type * as otp_VerificationCodeEmail from "../otp/VerificationCodeEmail.js";
 import type * as passwordReset_PasswordResetEmail from "../passwordReset/PasswordResetEmail.js";
 import type * as passwordReset_ResendOTPPasswordReset from "../passwordReset/ResendOTPPasswordReset.js";
+import type * as reactions from "../reactions.js";
 import type * as users from "../users.js";
 import type * as workspaces from "../workspaces.js";
 
@@ -45,6 +46,7 @@ declare const fullApi: ApiFromModules<{
   "otp/VerificationCodeEmail": typeof otp_VerificationCodeEmail;
   "passwordReset/PasswordResetEmail": typeof passwordReset_PasswordResetEmail;
   "passwordReset/ResendOTPPasswordReset": typeof passwordReset_ResendOTPPasswordReset;
+  reactions: typeof reactions;
   users: typeof users;
   workspaces: typeof workspaces;
 }>;

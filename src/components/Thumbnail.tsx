@@ -15,7 +15,7 @@ const Thumbnail = ({ imageUrl, alt = "Message thumbnail" }: ThumbnailProps) => {
   return (
     <Dialog>
       <DialogTrigger>
-        <div className="border border-gray-200 rounded-lg my-2 cursor-zoom-in">
+        <div className="border border-gray-200 rounded-lg mt-2 mb-1 cursor-zoom-in">
           <Image
             src={imageUrl}
             alt={alt}
