@@ -9,6 +9,7 @@ import MessageList from "@/components/MessageList";
 import { useGetMessages } from "@/api/message";
 import { Channel } from "@/types/docs";
 import ChannelHero from "@/components/ChannelHero";
+import MessagesInfiniteScrollLoader from "@/features/channel/_components/MessagesInfiniteScrollLoader";
 
 type ChannelMessageViewProps = {
   workspaceId: Id<"workspaces">;
@@ -80,10 +81,8 @@ const ChannelMessageView = ({
         channelCreationTime={channel?._creationTime}
         variant="channel"
         messages={messages}
-        loadMore={loadMore}
-        isLoadingMore={status === "LoadingMore"}
-        canLoadMore={status === "CanLoadMore"}
       />
+      <MessagesInfiniteScrollLoader status={status} onLoadMore={loadMore} />
       <ChannelHero
         channelName={channel?.name}
         createdAt={channel?._creationTime}

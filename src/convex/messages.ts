@@ -296,9 +296,8 @@ export const updateOneById = mutation({
   args: {
     messageId: v.id("messages"),
     body: v.string(),
-    image: v.optional(v.id("_storage")),
   },
-  handler: async (ctx, { messageId, body, image }) => {
+  handler: async (ctx, { messageId, body }) => {
     const message = await ctx.db.get(messageId);
 
     if (!message) {
@@ -313,7 +312,6 @@ export const updateOneById = mutation({
 
     await ctx.db.patch(messageId, {
       body,
-      image,
       updatedAt: Date.now(),
     });
 

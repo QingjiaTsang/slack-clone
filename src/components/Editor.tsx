@@ -26,7 +26,7 @@ import { cn } from "@/lib/utils";
 import ReactQuillBase from "@/components/ReactQuillBase";
 
 export type EditorSubmitData = {
-  image: File | Id<"_storage"> | null;
+  image: File | null;
   body: string;
 };
 type EditorProps = {

@@ -8,9 +8,9 @@ import { usePaginatedQuery } from "convex/react";
 
 export type GetMessagesType = ReturnType<typeof useGetMessages>["results"];
 
-const DEFAULT_PAGINATION_OPTS = {
-  initialNumItems: 50,
-};
+export type GetMessagesPaginatedQueryType = ReturnType<typeof useGetMessages>;
+
+export const DEFAULT_PAGINATION_NUM_ITEMS = 5;
 
 export const useCreateMessage = () =>
   useMutation({
@@ -22,7 +22,9 @@ export const useGetMessages = (args: {
   parentMessageId?: Id<"messages">;
   conversationId?: Id<"conversations">;
 }) =>
-  usePaginatedQuery(api.messages.getMessages, args, DEFAULT_PAGINATION_OPTS);
+  usePaginatedQuery(api.messages.getMessages, args, {
+    initialNumItems: DEFAULT_PAGINATION_NUM_ITEMS,
+  });
 
 export const useUpdateMessage = () =>
   useMutation({

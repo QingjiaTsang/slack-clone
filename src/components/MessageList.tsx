@@ -25,9 +25,6 @@ type MessageListProps = {
   channelCreationTime?: number;
   variant?: "channel" | "thread" | "conversation";
   messages: GetMessagesType;
-  loadMore: (numItems: number) => void;
-  isLoadingMore: boolean;
-  canLoadMore: boolean;
 };
 
 const MessageList = ({
@@ -39,7 +36,6 @@ const MessageList = ({
   channelCreationTime,
   variant,
   messages,
-  loadMore,
 }: MessageListProps) => {
   const [editingId, setEditingId] = useState<Id<"messages"> | null>(null);
 
