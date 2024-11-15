@@ -10,6 +10,8 @@ export type GetMessagesType = ReturnType<typeof useGetMessages>["results"];
 
 export type GetMessagesPaginatedQueryType = ReturnType<typeof useGetMessages>;
 
+export type GetMessageQueryType = ReturnType<typeof useGetMessage>["data"];
+
 export const DEFAULT_PAGINATION_NUM_ITEMS = 5;
 
 export const useCreateMessage = () =>
@@ -25,6 +27,9 @@ export const useGetMessages = (args: {
   usePaginatedQuery(api.messages.getMessages, args, {
     initialNumItems: DEFAULT_PAGINATION_NUM_ITEMS,
   });
+
+export const useGetMessage = (args: { messageId: Id<"messages"> }) =>
+  useQuery(convexQuery(api.messages.getOneById, args));
 
 export const useUpdateMessage = () =>
   useMutation({

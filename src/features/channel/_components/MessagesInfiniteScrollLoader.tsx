@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Loader } from "lucide-react";
+import { LoaderIcon } from "lucide-react";
 import {
   type GetMessagesPaginatedQueryType,
   DEFAULT_PAGINATION_NUM_ITEMS,
@@ -26,7 +26,9 @@ const MessagesInfiniteScrollLoader = ({
         }
       },
       {
-        threshold: 1,
+        // set rootMargin to trigger loading earlier
+        rootMargin: "200px 0px",
+        threshold: 0,
       }
     );
 
@@ -49,7 +51,7 @@ const MessagesInfiniteScrollLoader = ({
         <div className="relative text-center my-2">
           <hr className="absolute top-1/2 -translate-y-1/2 w-full -z-10" />
           <span className="px-4 py-1 rounded-full text-sm border border-gray-200 shadow-sm bg-white">
-            <Loader className="size-4 animate-spin inline" />
+            <LoaderIcon className="size-4 animate-spin inline" />
           </span>
         </div>
       )}

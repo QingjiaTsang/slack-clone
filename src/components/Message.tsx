@@ -27,6 +27,7 @@ import useConfirm from "@/hooks/useConfirm";
 
 import autoAnimate from "@formkit/auto-animate";
 import ReactionButton from "@/components/ReactionButton";
+import usePanel from "@/hooks/usePanel";
 
 const formatFullTime = (date: Date) => {
   return `${
@@ -90,6 +91,8 @@ const Message = ({
   const { mutate: deleteMessage, isPending: isDeleting } = useDeleteMessage();
   const { mutate: toggleReaction } = useToggleReaction();
 
+  const { parentMessageId, openMessagePanel, closeMessagePanel } = usePanel();
+
   const [DeleteMessageConfirmDialog, confirm] = useConfirm({
     title: "Delete message",
     message: "Are you sure you want to delete this message?",
@@ -120,8 +123,12 @@ const Message = ({
     deleteMessage(
       { messageId: id, imageStorageId },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
           toast.success("Message deleted");
+
+          if (parentMessageId === id) {
+            await closeMessagePanel();
+          }
         },
         onError: () => {
           toast.error("Failed to delete message");
@@ -152,11 +159,13 @@ const Message = ({
         <div className="flex items-center pl-3 gap-2" ref={messageContentRef}>
           <Hint description={formatFullTime(new Date(createdAt))}>
             <button className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 text-center hover:underline">
-              {formatDate(new Date(createdAt), "HH:mm")}
+              {updateAt
+                ? formatDate(new Date(updateAt), "HH:mm")
+                : formatDate(new Date(createdAt), "HH:mm")}
             </button>
           </Hint>
           {isEditing ? (
-            <div className="ml-2 size-full editor-container">
+            <div className="px-2 editor-container">
               <Editor
                 quillRef={editorRef}
                 variant="update"
@@ -195,7 +204,7 @@ const Message = ({
             onEdit={() => setEditing(id)}
             onDelete={() => handleDeleteMessage(image?.storageId)}
             onSelectReaction={handleToggleReaction}
-            onOpenThread={() => {}}
+            onOpenThread={() => openMessagePanel(id)}
             hideThreadButton={hideThreadButton}
           />
         </div>
@@ -221,7 +230,7 @@ const Message = ({
             </Avatar>
           </button>
           {isEditing ? (
-            <div className="ml-2 size-full editor-container">
+            <div className="ml-2 editor-container">
               <Editor
                 quillRef={editorRef}
                 variant="update"
@@ -243,7 +252,9 @@ const Message = ({
                 </button>
                 <Hint description={formatFullTime(new Date(createdAt))}>
                   <button className="text-xs text-muted-foreground hover:underline">
-                    {formatDate(new Date(createdAt), "HH:mm")}
+                    {updateAt
+                      ? formatDate(new Date(updateAt), "HH:mm")
+                      : formatDate(new Date(createdAt), "HH:mm")}
                   </button>
                 </Hint>
               </div>
@@ -273,7 +284,7 @@ const Message = ({
                 onEdit={() => setEditing(id)}
                 onDelete={() => handleDeleteMessage(image?.storageId)}
                 onSelectReaction={handleToggleReaction}
-                onOpenThread={() => {}}
+                onOpenThread={() => openMessagePanel(id)}
                 hideThreadButton={hideThreadButton}
               />
             </div>

@@ -22,8 +22,9 @@ import {
   useGetWorkspaceById,
 } from "@/features/workspace/api/workspace";
 import { useGetCurrentUserRoleInWorkspace } from "@/api/user";
-import usePanel from "../../../features/channel/hooks/usePanel";
+import usePanel from "@/hooks/usePanel";
 import WorkspaceLayoutSkeleton from "@/features/workspace/_components/WorkspaceLayoutSkeleton";
+import Thread from "@/features/channel/_components/Thread";
 
 type WorkspaceLayoutProps = {
   params: {
@@ -42,7 +43,7 @@ const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
   const { data: currentUserRoleInfo, isPending: isCurrentUserRoleInfoPending } =
     useGetCurrentUserRoleInWorkspace(params.workspaceId);
 
-  const { parentMessageId, openPanel, closePanel } = usePanel();
+  const { parentMessageId, closeMessagePanel } = usePanel();
 
   const isAdmin = currentUserRoleInfo?.role === "admin";
 
@@ -81,6 +82,7 @@ const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
             autoSaveId="workspace-layout"
           >
             <ResizablePanel
+              id="sidebar"
               defaultSize={20}
               minSize={20}
               className="bg-[#5E2C5F] h-[calc(100svh-56px)]"
@@ -91,12 +93,17 @@ const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
               />
             </ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel minSize={20}>{children}</ResizablePanel>
+            <ResizablePanel id="main" minSize={20}>
+              {children}
+            </ResizablePanel>
             {showPanel && (
               <>
                 <ResizableHandle withHandle />
-                <ResizablePanel defaultSize={30} minSize={20}>
-                  thread
+                <ResizablePanel id="thread" defaultSize={30} minSize={20}>
+                  <Thread
+                    messageId={parentMessageId as Id<"messages">}
+                    closeMessagePanel={closeMessagePanel}
+                  />
                 </ResizablePanel>
               </>
             )}

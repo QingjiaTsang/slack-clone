@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/shadcnUI/card";
 import { Separator } from "@/components/shadcnUI/separator";
-import { Loader } from "lucide-react";
+import { LoaderIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import SignUpForm from "@/features/auth/_components/SignUpForm";
@@ -89,7 +89,7 @@ const SignUp = ({ onToggleAuthCard: onToggleAuthForm }: SignUpProps) => {
     <div className="flex flex-col h-full justify-center items-center">
       {isLoading && (
         <div className="absolute flex items-center justify-center">
-          <Loader className="animate-spin text-2xl" />
+          <LoaderIcon className="animate-spin text-2xl" />
         </div>
       )}
 

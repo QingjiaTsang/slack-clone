@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import EmailForm from "@/features/auth/_components/PasswordResetEmailForm";
 import ResetForm from "@/features/auth/_components/PasswordResetForm";
 import { useAuthActions } from "@convex-dev/auth/react";
-import { Loader } from "lucide-react";
+import { LoaderIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type PasswordResetProps = {
@@ -67,7 +67,7 @@ const PasswordReset = ({ onCancel }: PasswordResetProps) => {
     <div className="flex flex-col h-full justify-center items-center">
       {isLoading && (
         <div className="absolute flex items-center justify-center">
-          <Loader className="animate-spin text-2xl" />
+          <LoaderIcon className="animate-spin text-2xl" />
         </div>
       )}
       <Card

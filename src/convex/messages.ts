@@ -116,7 +116,7 @@ const formatReactions = (reactions: Doc<"reactions">[]) => {
 };
 
 const enrichMessageWithDetails = async (
-  ctx: QueryCtx,
+  ctx: QueryCtx & { userId: Id<"users"> | null },
   message: Doc<"messages">
 ) => {
   const member = await ctx.db.get(message.memberId);
@@ -126,6 +126,13 @@ const enrichMessageWithDetails = async (
     throw new Error("Member or user not found");
   }
 
+  const currentMember = await getMember(ctx, message.workspaceId, ctx.userId!);
+
+  if (!currentMember) {
+    throw new Error("Unauthorized");
+  }
+
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   const { memberId, ...messageWithoutMemberId } = message;
   const thread = await populateThread(ctx, message._id);
   const image = message.image
@@ -217,6 +224,8 @@ export const getMessages = query({
       parentMessageId,
     });
 
+    // if parentMessageId is null, it means the message is not a reply
+    // otherwise, it's a reply which will not show in the message list
     const result = await ctx.db
       .query("messages")
       .withIndex(
@@ -238,6 +247,28 @@ export const getMessages = query({
         )
       ).filter(Boolean),
     };
+  },
+});
+
+export const getOneById = query({
+  args: {
+    messageId: v.id("messages"),
+  },
+  handler: async (ctx, { messageId }) => {
+    try {
+      if (!ctx.userId) {
+        throw new Error("User Unauthorized");
+      }
+
+      const message = await ctx.db.get(messageId);
+      if (!message) {
+        return null;
+      }
+
+      return await enrichMessageWithDetails(ctx, message);
+    } catch (_error) {
+      return null;
+    }
   },
 });
 

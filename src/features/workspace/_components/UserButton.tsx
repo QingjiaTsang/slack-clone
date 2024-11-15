@@ -16,7 +16,7 @@ import {
   AvatarImage,
 } from "@/components/shadcnUI/avatar";
 
-import { Loader } from "lucide-react";
+import { LoaderIcon } from "lucide-react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useGetCurrentUser } from "@/api/user";
 
@@ -32,7 +32,7 @@ const UserButton = () => {
   const avatarFallback = user?.name?.[0].toUpperCase();
 
   if (isPending) {
-    return <Loader className="animate-spin text-2xl" />;
+    return <LoaderIcon className="animate-spin text-2xl" />;
   }
 
   if (!user) {

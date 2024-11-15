@@ -32,7 +32,7 @@ const ChannelMessageView = ({
     channelId: channel._id,
   });
 
-  // handle scroll behavior when messages update
+  // handle scroll behavior when new messages are loaded
   useEffect(() => {
     if (!messages.length || !containerRef.current) return;
 
@@ -77,8 +77,6 @@ const ChannelMessageView = ({
       <MessageList
         workspaceId={workspaceId}
         channelId={channel!._id}
-        channelName={channel?.name}
-        channelCreationTime={channel?._creationTime}
         variant="channel"
         messages={messages}
       />

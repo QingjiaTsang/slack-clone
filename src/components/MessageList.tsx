@@ -21,8 +21,6 @@ type MessageListProps = {
   channelId: Id<"channels">;
   memberName?: string;
   memberImage?: string;
-  channelName?: string;
-  channelCreationTime?: number;
   variant?: "channel" | "thread" | "conversation";
   messages: GetMessagesType;
 };
@@ -32,8 +30,6 @@ const MessageList = ({
   channelId,
   memberName,
   memberImage,
-  channelName,
-  channelCreationTime,
   variant,
   messages,
 }: MessageListProps) => {
@@ -94,12 +90,10 @@ const MessageList = ({
                   threadCount={message.threadCount}
                   threadImage={message.threadImage}
                   threadTimestamp={message.threadTimestamp}
-                  // todo: a bit difference
                   isAuthor={message.member.userId === currentUser?._id}
                   isEditing={editingId === message._id}
                   setEditing={setEditingId}
                   isCompact={isCompact}
-                  // todo: figure out
                   hideThreadButton={variant === "thread"}
                   createdAt={message._creationTime}
                   updateAt={message.updatedAt}

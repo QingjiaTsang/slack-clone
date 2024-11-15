@@ -1,7 +1,6 @@
 import { Id } from "@/convex/_generated/dataModel";
 
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
 
 import { fetchQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";

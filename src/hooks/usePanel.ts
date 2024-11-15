@@ -6,15 +6,19 @@ const usePanel = () => {
   const [parentMessageId, setParentMessageId] =
     useQueryState("parentMessageId");
 
-  const openPanel = async (messageId: Id<"messages">) => {
+  const openMessagePanel = async (messageId: Id<"messages">) => {
     await setParentMessageId(messageId);
   };
 
-  const closePanel = async () => {
+  const closeMessagePanel = async () => {
     await setParentMessageId(null);
   };
 
-  return { parentMessageId, openPanel, closePanel };
+  return {
+    parentMessageId,
+    openMessagePanel,
+    closeMessagePanel,
+  };
 };
 
 export default usePanel;

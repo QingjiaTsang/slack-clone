@@ -26,10 +26,10 @@ const ChatInput = ({ placeholder }: ChatInputProps) => {
 
   const { mutate } = useCreateMessage();
 
-  const editorRef = useRef<ReactQuill>(null);
-
   const [rerenderFlag, setRerenderFlag] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const editorRef = useRef<ReactQuill>(null);
 
   const handleSubmit = async (data: EditorSubmitData) => {
     const editor = editorRef.current?.getEditor();
@@ -81,11 +81,9 @@ const ChatInput = ({ placeholder }: ChatInputProps) => {
       <Editor
         key={rerenderFlag}
         quillRef={editorRef}
-        // variant="update"
-        defaultValue={""}
+        variant="create"
         disabled={isSubmitting}
         placeholder={placeholder}
-        onCancel={() => {}}
         onSubmit={handleSubmit}
       />
     </div>

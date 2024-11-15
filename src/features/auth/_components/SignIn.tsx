@@ -28,7 +28,7 @@ import { Input } from "@/components/shadcnUI/input";
 import { Button } from "@/components/shadcnUI/button";
 import { Separator } from "@/components/shadcnUI/separator";
 
-import { Loader } from "lucide-react";
+import { LoaderIcon } from "lucide-react";
 
 import { useAuthActions } from "@convex-dev/auth/react";
 
@@ -106,7 +106,7 @@ const SignIn = ({ onToggleAuthCard: onToggleAuthForm }: SignInProps) => {
     <div className="flex flex-col h-full justify-center items-center">
       {isLoading && (
         <div className="absolute flex items-center justify-center">
-          <Loader className="animate-spin text-2xl" />
+          <LoaderIcon className="animate-spin text-2xl" />
         </div>
       )}
       <Card
