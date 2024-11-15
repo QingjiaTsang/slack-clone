@@ -7,6 +7,9 @@ import { Id } from "@/convex/_generated/dataModel";
 export const useGetWorkspaceById = (workspaceId: Id<"workspaces">) =>
   useQuery(convexQuery(api.workspaces.getOneById, { id: workspaceId }));
 
+export const useGetAllWorkspacesByAuth = () =>
+  useQuery(convexQuery(api.workspaces.getAllByAuth, {}));
+
 export const useCreateWorkspace = () =>
   useMutation({
     mutationFn: useConvexMutation(api.workspaces.create),

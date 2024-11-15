@@ -1,6 +1,5 @@
 "use client";
 
-import { Id } from "@/convex/_generated/dataModel";
 import type ReactQuill from "react-quill";
 
 import {

@@ -16,10 +16,7 @@ type WorkspaceSidebarProps = {
   workspace: Workspace | null;
 };
 
-const WorkspaceSidebar = async ({
-  isAdmin,
-  workspace,
-}: WorkspaceSidebarProps) => {
+const WorkspaceSidebar = ({ isAdmin, workspace }: WorkspaceSidebarProps) => {
   if (!workspace) {
     return (
       <div className="flex flex-col items-center justify-center h-full">

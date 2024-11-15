@@ -1,18 +1,48 @@
+import { useEffect, useRef } from "react";
 import { Loader } from "lucide-react";
 import {
   type GetMessagesPaginatedQueryType,
   DEFAULT_PAGINATION_NUM_ITEMS,
 } from "@/api/message";
 
-interface MessagesInfiniteScrollLoaderProps {
+type MessagesInfiniteScrollLoaderProps = {
   status: GetMessagesPaginatedQueryType["status"];
   onLoadMore: GetMessagesPaginatedQueryType["loadMore"];
-}
+};
 
 const MessagesInfiniteScrollLoader = ({
   status,
   onLoadMore,
 }: MessagesInfiniteScrollLoaderProps) => {
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const elementRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    // create new observer
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && status === "CanLoadMore") {
+          onLoadMore(DEFAULT_PAGINATION_NUM_ITEMS);
+        }
+      },
+      {
+        threshold: 1,
+      }
+    );
+
+    // if element exists, start observing
+    if (elementRef.current) {
+      observerRef.current.observe(elementRef.current);
+    }
+
+    // cleanup function
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [status, onLoadMore]);
+
   return (
     <>
       {status === "LoadingMore" && (
@@ -23,24 +53,7 @@ const MessagesInfiniteScrollLoader = ({
           </span>
         </div>
       )}
-      <div
-        className="h-1"
-        ref={(el) => {
-          if (el) {
-            const observer = new IntersectionObserver(
-              (entries) => {
-                if (entries[0].isIntersecting && status === "CanLoadMore") {
-                  onLoadMore(DEFAULT_PAGINATION_NUM_ITEMS);
-                }
-              },
-              {
-                threshold: 1,
-              }
-            );
-            observer.observe(el);
-          }
-        }}
-      />
+      <div ref={elementRef} className="h-1" />
     </>
   );
 };

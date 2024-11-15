@@ -16,9 +16,9 @@ import { Skeleton } from "@/components/shadcnUI/skeleton";
 import WorkspaceSection from "@/features/workspace/_components/WorkspaceSection";
 import { useGetAllMembersByWorkspaceId } from "@/features/workspace/api/member";
 
-interface DmMemberListProps {
+type DmMemberListProps = {
   workspaceId: Id<"workspaces">;
-}
+};
 
 const DmMemberList = ({ workspaceId }: DmMemberListProps) => {
   const { data: members, isPending } =

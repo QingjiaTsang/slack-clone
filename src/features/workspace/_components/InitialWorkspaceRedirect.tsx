@@ -21,7 +21,7 @@ const InitialWorkspaceRedirect = ({
   useEffect(() => {
     if (initialWorkspaces && initialWorkspaces.length > 0) {
       closeModal();
-      router.push(`/workspace/${initialWorkspaces[0]?._id}`);
+      router.replace(`/workspace/${initialWorkspaces[0]?._id}`);
     } else {
       openModal();
     }

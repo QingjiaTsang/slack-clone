@@ -17,9 +17,5 @@ export default async function Home() {
     }
   );
 
-  return (
-    <>
-      <InitialWorkspaceRedirect initialWorkspaces={currentUserWorkspaces} />
-    </>
-  );
+  return <InitialWorkspaceRedirect initialWorkspaces={currentUserWorkspaces} />;
 }

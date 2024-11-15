@@ -34,6 +34,19 @@ const WorkspacePage = ({ params }: WorkspacePageProps) => {
     useGetCurrentUserRoleInWorkspace(params.workspaceId);
 
   useEffect(() => {
+    if (
+      isWorkspacePending ||
+      isChannelsPending ||
+      isCurrentUserRoleInfoPending
+    ) {
+      return;
+    }
+
+    if (!workspace) {
+      router.replace(`/`);
+      return;
+    }
+
     if (channels && channels.length > 0) {
       router.replace(
         `/workspace/${params.workspaceId}/channel/${channels[0]._id}`
@@ -46,11 +59,15 @@ const WorkspacePage = ({ params }: WorkspacePageProps) => {
     }
   }, [
     isOpen,
+    workspace,
     channels,
     currentUserRoleInfo,
     router,
     params.workspaceId,
     openModal,
+    isWorkspacePending,
+    isChannelsPending,
+    isCurrentUserRoleInfoPending,
   ]);
 
   if (isWorkspacePending || isChannelsPending || isCurrentUserRoleInfoPending) {

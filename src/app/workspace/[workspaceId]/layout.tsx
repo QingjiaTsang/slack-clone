@@ -1,8 +1,8 @@
+"use client";
+
 import { Id } from "@/convex/_generated/dataModel";
 
-import { fetchQuery } from "convex/nextjs";
-import { api } from "@/convex/_generated/api";
-import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
+import { useRouter } from "next/navigation";
 
 import {
   ResizableHandle,
@@ -17,44 +17,54 @@ import WorkspaceSidebar from "@/features/workspace/_components/WorkspaceSidebar"
 
 import CreateWorkspaceModal from "@/features/workspace/_components/CreateWorkspaceModal";
 import CreateChannelModal from "@/features/channel/_components/CreateChannelModal";
+import {
+  useGetAllWorkspacesByAuth,
+  useGetWorkspaceById,
+} from "@/features/workspace/api/workspace";
+import { useGetCurrentUserRoleInWorkspace } from "@/api/user";
+import usePanel from "../../../features/channel/hooks/usePanel";
+import WorkspaceLayoutSkeleton from "@/features/workspace/_components/WorkspaceLayoutSkeleton";
 
 type WorkspaceLayoutProps = {
-  children: React.ReactNode;
   params: {
     workspaceId: Id<"workspaces">;
   };
+  children: React.ReactNode;
 };
 
-const WorkspaceLayout = async ({ children, params }: WorkspaceLayoutProps) => {
-  // Note: Data fetched from the React Server Component (RSC) will be cached and won't update immediately when Convex data changes.
-  // Since Convex normally has an automatic real-time data update mechanism (implemented by websocket),
-  // it's better to use client-side fetching for data that needs to be real-time or immediately updated.
-  const workspacePromise = fetchQuery(
-    api.workspaces.getOneById,
-    { id: params.workspaceId },
-    { token: convexAuthNextjsToken() }
-  );
+const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
+  const router = useRouter();
 
-  const userWorkspacesPromise = fetchQuery(
-    api.workspaces.getAllByAuth,
-    {},
-    { token: convexAuthNextjsToken() }
-  );
+  const { data: currentWorkspace, isPending: isCurrentWorkspacePending } =
+    useGetWorkspaceById(params.workspaceId);
+  const { data: userWorkspaces, isPending: isUserWorkspacesPending } =
+    useGetAllWorkspacesByAuth();
+  const { data: currentUserRoleInfo, isPending: isCurrentUserRoleInfoPending } =
+    useGetCurrentUserRoleInWorkspace(params.workspaceId);
 
-  const currentUserRoleInfoPromise = fetchQuery(
-    api.workspaces.getCurrentUserRoleInWorkspace,
-    { id: params.workspaceId },
-    { token: convexAuthNextjsToken() }
-  );
-
-  const [currentWorkspace, userWorkspaces, currentUserRoleInfo] =
-    await Promise.all([
-      workspacePromise,
-      userWorkspacesPromise,
-      currentUserRoleInfoPromise,
-    ]);
+  const { parentMessageId, openPanel, closePanel } = usePanel();
 
   const isAdmin = currentUserRoleInfo?.role === "admin";
+
+  const showPanel = !!parentMessageId;
+
+  if (
+    isCurrentWorkspacePending ||
+    isUserWorkspacesPending ||
+    isCurrentUserRoleInfoPending
+  ) {
+    return <WorkspaceLayoutSkeleton />;
+  }
+
+  if (
+    !currentWorkspace ||
+    !userWorkspaces ||
+    userWorkspaces?.length === 0 ||
+    !currentUserRoleInfo
+  ) {
+    router.replace("/");
+    return;
+  }
 
   return (
     <WorkspaceProvider currentWorkspace={currentWorkspace}>
@@ -72,7 +82,7 @@ const WorkspaceLayout = async ({ children, params }: WorkspaceLayoutProps) => {
           >
             <ResizablePanel
               defaultSize={20}
-              minSize={10}
+              minSize={20}
               className="bg-[#5E2C5F] h-[calc(100svh-56px)]"
             >
               <WorkspaceSidebar
@@ -81,7 +91,15 @@ const WorkspaceLayout = async ({ children, params }: WorkspaceLayoutProps) => {
               />
             </ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={80}>{children}</ResizablePanel>
+            <ResizablePanel minSize={20}>{children}</ResizablePanel>
+            {showPanel && (
+              <>
+                <ResizableHandle withHandle />
+                <ResizablePanel defaultSize={30} minSize={20}>
+                  thread
+                </ResizablePanel>
+              </>
+            )}
           </ResizablePanelGroup>
         </div>
       </div>
