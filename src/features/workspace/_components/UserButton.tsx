@@ -45,7 +45,9 @@ const UserButton = () => {
         <div className="flex items-center">
           <Avatar>
             <AvatarImage src={user!.image!} />
-            <AvatarFallback>{avatarFallback}</AvatarFallback>
+            <AvatarFallback className="text-xl">
+              {avatarFallback}
+            </AvatarFallback>
           </Avatar>
           {isMobile && <span className="ml-2">{user!.name}</span>}
         </div>

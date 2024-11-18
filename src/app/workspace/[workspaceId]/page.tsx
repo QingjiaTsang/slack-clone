@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 
 import { useCreateChannelModal } from "@/stores/useCreateChannelModal";
 
-import { Loader2Icon, TriangleAlertIcon } from "lucide-react";
+import { LoaderIcon, TriangleAlertIcon } from "lucide-react";
 import { useGetWorkspaceById } from "@/features/workspace/api/workspace";
 import { useGetAllChannelsByWorkspaceId } from "@/features/workspace/api/workspace";
 import { useGetCurrentUserRoleInWorkspace } from "@/api/user";
@@ -73,7 +73,7 @@ const WorkspacePage = ({ params }: WorkspacePageProps) => {
   if (isWorkspacePending || isChannelsPending || isCurrentUserRoleInfoPending) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2Icon className="animate-spin" />
+        <LoaderIcon className="animate-spin" />
       </div>
     );
   }

@@ -1,4 +1,6 @@
 /* eslint-disable no-restricted-imports */
+import { Id } from "./_generated/dataModel";
+
 import {
   action as actionRaw,
   mutation as mutationRaw,
@@ -39,3 +41,8 @@ const queryAuthCheck = customCtx(async (ctx: QueryCtx) => {
 export const query = customQuery(queryRaw, queryAuthCheck);
 export const mutation = customMutation(mutationRaw, authCheck);
 export const action = customAction(actionRaw, authCheck);
+
+export type QueryCtxWithUserId = QueryCtx & { userId: Id<"users"> | null };
+export type MutationCtxWithUserId = MutationCtx & {
+  userId: Id<"users"> | null;
+};

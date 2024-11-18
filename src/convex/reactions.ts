@@ -1,20 +1,6 @@
 import { v } from "convex/values";
 import { mutation } from "./functions";
-import { Id } from "./_generated/dataModel";
-import { QueryCtx } from "./_generated/server";
-
-const getMember = (
-  ctx: QueryCtx,
-  workspaceId: Id<"workspaces">,
-  userId: Id<"users">
-) => {
-  return ctx.db
-    .query("members")
-    .withIndex("by_user_id_and_workspace_id", (q) =>
-      q.eq("userId", userId).eq("workspaceId", workspaceId)
-    )
-    .first();
-};
+import { getMember } from "./helper";
 
 export const toggle = mutation({
   args: {

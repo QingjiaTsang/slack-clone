@@ -7,7 +7,7 @@ import { api } from "@/convex/_generated/api";
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 
 import ChannelHeader from "@/features/channel/_components/ChannelHeader";
-import ChatInput from "@/features/channel/_components/ChatInput";
+import ChatInput from "@/components/ChatInput";
 import ChannelMessageView from "@/features/channel/_components/ChannelMessageView";
 
 type ChannelPageProps = {
@@ -16,7 +16,7 @@ type ChannelPageProps = {
   };
 };
 
-const ChannelPage = async ({ params }: ChannelPageProps) => {
+const ChannelIdPage = async ({ params }: ChannelPageProps) => {
   try {
     const channel = await fetchQuery(
       api.channels.getOneById,
@@ -38,12 +38,9 @@ const ChannelPage = async ({ params }: ChannelPageProps) => {
     const isAdmin = currentUserRoleInfo?.role === "admin";
 
     return (
-      <div className="flex flex-col h-[calc(100vh-theme(spacing.16))]">
+      <div className="flex flex-col h-[calc(100svh-theme(spacing.16))]">
         <ChannelHeader channel={channel} isAdmin={isAdmin} />
-        <ChannelMessageView
-          workspaceId={channel.workspaceId}
-          channel={channel}
-        />
+        <ChannelMessageView channel={channel} />
         <ChatInput placeholder={`Message #${channel?.name}`} />
       </div>
     );
@@ -53,4 +50,4 @@ const ChannelPage = async ({ params }: ChannelPageProps) => {
   }
 };
 
-export default ChannelPage;
+export default ChannelIdPage;

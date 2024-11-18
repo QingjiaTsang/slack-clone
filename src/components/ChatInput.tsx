@@ -18,8 +18,9 @@ import Editor from "@/components/Editor";
 
 type ChatInputProps = {
   placeholder: string;
+  conversationId?: Id<"conversations">;
 };
-const ChatInput = ({ placeholder }: ChatInputProps) => {
+const ChatInput = ({ placeholder, conversationId }: ChatInputProps) => {
   const { channelId, workspaceId } = useParams();
 
   const generateUploadUrl = useMutation(api.messages.generateUploadUrl);
@@ -56,8 +57,9 @@ const ChatInput = ({ placeholder }: ChatInputProps) => {
       await mutate({
         body: data.body,
         ...(storageId && { image: storageId }),
-        channelId: channelId as Id<"channels">,
-        workspaceId: workspaceId as Id<"workspaces">,
+        ...(channelId && { channelId: channelId as Id<"channels"> }),
+        ...(workspaceId && { workspaceId: workspaceId as Id<"workspaces"> }),
+        ...(conversationId && { conversationId }),
       });
 
       // toast.success("Message sent");

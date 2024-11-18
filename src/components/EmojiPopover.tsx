@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 
 import {
   Popover,
@@ -26,17 +25,28 @@ const EmojiPopover = React.forwardRef<HTMLDivElement, EmojiPopoverProps>(
   ({ hint, onSelect, children }, ref) => {
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+    const [preventTooltip, setPreventTooltip] = useState(false);
 
     const handleSelect = (emoji: { native: string }) => {
       onSelect(emoji.native);
       setIsPopoverOpen(false);
-      setIsTooltipOpen(false);
+      setPreventTooltip(true);
+      // prevent tooltip display right away after popover is closed
+      setTimeout(() => {
+        setPreventTooltip(false);
+      }, 200);
+    };
+
+    const handleTooltipChange = (open: boolean) => {
+      if (!preventTooltip) {
+        setIsTooltipOpen(open);
+      }
     };
 
     return (
       <TooltipProvider>
         <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-          <Tooltip open={isTooltipOpen} onOpenChange={setIsTooltipOpen}>
+          <Tooltip open={isTooltipOpen} onOpenChange={handleTooltipChange}>
             <TooltipTrigger asChild>
               <PopoverTrigger asChild>{children}</PopoverTrigger>
             </TooltipTrigger>

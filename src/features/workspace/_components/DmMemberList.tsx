@@ -45,7 +45,11 @@ const DmMemberList = ({ workspaceId }: DmMemberListProps) => {
       )}
 
       {members?.map((member: Member & { user: User }) => (
-        <DmMemberItem key={member._id} member={member} />
+        <DmMemberItem
+          key={member._id}
+          member={member}
+          workspaceId={workspaceId}
+        />
       ))}
     </WorkspaceSection>
   );
@@ -53,13 +57,21 @@ const DmMemberList = ({ workspaceId }: DmMemberListProps) => {
 
 export default DmMemberList;
 
-const DmMemberItem = ({ member }: { member: Member & { user: User } }) => {
+const DmMemberItem = ({
+  member,
+  workspaceId,
+}: {
+  member: Member & { user: User };
+  workspaceId: Id<"workspaces">;
+}) => {
   return (
-    <Link href={`/user/${member.user.id}`}>
+    <Link href={`/workspace/${workspaceId}/member/${member._id}`}>
       <div className="flex items-center lowercase text-[#f9edffcc] gap-2 cursor-pointer hover:bg-white/10 py-1 px-2">
         <Avatar className="size-5">
           <AvatarImage src={member.user.image!} />
-          <AvatarFallback>{member.user.name?.[0]}</AvatarFallback>
+          <AvatarFallback className="text-xs">
+            {member.user.name?.[0]}
+          </AvatarFallback>
         </Avatar>
         <div className="truncate">{member.user.name}</div>
       </div>

@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 
 import { Button } from "@/components/shadcnUI/button";
 
-import { LoaderIcon, TriangleAlertIcon, XIcon } from "lucide-react";
+import { TriangleAlertIcon, XIcon } from "lucide-react";
 
 import { useMutation } from "convex/react";
 import { useCreateMessage, useGetMessage } from "@/api/message";
@@ -17,12 +17,12 @@ import ReactQuill from "react-quill";
 import { toast } from "sonner";
 import ThreadMessagesView from "@/features/channel/_components/ThreadMessagesView";
 
-type ThreadProps = {
+type ThreadPanelProps = {
   messageId: Id<"messages">;
-  closeMessagePanel: () => void;
+  onClose: () => void;
 };
 
-const Thread = ({ messageId, closeMessagePanel }: ThreadProps) => {
+const ThreadPanel = ({ messageId, onClose }: ThreadPanelProps) => {
   const { channelId, workspaceId } = useParams();
 
   const { data: message, isPending: isLoadingMessage } = useGetMessage({
@@ -63,12 +63,11 @@ const Thread = ({ messageId, closeMessagePanel }: ThreadProps) => {
       await mutate({
         body: data.body,
         ...(storageId && { image: storageId }),
-        parentMessageId: messageId,
-        channelId: channelId as Id<"channels">,
         workspaceId: workspaceId as Id<"workspaces">,
+        parentMessageId: messageId,
+        ...(channelId && { channelId: channelId as Id<"channels"> }),
       });
 
-      toast.success("Reply sent");
       setRerenderFlag((prev) => prev + 1);
 
       const messageContainer = document.querySelector(".scrollbar-thin");
@@ -85,19 +84,17 @@ const Thread = ({ messageId, closeMessagePanel }: ThreadProps) => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-theme(spacing.16))]">
+    <div className="flex flex-col h-[calc(100svh-theme(spacing.16))]">
       <div className="p-2 flex justify-between items-center border-b border-b-gray-100 shadow-sm">
         <div className="px-2 font-semibold text-xl">Thread</div>
-        <Button variant="text" size="icon" onClick={closeMessagePanel}>
+        <Button variant="ghost" size="icon" onClick={onClose}>
           <XIcon className="size-4 stroke-[1.5]" />
         </Button>
       </div>
-      {isLoadingMessage && <MessageLoading />}
       {!isLoadingMessage && !message && <MessageNotFound />}
       {!isLoadingMessage && message && (
         <>
           <ThreadMessagesView
-            workspaceId={workspaceId as Id<"workspaces">}
             channelId={channelId as Id<"channels">}
             message={message}
           />
@@ -117,7 +114,7 @@ const Thread = ({ messageId, closeMessagePanel }: ThreadProps) => {
   );
 };
 
-export default Thread;
+export default ThreadPanel;
 
 const MessageNotFound = () => (
   <div className="flex flex-col items-center justify-center h-full">
@@ -125,11 +122,5 @@ const MessageNotFound = () => (
     <div className="text-destructive text-sm font-semibold">
       Message not found
     </div>
-  </div>
-);
-
-const MessageLoading = () => (
-  <div className="flex justify-center items-center h-full">
-    <LoaderIcon className="size-4 animate-spin" />
   </div>
 );

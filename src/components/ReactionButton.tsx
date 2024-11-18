@@ -44,12 +44,12 @@ const ReactionButton = ({
       <button
         onClick={() => onToggle(value)}
         className={cn(
-          "flex items-center gap-1 p-1 rounded-md text-sm",
+          "flex items-center gap-0.5 p-1 px-2 rounded-full text-sm",
           "bg-gray-200/70",
           "transition-all duration-200",
           "hover:scale-105 hover:-translate-y-0.5",
           "reaction-active",
-          { "bg-blue-200/65": selected }
+          { "bg-blue-200/65 border border-blue-500": selected }
         )}
       >
         <span

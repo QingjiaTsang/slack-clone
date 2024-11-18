@@ -28,6 +28,9 @@ import useConfirm from "@/hooks/useConfirm";
 import autoAnimate from "@formkit/auto-animate";
 import ReactionButton from "@/components/ReactionButton";
 import usePanel from "@/hooks/usePanel";
+import { SmilePlusIcon } from "lucide-react";
+import EmojiPopover from "@/components/EmojiPopover";
+import ThreadBar from "@/components/ThreadBar";
 
 const formatFullTime = (date: Date) => {
   return `${
@@ -54,6 +57,7 @@ type MessageProps = {
   >;
   threadCount: number;
   threadImage?: string;
+  threadName?: string;
   threadTimestamp: number;
   isAuthor: boolean;
   isEditing: boolean;
@@ -74,6 +78,7 @@ const Message = ({
   reactions,
   threadCount,
   threadImage,
+  threadName,
   threadTimestamp,
   isAuthor,
   isEditing,
@@ -89,14 +94,22 @@ const Message = ({
 
   const { mutate: updateMessage, isPending: isUpdating } = useUpdateMessage();
   const { mutate: deleteMessage, isPending: isDeleting } = useDeleteMessage();
-  const { mutate: toggleReaction } = useToggleReaction();
+  const { mutate: toggleReaction, isPending: isTogglingReaction } =
+    useToggleReaction();
 
-  const { parentMessageId, openMessagePanel, closeMessagePanel } = usePanel();
+  const isPending = isUpdating || isDeleting || isTogglingReaction;
+
+  const { parentMessageId, openMessagePanel, closePanel, openProfilePanel } =
+    usePanel();
 
   const [DeleteMessageConfirmDialog, confirm] = useConfirm({
     title: "Delete message",
     message: "Are you sure you want to delete this message?",
   }) as [() => JSX.Element, () => Promise<boolean>];
+
+  const handleOpenThread = async () => {
+    await openMessagePanel(id);
+  };
 
   const handleUpdateMessage = ({ body }: EditorSubmitData) => {
     updateMessage(
@@ -127,7 +140,7 @@ const Message = ({
           toast.success("Message deleted");
 
           if (parentMessageId === id) {
-            await closeMessagePanel();
+            await closePanel();
           }
         },
         onError: () => {
@@ -151,7 +164,7 @@ const Message = ({
   // auto animate the message content
   useEffect(() => {
     messageContentRef.current && autoAnimate(messageContentRef.current);
-  }, [messageContentRef]);
+  }, []);
 
   if (isCompact) {
     return (
@@ -170,7 +183,7 @@ const Message = ({
                 quillRef={editorRef}
                 variant="update"
                 defaultValue={JSON.parse(body)}
-                disabled={isUpdating}
+                disabled={isPending}
                 placeholder="Edit message"
                 onCancel={() => setEditing(null)}
                 onSubmit={handleUpdateMessage}
@@ -194,17 +207,32 @@ const Message = ({
                       onToggle={handleToggleReaction}
                     />
                   ))}
+                  <EmojiPopover hint="Emoji" onSelect={handleToggleReaction}>
+                    <button
+                      onClick={() => {}}
+                      className="rounded-full p-1 hover:bg-gray-200/70 transition-all duration-200"
+                    >
+                      <SmilePlusIcon className="h-4 w-4 text-muted-foreground" />
+                    </button>
+                  </EmojiPopover>
                 </div>
               )}
+              <ThreadBar
+                threadCount={threadCount}
+                threadImage={threadImage}
+                threadName={threadName}
+                threadTimestamp={threadTimestamp}
+                onClick={handleOpenThread}
+              />
             </div>
           )}
           <MessageToolBar
             isAuthor={isAuthor}
-            isPending={isUpdating || isDeleting}
+            isPending={isPending}
             onEdit={() => setEditing(id)}
             onDelete={() => handleDeleteMessage(image?.storageId)}
             onSelectReaction={handleToggleReaction}
-            onOpenThread={() => openMessagePanel(id)}
+            onOpenThread={handleOpenThread}
             hideThreadButton={hideThreadButton}
           />
         </div>
@@ -223,10 +251,15 @@ const Message = ({
         )}
       >
         <div className="flex items-start px-2" ref={messageContentRef}>
-          <button className="flex-shrink-0">
+          <button
+            className="flex-shrink-0"
+            onClick={() => openProfilePanel(memberId)}
+          >
             <Avatar>
               <AvatarImage src={authorImage!} />
-              <AvatarFallback>{avatarFallback}</AvatarFallback>
+              <AvatarFallback className="text-xl">
+                {avatarFallback}
+              </AvatarFallback>
             </Avatar>
           </button>
           {isEditing ? (
@@ -235,7 +268,7 @@ const Message = ({
                 quillRef={editorRef}
                 variant="update"
                 defaultValue={JSON.parse(body)}
-                disabled={isUpdating}
+                disabled={isPending}
                 placeholder="Edit message"
                 onCancel={() => setEditing(null)}
                 onSubmit={handleUpdateMessage}
@@ -245,7 +278,7 @@ const Message = ({
             <div className="flex flex-col ml-2">
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => {}}
+                  onClick={() => openProfilePanel(memberId)}
                   className="text-sm text-primary font-bold hover:underline"
                 >
                   {authorName}
@@ -275,16 +308,31 @@ const Message = ({
                         onToggle={handleToggleReaction}
                       />
                     ))}
+                    <EmojiPopover hint="Emoji" onSelect={handleToggleReaction}>
+                      <button
+                        onClick={() => {}}
+                        className="rounded-full p-1 hover:bg-gray-200/70 transition-all duration-200"
+                      >
+                        <SmilePlusIcon className="h-4 w-4 text-muted-foreground" />
+                      </button>
+                    </EmojiPopover>
                   </div>
                 )}
+                <ThreadBar
+                  threadCount={threadCount}
+                  threadImage={threadImage}
+                  threadName={threadName}
+                  threadTimestamp={threadTimestamp}
+                  onClick={handleOpenThread}
+                />
               </div>
               <MessageToolBar
                 isAuthor={isAuthor}
-                isPending={isUpdating || isDeleting}
+                isPending={isPending}
                 onEdit={() => setEditing(id)}
                 onDelete={() => handleDeleteMessage(image?.storageId)}
                 onSelectReaction={handleToggleReaction}
-                onOpenThread={() => openMessagePanel(id)}
+                onOpenThread={handleOpenThread}
                 hideThreadButton={hideThreadButton}
               />
             </div>

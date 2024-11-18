@@ -17,8 +17,6 @@ const formatDate = (date: string) => {
 };
 
 type MessageListProps = {
-  workspaceId: Id<"workspaces">;
-  channelId: Id<"channels">;
   memberName?: string;
   memberImage?: string;
   variant?: "channel" | "thread" | "conversation";
@@ -26,8 +24,6 @@ type MessageListProps = {
 };
 
 const MessageList = ({
-  workspaceId,
-  channelId,
   memberName,
   memberImage,
   variant,
@@ -89,6 +85,7 @@ const MessageList = ({
                   reactions={message.reactions}
                   threadCount={message.threadCount}
                   threadImage={message.threadImage}
+                  threadName={message.threadName}
                   threadTimestamp={message.threadTimestamp}
                   isAuthor={message.member.userId === currentUser?._id}
                   isEditing={editingId === message._id}

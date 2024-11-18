@@ -29,8 +29,15 @@ const schema = defineSchema({
     workspaceId: v.id("workspaces"),
     memberOneId: v.id("members"),
     memberTwoId: v.id("members"),
-  }).index("by_workspace_id", ["workspaceId"]),
+  }),
 
+  /**
+   * message types:
+   * 1. most regular message in a workspace's channel: having a workspaceId and channelId, without conversationId and parentMessageId
+   * 2. reply to a message in a thread within a particular channel: having a workspaceId, channelId, parentMessageId, without conversationId
+   * 3. direct message to a member: having a workspaceId, conversationId, without channelId, parentMessageId
+   * 4. reply to a message in a thread within a particular conversation: having a workspaceId, parentMessageId, conversationId
+   */
   messages: defineTable({
     body: v.string(),
     image: v.optional(v.id("_storage")),

@@ -17,7 +17,7 @@ const WorkspaceLayoutSkeleton = () => {
 
       <div className="flex">
         {/* workspace switcher sidebar skeleton */}
-        <div className="hidden md:flex h-[calc(100vh-56px)] w-20 bg-[#481349] flex-col items-center p-2 space-y-4">
+        <div className="hidden md:flex h-[calc(100svh-56px)] w-20 bg-[#481349] flex-col items-center p-2 space-y-4">
           <div className="w-12 h-12 rounded-lg bg-white/10 animate-pulse" />
           {[...Array(5)].map((_, i) => (
             <div

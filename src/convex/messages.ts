@@ -1,10 +1,14 @@
-import { v } from "convex/values";
-import { mutation, query } from "./functions";
 import { Doc, Id } from "./_generated/dataModel";
-import { QueryCtx } from "./_generated/server";
-import { paginationOptsValidator } from "convex/server";
 
-const populateReactions = (ctx: QueryCtx, messageId: Id<"messages">) => {
+import { v } from "convex/values";
+import { type QueryCtxWithUserId, mutation, query } from "./functions";
+import { paginationOptsValidator } from "convex/server";
+import { getMember } from "./helper";
+
+const populateReactions = (
+  ctx: QueryCtxWithUserId,
+  messageId: Id<"messages">
+) => {
   return ctx.db
     .query("reactions")
     .withIndex("by_message_id", (q) => q.eq("messageId", messageId))
@@ -12,7 +16,10 @@ const populateReactions = (ctx: QueryCtx, messageId: Id<"messages">) => {
 };
 
 // to get the last message info of the thread
-const populateThread = async (ctx: QueryCtx, messageId: Id<"messages">) => {
+const populateThread = async (
+  ctx: QueryCtxWithUserId,
+  messageId: Id<"messages">
+) => {
   const messages = await ctx.db
     .query("messages")
     .withIndex("by_parent_message_id", (q) =>
@@ -24,6 +31,7 @@ const populateThread = async (ctx: QueryCtx, messageId: Id<"messages">) => {
     return {
       count: 0,
       image: undefined,
+      name: undefined,
       timestamp: 0,
     };
   }
@@ -35,6 +43,7 @@ const populateThread = async (ctx: QueryCtx, messageId: Id<"messages">) => {
     return {
       count: 0,
       image: undefined,
+      name: undefined,
       timestamp: 0,
     };
   }
@@ -44,29 +53,17 @@ const populateThread = async (ctx: QueryCtx, messageId: Id<"messages">) => {
   return {
     count: messages.length,
     image: lastMessageUser?.image,
+    name: lastMessageUser?.name,
     timestamp: lastMessage._creationTime,
   };
 };
 
-const populateUser = (ctx: QueryCtx, userId: Id<"users">) => {
+const populateUser = (ctx: QueryCtxWithUserId, userId: Id<"users">) => {
   return ctx.db.get(userId);
 };
 
-const populateMember = (ctx: QueryCtx, memberId: Id<"members">) => {
+const populateMember = (ctx: QueryCtxWithUserId, memberId: Id<"members">) => {
   return ctx.db.get(memberId);
-};
-
-const getMember = (
-  ctx: QueryCtx,
-  workspaceId: Id<"workspaces">,
-  userId: Id<"users">
-) => {
-  return ctx.db
-    .query("members")
-    .withIndex("by_user_id_and_workspace_id", (q) =>
-      q.eq("userId", userId).eq("workspaceId", workspaceId)
-    )
-    .first();
 };
 
 const getConversationIdForReply = async ({
@@ -75,11 +72,15 @@ const getConversationIdForReply = async ({
   conversationId,
   parentMessageId,
 }: {
-  ctx: QueryCtx;
+  ctx: QueryCtxWithUserId;
   channelId?: Id<"channels">;
   conversationId?: Id<"conversations">;
   parentMessageId?: Id<"messages">;
 }) => {
+  // if the message is within a conversation, or it's a reply to a message in a thread within the conversation,
+  // we need to get the conversationId from the parentMessage
+  // because from client, we only know the workspaceId, channelId, parentMessageId,
+  // but not the conversationId which is exactly what we need
   if (!channelId && !conversationId && parentMessageId) {
     const parentMessage = await ctx.db.get(parentMessageId);
     if (!parentMessage) {
@@ -112,11 +113,11 @@ const formatReactions = (reactions: Doc<"reactions">[]) => {
     [] as (Doc<"reactions"> & { count: number; memberIds: Id<"members">[] })[]
   );
 
-  return groupedReactions.map(({ memberId, ...rest }) => rest);
+  return groupedReactions.map(({ memberId: _memberId, ...rest }) => rest);
 };
 
 const enrichMessageWithDetails = async (
-  ctx: QueryCtx & { userId: Id<"users"> | null },
+  ctx: QueryCtxWithUserId,
   message: Doc<"messages">
 ) => {
   const member = await ctx.db.get(message.memberId);
@@ -132,8 +133,7 @@ const enrichMessageWithDetails = async (
     throw new Error("Unauthorized");
   }
 
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  const { memberId, ...messageWithoutMemberId } = message;
+  const { memberId: _memberId, ...messageWithoutMemberId } = message;
   const thread = await populateThread(ctx, message._id);
   const image = message.image
     ? {
@@ -175,6 +175,8 @@ const enrichMessageWithDetails = async (
   //     }
   //   ],
   //   "threadCount": 0,
+  //   "threadImage": undefined,
+  //   "threadName": undefined,
   //   "threadTimestamp": 0,
   //   "updatedAt": 1731168723284,
   //   "user": {
@@ -194,8 +196,9 @@ const enrichMessageWithDetails = async (
     member,
     user,
     reactions: formattedReactions,
-    threadImage: thread.image,
     threadCount: thread.count,
+    threadImage: thread.image,
+    threadName: thread.name,
     threadTimestamp: thread.timestamp,
   };
 };
@@ -216,7 +219,6 @@ export const getMessages = query({
       throw new Error("User Unauthorized");
     }
 
-    // todo: figure out why it has to do this
     const _conversationId = await getConversationIdForReply({
       ctx,
       channelId,
@@ -280,14 +282,14 @@ export const create = mutation({
   args: {
     body: v.string(),
     image: v.optional(v.id("_storage")),
-    channelId: v.optional(v.id("channels")),
     workspaceId: v.id("workspaces"),
+    channelId: v.optional(v.id("channels")),
     parentMessageId: v.optional(v.id("messages")),
     conversationId: v.optional(v.id("conversations")),
   },
   handler: async (
     ctx,
-    { body, image, channelId, workspaceId, parentMessageId, conversationId }
+    { body, image, workspaceId, channelId, parentMessageId, conversationId }
   ) => {
     const { userId } = ctx;
 
@@ -297,9 +299,11 @@ export const create = mutation({
       throw new Error("Member not found");
     }
 
-    // todo: figure out why it has to do this
+    // if the message is a reply to a message in a thread within the conversation,
+    // we need to get the conversationId from the parentMessage
+    // because from client, we only know the workspaceId, channelId, parentMessageId,
+    // but not the conversationId which is exactly what we need
     let _conversationId = conversationId;
-    // if the message is a reply, we need to get the conversationId from the parent message
     if (!channelId && !conversationId && parentMessageId) {
       const parentMessage = await ctx.db.get(parentMessageId);
       if (!parentMessage) {

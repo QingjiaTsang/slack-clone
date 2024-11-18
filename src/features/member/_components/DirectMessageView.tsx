@@ -1,19 +1,24 @@
 "use client";
 
+import { Doc, Id } from "@/convex/_generated/dataModel";
+
 import { useRef, useEffect } from "react";
 
 import MessageList from "@/components/MessageList";
 
 import { useGetMessages } from "@/api/message";
-import { Channel } from "@/types/docs";
-import ChannelHero from "@/components/ChannelHero";
 import MessagesInfiniteScrollLoader from "@/components/MessagesInfiniteScrollLoader";
+import DirectMessageHero from "@/features/member/_components/DirectMessageHero";
 
-type ChannelMessageViewProps = {
-  channel: Channel;
+type DirectMessageViewProps = {
+  conversationId: Id<"conversations">;
+  memberWithUserInfo: Doc<"members"> & { user: Doc<"users"> };
 };
 
-const ChannelMessageView = ({ channel }: ChannelMessageViewProps) => {
+const DirectMessageView = ({
+  conversationId,
+  memberWithUserInfo,
+}: DirectMessageViewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const lastMessageRef = useRef<string | null>(null);
   const shouldScrollRef = useRef(true);
@@ -23,7 +28,7 @@ const ChannelMessageView = ({ channel }: ChannelMessageViewProps) => {
     status,
     loadMore,
   } = useGetMessages({
-    channelId: channel._id,
+    conversationId,
   });
 
   // handle scroll behavior when new messages are loaded
@@ -58,7 +63,6 @@ const ChannelMessageView = ({ channel }: ChannelMessageViewProps) => {
             <MessageList.Skeleton key={index} />
           ))}
         </div>
-        <ChannelHero.Skeleton />
       </div>
     );
   }
@@ -70,12 +74,9 @@ const ChannelMessageView = ({ channel }: ChannelMessageViewProps) => {
     >
       <MessageList variant="channel" messages={messages} />
       <MessagesInfiniteScrollLoader status={status} onLoadMore={loadMore} />
-      <ChannelHero
-        channelName={channel?.name}
-        createdAt={channel?._creationTime}
-      />
+      <DirectMessageHero memberWithUserInfo={memberWithUserInfo} />
     </div>
   );
 };
 
-export default ChannelMessageView;
+export default DirectMessageView;

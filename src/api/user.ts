@@ -14,3 +14,6 @@ export const useGetCurrentUserRoleInWorkspace = (
       id: workspaceId,
     })
   );
+
+export const useGetMemberWithUserInfoById = (memberId: Id<"members">) =>
+  useQuery(convexQuery(api.members.getMemberWithUserInfoById, { memberId }));

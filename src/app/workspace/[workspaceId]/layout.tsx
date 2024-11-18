@@ -24,7 +24,8 @@ import {
 import { useGetCurrentUserRoleInWorkspace } from "@/api/user";
 import usePanel from "@/hooks/usePanel";
 import WorkspaceLayoutSkeleton from "@/features/workspace/_components/WorkspaceLayoutSkeleton";
-import Thread from "@/features/channel/_components/Thread";
+import ThreadPanel from "@/features/channel/_components/ThreadPanel";
+import ProfilePanel from "@/features/member/_components/ProfilePanel";
 
 type WorkspaceLayoutProps = {
   params: {
@@ -43,11 +44,11 @@ const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
   const { data: currentUserRoleInfo, isPending: isCurrentUserRoleInfoPending } =
     useGetCurrentUserRoleInWorkspace(params.workspaceId);
 
-  const { parentMessageId, closeMessagePanel } = usePanel();
+  const { parentMessageId, profileMemberId, closePanel } = usePanel();
 
   const isAdmin = currentUserRoleInfo?.role === "admin";
 
-  const showPanel = !!parentMessageId;
+  const showPanel = !!parentMessageId || !!profileMemberId;
 
   if (
     isCurrentWorkspacePending ||
@@ -99,11 +100,23 @@ const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
             {showPanel && (
               <>
                 <ResizableHandle withHandle />
-                <ResizablePanel id="thread" defaultSize={30} minSize={20}>
-                  <Thread
-                    messageId={parentMessageId as Id<"messages">}
-                    closeMessagePanel={closeMessagePanel}
-                  />
+                <ResizablePanel
+                  id="thread"
+                  defaultSize={30}
+                  minSize={20}
+                  className="shadow-[0_0_8px_rgba(0,0,0,0.25)]"
+                >
+                  {parentMessageId ? (
+                    <ThreadPanel
+                      messageId={parentMessageId as Id<"messages">}
+                      onClose={closePanel}
+                    />
+                  ) : profileMemberId ? (
+                    <ProfilePanel
+                      memberId={profileMemberId as Id<"members">}
+                      onClose={closePanel}
+                    />
+                  ) : null}
                 </ResizablePanel>
               </>
             )}
