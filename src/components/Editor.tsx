@@ -136,6 +136,28 @@ const Editor = ({
           },
         },
       },
+      imageDropAndPaste: {
+        handler: async (imageDataUrl: string, type: string, imageData: any) => {
+          console.log({ imageDataUrl, type, imageData });
+          try {
+            // transform the image data to file
+            const file = imageData.toFile();
+
+            // set the preview image url
+            const previewUrl = URL.createObjectURL(file);
+            setUploadedImageUrl(previewUrl);
+
+            // update the file input value to imitate the action of user uploading the image
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            if (imageInputRef.current) {
+              imageInputRef.current.files = dataTransfer.files;
+            }
+          } catch (error) {
+            console.error("Failed to process dropped/pasted image:", error);
+          }
+        },
+      },
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

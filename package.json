@@ -53,6 +53,7 @@
     "nuqs": "^2.0.4",
     "oslo": "^1.2.1",
     "prettier": "^3.3.3",
+    "quill-image-drop-and-paste": "^2.0.1",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.53.0",
