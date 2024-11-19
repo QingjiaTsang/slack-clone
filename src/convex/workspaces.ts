@@ -160,17 +160,37 @@ export const deleteOneById = mutation({
       throw new Error("Unauthorized");
     }
 
-    const members = await ctx.db
-      .query("members")
-      .withIndex("by_workspace_id", (q) => q.eq("workspaceId", id))
-      .collect();
-    members.forEach(async (member) => {
-      await ctx.db.delete(member._id);
-    });
+    // do cascade delete on all related records in members, channels, messages, conversations, reactions
+    const [members, channels, messages, conversations, reactions] =
+      await Promise.all([
+        ctx.db
+          .query("members")
+          .withIndex("by_workspace_id", (q) => q.eq("workspaceId", id))
+          .collect(),
+        ctx.db
+          .query("channels")
+          .withIndex("by_workspace_id", (q) => q.eq("workspaceId", id))
+          .collect(),
+        ctx.db
+          .query("messages")
+          .withIndex("by_workspace_id", (q) => q.eq("workspaceId", id))
+          .collect(),
+        ctx.db
+          .query("conversations")
+          .withIndex("by_workspace_id", (q) => q.eq("workspaceId", id))
+          .collect(),
+        ctx.db
+          .query("reactions")
+          .withIndex("by_workspace_id", (q) => q.eq("workspaceId", id))
+          .collect(),
+      ]);
 
-    // todo: delete all related records in other collections
-
-    await ctx.db.delete(id);
+    await Promise.all([
+      ctx.db.delete(id),
+      ...members.map((member) => ctx.db.delete(member._id)),
+      ...channels.map((channel) => ctx.db.delete(channel._id)),
+      ...messages.map((message) => ctx.db.delete(message._id)),
+    ]);
   },
 });
 

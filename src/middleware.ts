@@ -7,8 +7,6 @@ import {
 // docs: https://labs.convex.dev/auth/authz/nextjs#require-authentication-for-certain-routes
 const isAuthPage = createRouteMatcher(["/auth(.*)"]);
 const isPublicRoute = createRouteMatcher(["/auth(.*)"]);
-// todo
-// const isPublicRoute = createRouteMatcher(["/", "/auth(.*)"]);
 
 export default convexAuthNextjsMiddleware((request, { convexAuth }) => {
   // redirect authenticated users away from auth page

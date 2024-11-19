@@ -26,6 +26,7 @@ import usePanel from "@/hooks/usePanel";
 import WorkspaceLayoutSkeleton from "@/features/workspace/_components/WorkspaceLayoutSkeleton";
 import ThreadPanel from "@/features/channel/_components/ThreadPanel";
 import ProfilePanel from "@/features/member/_components/ProfilePanel";
+import { useEffect } from "react";
 
 type WorkspaceLayoutProps = {
   params: {
@@ -50,6 +51,31 @@ const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
 
   const showPanel = !!parentMessageId || !!profileMemberId;
 
+  useEffect(() => {
+    if (
+      !isCurrentWorkspacePending &&
+      !isUserWorkspacesPending &&
+      !isCurrentUserRoleInfoPending
+    ) {
+      if (
+        !currentWorkspace ||
+        !userWorkspaces ||
+        userWorkspaces?.length === 0 ||
+        !currentUserRoleInfo
+      ) {
+        router.replace("/");
+      }
+    }
+  }, [
+    currentWorkspace,
+    userWorkspaces,
+    currentUserRoleInfo,
+    router,
+    isCurrentWorkspacePending,
+    isUserWorkspacesPending,
+    isCurrentUserRoleInfoPending,
+  ]);
+
   if (
     isCurrentWorkspacePending ||
     isUserWorkspacesPending ||
@@ -64,8 +90,7 @@ const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
     userWorkspaces?.length === 0 ||
     !currentUserRoleInfo
   ) {
-    router.replace("/");
-    return;
+    return null;
   }
 
   return (

@@ -166,6 +166,27 @@ export const deleteOneById = mutation({
       throw new Error("User unauthorized");
     }
 
+    // do cascade delete on all related records in messages, reactions
+    const relatedMessages = await ctx.db
+      .query("messages")
+      .withIndex("by_channel_id", (q) => q.eq("channelId", id))
+      .collect();
+
+    const relatedReactions = await Promise.all(
+      relatedMessages.map(async (message) => {
+        const reactions = await ctx.db
+          .query("reactions")
+          .withIndex("by_message_id", (q) => q.eq("messageId", message._id))
+          .collect();
+        return reactions;
+      })
+    ).then((reactions) => reactions.flat());
+
+    await Promise.all([
+      ...relatedMessages.map((message) => ctx.db.delete(message._id)),
+      ...relatedReactions.map((reaction) => ctx.db.delete(reaction._id)),
+    ]);
+
     await ctx.db.delete(id);
   },
 });

@@ -375,6 +375,15 @@ export const deleteOneById = mutation({
     if (imageStorageId) {
       await ctx.storage.delete(imageStorageId);
     }
+
+    // do cascade delete on all related records in reactions
+    const reactions = await ctx.db
+      .query("reactions")
+      .withIndex("by_message_id", (q) => q.eq("messageId", messageId))
+      .collect();
+
+    await Promise.all(reactions.map((reaction) => ctx.db.delete(reaction._id)));
+
     await ctx.db.delete(messageId);
 
     return messageId;
