@@ -64,6 +64,7 @@ type MessageProps = {
   setEditing: (id: Id<"messages"> | null) => void;
   isCompact?: boolean;
   hideThreadButton: boolean;
+  hideThreadBar: boolean;
   createdAt: Doc<"messages">["_creationTime"];
   updateAt?: Doc<"messages">["updatedAt"];
 };
@@ -85,6 +86,7 @@ const Message = ({
   setEditing,
   isCompact,
   hideThreadButton,
+  hideThreadBar = false,
   createdAt,
   updateAt,
 }: MessageProps) => {
@@ -214,13 +216,15 @@ const Message = ({
                   </EmojiPopover>
                 </div>
               )}
-              <ThreadBar
-                threadCount={threadCount}
-                threadImage={threadImage}
-                threadName={threadName}
-                threadTimestamp={threadTimestamp}
-                onClick={handleOpenThread}
-              />
+              {!hideThreadBar && (
+                <ThreadBar
+                  threadCount={threadCount}
+                  threadImage={threadImage}
+                  threadName={threadName}
+                  threadTimestamp={threadTimestamp}
+                  onClick={handleOpenThread}
+                />
+              )}
             </div>
           )}
           <MessageToolBar
@@ -312,13 +316,15 @@ const Message = ({
                     </EmojiPopover>
                   </div>
                 )}
-                <ThreadBar
-                  threadCount={threadCount}
-                  threadImage={threadImage}
-                  threadName={threadName}
-                  threadTimestamp={threadTimestamp}
-                  onClick={handleOpenThread}
-                />
+                {!hideThreadBar && (
+                  <ThreadBar
+                    threadCount={threadCount}
+                    threadImage={threadImage}
+                    threadName={threadName}
+                    threadTimestamp={threadTimestamp}
+                    onClick={handleOpenThread}
+                  />
+                )}
               </div>
               <MessageToolBar
                 isAuthor={isAuthor}

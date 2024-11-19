@@ -52,8 +52,7 @@ const ThreadBar = ({
       {threadTimestamp && (
         <div className="opacity-70 relative flex-1">
           <span className="group-hover/thread-bar:opacity-0 transition-opacity truncate">
-            Last reply
-            {formatDistanceToNow(threadTimestamp, { addSuffix: true })}
+            {`Last reply ${formatDistanceToNow(threadTimestamp, { addSuffix: true })}`}
           </span>
           <span className="absolute left-0 opacity-0 group-hover/thread-bar:opacity-100 transition-opacity">
             View thread

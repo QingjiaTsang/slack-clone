@@ -110,6 +110,7 @@ const ThreadMessagesView = ({
         setEditing={setEditingId}
         isCompact={false}
         hideThreadButton={true}
+        hideThreadBar={true}
         createdAt={message._creationTime}
         updateAt={message.updatedAt}
       />

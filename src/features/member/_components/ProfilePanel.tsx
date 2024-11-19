@@ -30,6 +30,7 @@ import {
 import { toast } from "sonner";
 
 import usePanel from "@/hooks/usePanel";
+import useConfirm from "@/hooks/useConfirm";
 
 import {
   useGetCurrentUserMemberWithUserInfo,
@@ -63,7 +64,20 @@ const ProfilePanel = ({
   const { data: currentUserMember, isPending: isCurrentUserPending } =
     useGetCurrentUserMemberWithUserInfo(workspaceId);
 
-  const isUpdating = isUpdateMemberRolePending || isDeleteMemberPending;
+  const [LeaveWorkspaceConfirmDialog, confirmLeaveWorkspace] = useConfirm({
+    title: "Leave Workspace",
+    message: "Are you sure you want to leave this workspace?",
+  }) as [React.FC, () => Promise<boolean>];
+
+  const [UpdateMemberRoleConfirmDialog, confirmUpdateMemberRole] = useConfirm({
+    title: "Update Member Role",
+    message: "Are you sure you want to update this member's role?",
+  }) as [React.FC, () => Promise<boolean>];
+
+  const [RemoveMemberConfirmDialog, confirmRemoveMember] = useConfirm({
+    title: "Remove Member",
+    message: "Are you sure you want to remove this member?",
+  }) as [React.FC, () => Promise<boolean>];
 
   if (isMemberPending || isCurrentUserPending) {
     return <ProfileLoading />;
@@ -73,7 +87,12 @@ const ProfilePanel = ({
     return <ProfileNotFound />;
   }
 
-  const handleLeave = () => {
+  const handleLeave = async () => {
+    const confirmed = await confirmLeaveWorkspace();
+    if (!confirmed) {
+      return;
+    }
+
     deleteMember(
       { id: memberId },
       {
@@ -88,8 +107,13 @@ const ProfilePanel = ({
     );
   };
 
-  const handleUpdateMemberRole = (role: Doc<"members">["role"]) => {
+  const handleUpdateMemberRole = async (role: Doc<"members">["role"]) => {
     if (role === member.role) {
+      return;
+    }
+
+    const confirmed = await confirmUpdateMemberRole();
+    if (!confirmed) {
       return;
     }
 
@@ -106,7 +130,12 @@ const ProfilePanel = ({
     );
   };
 
-  const handleRemoveMember = () => {
+  const handleRemoveMember = async () => {
+    const confirmed = await confirmRemoveMember();
+    if (!confirmed) {
+      return;
+    }
+
     deleteMember(
       { id: memberId },
       {
@@ -125,6 +154,8 @@ const ProfilePanel = ({
   const isCurrentUserAdmin = currentUserMember?.role === "admin";
   const isMemberAdmin = member.role === "admin";
 
+  const isUpdating = isUpdateMemberRolePending || isDeleteMemberPending;
+
   return (
     <div className="flex flex-col h-[calc(100svh-theme(spacing.16))]">
       <div className="p-2 flex justify-between items-center border-b border-b-gray-100 shadow-sm">
@@ -133,7 +164,6 @@ const ProfilePanel = ({
           <XIcon className="size-4 stroke-[1.5]" />
         </Button>
       </div>
-
       <div className="flex flex-col flex-1 p-6">
         <div className="mb-8 flex justify-center items-center">
           <Avatar className="max-w-64 max-h-64 size-full">
@@ -224,6 +254,9 @@ const ProfilePanel = ({
           </div>
         </div>
       </div>
+      <LeaveWorkspaceConfirmDialog />
+      <UpdateMemberRoleConfirmDialog />
+      <RemoveMemberConfirmDialog />
     </div>
   );
 };
