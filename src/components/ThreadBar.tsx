@@ -34,29 +34,28 @@ const ThreadBar = ({
         "text-muted-foreground rounded-md",
         "border border-transparent",
         "hover:bg-white hover:shadow-sm hover:border-gray-300/70",
-        "transition-all duration-200",
-        "w-fit"
+        "transition-all duration-200"
       )}
     >
-      <div className="flex items-center gap-1.5">
-        <Avatar className="h-5 w-5 shrink-0">
+      <div className="shrink-0 flex items-center gap-1.5">
+        <Avatar className="h-5 w-5">
           <AvatarImage src={threadImage} />
           <AvatarFallback className="text-xs">
             {threadName?.[0] ?? "M"}
           </AvatarFallback>
         </Avatar>
-        <span className="font-bold text-sky-700 hover:underline whitespace-nowrap">
+        <span className="font-bold text-sky-700 hover:underline">
           {`${threadCount} ${threadCount === 1 ? "reply" : "replies"}`}
         </span>
       </div>
       {threadTimestamp && (
-        <div className="opacity-70 relative flex-1">
-          <span className="group-hover/thread-bar:opacity-0 transition-opacity truncate">
+        <div className="opacity-70 relative overflow-hidden">
+          <div className="group-hover/thread-bar:opacity-0 transition-opacity truncate">
             {`Last reply ${formatDistanceToNow(threadTimestamp, { addSuffix: true })}`}
-          </span>
-          <span className="absolute left-0 opacity-0 group-hover/thread-bar:opacity-100 transition-opacity">
+          </div>
+          <div className="absolute left-0 top-0 opacity-0 group-hover/thread-bar:opacity-100 transition-opacity">
             View thread
-          </span>
+          </div>
           <ChevronRight className="size-4 absolute top-0 right-0 opacity-0 group-hover/thread-bar:opacity-100 transition-opacity" />
         </div>
       )}

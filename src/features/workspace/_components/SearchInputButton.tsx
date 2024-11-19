@@ -73,7 +73,7 @@ const SearchInputButton = ({ workspaceId }: SearchInputButtonProps) => {
         className="w-full h-10 bg-accent/25 hover:bg-accent/25 justify-start"
       >
         <Search className="absolute left-5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-200 dark:text-gray-300" />
-        <span className="pl-10 text-white">{`Search in ${workspace?.name}`}</span>
+        <span className="pl-10 text-white truncate">{`Search in ${workspace?.name}`}</span>
         <CommandShortcut className="text-gray-400">⌘K</CommandShortcut>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
