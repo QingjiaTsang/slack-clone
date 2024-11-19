@@ -1,3 +1,5 @@
+"use client";
+
 import { Doc } from "@/convex/_generated/dataModel";
 
 import { Skeleton } from "@/components/shadcnUI/skeleton";
@@ -6,16 +8,26 @@ import {
   AvatarImage,
   AvatarFallback,
 } from "@/components/shadcnUI/avatar";
+import usePanel from "@/hooks/usePanel";
 
 type DirectMessageHeroProps = {
   memberWithUserInfo: Doc<"members"> & { user: Doc<"users"> };
+  isCurrentUser: boolean;
 };
 
-const DirectMessageHero = ({ memberWithUserInfo }: DirectMessageHeroProps) => {
+const DirectMessageHero = ({
+  memberWithUserInfo,
+  isCurrentUser,
+}: DirectMessageHeroProps) => {
+  const { openProfilePanel } = usePanel();
+
   return (
     <div className="mt-20 mx-5 mb-4 p-8 rounded-lg bg-gradient-to-r from-[#481349]/5 via-[#5E2C5F]/5 to-[#481349]/5">
       <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-3">
+        <button
+          onClick={() => openProfilePanel(memberWithUserInfo._id)}
+          className="flex items-center gap-3"
+        >
           <Avatar className="size-12">
             <AvatarImage src={memberWithUserInfo.user.image!} />
             <AvatarFallback className="text-xl">
@@ -23,12 +35,13 @@ const DirectMessageHero = ({ memberWithUserInfo }: DirectMessageHeroProps) => {
             </AvatarFallback>
           </Avatar>
           <span className="text-xl font-semibold">
-            {memberWithUserInfo.user.name}
+            {memberWithUserInfo.user.name} {isCurrentUser && "(you)"}
           </span>
-        </div>
+        </button>
         <p className="text-sm text-muted-foreground">
-          This conversation is just between {memberWithUserInfo.user.name} and
-          you. Check out their profile to learn more about them.
+          {isCurrentUser
+            ? "This is your space. Draft messages, list your to-dos, or keep links and files handy. You can also talk to yourself here, but please bear in mind you’ll have to supply both sides of the conversation."
+            : `This conversation is just between ${memberWithUserInfo.user.name} and you. Check out their profile to learn more about them.`}
         </p>
       </div>
     </div>

@@ -17,3 +17,10 @@ export const useGetCurrentUserRoleInWorkspace = (
 
 export const useGetMemberWithUserInfoById = (memberId: Id<"members">) =>
   useQuery(convexQuery(api.members.getMemberWithUserInfoById, { memberId }));
+
+export const useGetCurrentUserMemberWithUserInfo = (
+  workspaceId: Id<"workspaces">
+) =>
+  useQuery(
+    convexQuery(api.members.getCurrentUserMemberWithUserInfo, { workspaceId })
+  );

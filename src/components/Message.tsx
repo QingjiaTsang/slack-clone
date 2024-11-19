@@ -208,10 +208,7 @@ const Message = ({
                     />
                   ))}
                   <EmojiPopover hint="Emoji" onSelect={handleToggleReaction}>
-                    <button
-                      onClick={() => {}}
-                      className="rounded-full p-1 hover:bg-gray-200/70 transition-all duration-200"
-                    >
+                    <button className="rounded-full p-1 hover:bg-gray-200/70 transition-all duration-200">
                       <SmilePlusIcon className="h-4 w-4 text-muted-foreground" />
                     </button>
                   </EmojiPopover>
@@ -309,10 +306,7 @@ const Message = ({
                       />
                     ))}
                     <EmojiPopover hint="Emoji" onSelect={handleToggleReaction}>
-                      <button
-                        onClick={() => {}}
-                        className="rounded-full p-1 hover:bg-gray-200/70 transition-all duration-200"
-                      >
+                      <button className="rounded-full p-1 hover:bg-gray-200/70 transition-all duration-200">
                         <SmilePlusIcon className="h-4 w-4 text-muted-foreground" />
                       </button>
                     </EmojiPopover>

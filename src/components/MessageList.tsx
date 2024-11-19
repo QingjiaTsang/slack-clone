@@ -17,18 +17,11 @@ const formatDate = (date: string) => {
 };
 
 type MessageListProps = {
-  memberName?: string;
-  memberImage?: string;
   variant?: "channel" | "thread" | "conversation";
   messages: GetMessagesType;
 };
 
-const MessageList = ({
-  memberName,
-  memberImage,
-  variant,
-  messages,
-}: MessageListProps) => {
+const MessageList = ({ variant, messages }: MessageListProps) => {
   const [editingId, setEditingId] = useState<Id<"messages"> | null>(null);
 
   const { data: currentUser } = useGetCurrentUser();

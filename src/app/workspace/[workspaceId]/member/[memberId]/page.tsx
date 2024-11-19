@@ -8,6 +8,7 @@ import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 import DirectMessageHeader from "@/features/member/_components/DirectMessageHeader";
 import DirectMessageView from "@/features/member/_components/DirectMessageView";
 import ChatInput from "@/components/ChatInput";
+import { TriangleAlertIcon } from "lucide-react";
 
 type MemberIdPageProps = {
   params: {
@@ -37,7 +38,14 @@ const MemberIdPage = async ({ params }: MemberIdPageProps) => {
   );
 
   if (!memberWithUserInfo || !conversation) {
-    return null;
+    return (
+      <div className="flex flex-col items-center justify-center h-full">
+        <TriangleAlertIcon className="size-10 text-destructive" />
+        <div className="text-destructive text-lg font-semibold">
+          No workspace found
+        </div>
+      </div>
+    );
   }
 
   return (

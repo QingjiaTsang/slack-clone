@@ -14,7 +14,7 @@ import {
 import { Skeleton } from "@/components/shadcnUI/skeleton";
 
 import WorkspaceSection from "@/features/workspace/_components/WorkspaceSection";
-import { useGetAllMembersByWorkspaceId } from "@/features/workspace/api/member";
+import { useGetAllMembersByWorkspaceId } from "@/features/workspace/api/workspace";
 
 type DmMemberListProps = {
   workspaceId: Id<"workspaces">;
@@ -28,6 +28,7 @@ const DmMemberList = ({ workspaceId }: DmMemberListProps) => {
     <WorkspaceSection
       label="Direct Messages"
       hint="Create a new direct message"
+      // todo
       onNew={() => {}}
     >
       {isPending && (

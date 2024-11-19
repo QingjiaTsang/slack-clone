@@ -168,6 +168,8 @@ export const deleteOneById = mutation({
       await ctx.db.delete(member._id);
     });
 
+    // todo: delete all related records in other collections
+
     await ctx.db.delete(id);
   },
 });

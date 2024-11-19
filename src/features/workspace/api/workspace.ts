@@ -27,3 +27,6 @@ export const useDeleteWorkspace = () =>
 
 export const useGetAllChannelsByWorkspaceId = (workspaceId: Id<"workspaces">) =>
   useQuery(convexQuery(api.channels.getAllByWorkspaceId, { workspaceId }));
+
+export const useGetAllMembersByWorkspaceId = (workspaceId: Id<"workspaces">) =>
+  useQuery(convexQuery(api.members.getAllByWorkspaceId, { workspaceId }));

@@ -7,6 +7,8 @@ import { useRef, useEffect } from "react";
 import MessageList from "@/components/MessageList";
 
 import { useGetMessages } from "@/api/message";
+import { useGetCurrentUserMemberWithUserInfo } from "@/api/user";
+
 import MessagesInfiniteScrollLoader from "@/components/MessagesInfiniteScrollLoader";
 import DirectMessageHero from "@/features/member/_components/DirectMessageHero";
 
@@ -30,6 +32,12 @@ const DirectMessageView = ({
   } = useGetMessages({
     conversationId,
   });
+
+  const { data: currentUserMember, isPending: isCurrentUserPending } =
+    useGetCurrentUserMemberWithUserInfo(memberWithUserInfo.workspaceId);
+
+  const isCurrentUser =
+    memberWithUserInfo.user.name === currentUserMember?.user?.name;
 
   // handle scroll behavior when new messages are loaded
   useEffect(() => {
@@ -55,7 +63,7 @@ const DirectMessageView = ({
     lastMessageRef.current = lastMessage._id;
   }, [messages]);
 
-  if (status === "LoadingFirstPage") {
+  if (status === "LoadingFirstPage" || isCurrentUserPending) {
     return (
       <div className="flex flex-col-reverse flex-1 overflow-y-auto mb-2">
         <div>
@@ -74,7 +82,10 @@ const DirectMessageView = ({
     >
       <MessageList variant="channel" messages={messages} />
       <MessagesInfiniteScrollLoader status={status} onLoadMore={loadMore} />
-      <DirectMessageHero memberWithUserInfo={memberWithUserInfo} />
+      <DirectMessageHero
+        memberWithUserInfo={memberWithUserInfo}
+        isCurrentUser={isCurrentUser}
+      />
     </div>
   );
 };

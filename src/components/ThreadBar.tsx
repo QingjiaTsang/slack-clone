@@ -22,7 +22,9 @@ const ThreadBar = ({
   threadTimestamp,
   onClick,
 }: ThreadBarProps) => {
-  if (threadCount === 0) return null;
+  if (threadCount === 0) {
+    return null;
+  }
 
   return (
     <button

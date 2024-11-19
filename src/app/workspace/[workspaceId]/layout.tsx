@@ -113,6 +113,7 @@ const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
                     />
                   ) : profileMemberId ? (
                     <ProfilePanel
+                      workspaceId={params.workspaceId}
                       memberId={profileMemberId as Id<"members">}
                       onClose={closePanel}
                     />
