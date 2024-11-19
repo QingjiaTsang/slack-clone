@@ -190,6 +190,8 @@ export const deleteOneById = mutation({
       ...members.map((member) => ctx.db.delete(member._id)),
       ...channels.map((channel) => ctx.db.delete(channel._id)),
       ...messages.map((message) => ctx.db.delete(message._id)),
+      ...conversations.map((conversation) => ctx.db.delete(conversation._id)),
+      ...reactions.map((reaction) => ctx.db.delete(reaction._id)),
     ]);
   },
 });

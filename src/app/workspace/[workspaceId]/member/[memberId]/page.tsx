@@ -18,49 +18,63 @@ type MemberIdPageProps = {
 };
 
 const MemberIdPage = async ({ params }: MemberIdPageProps) => {
-  const memberWithUserInfo = await fetchQuery(
-    api.members.getMemberWithUserInfoById,
-    { memberId: params.memberId },
-    {
-      token: convexAuthNextjsToken(),
-    }
-  );
+  try {
+    const memberWithUserInfo = await fetchQuery(
+      api.members.getMemberWithUserInfoById,
+      { memberId: params.memberId },
+      {
+        token: convexAuthNextjsToken(),
+      }
+    );
 
-  const conversation = await fetchMutation(
-    api.conversations.getOrCreate,
-    {
-      workspaceId: params.workspaceId,
-      targetMemberId: params.memberId,
-    },
-    {
-      token: convexAuthNextjsToken(),
-    }
-  );
+    const conversation = await fetchMutation(
+      api.conversations.getOrCreate,
+      {
+        workspaceId: params.workspaceId,
+        targetMemberId: params.memberId,
+      },
+      {
+        token: convexAuthNextjsToken(),
+      }
+    );
 
-  if (!memberWithUserInfo || !conversation) {
+    if (!memberWithUserInfo || !conversation) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full">
+          <TriangleAlertIcon className="size-10 text-destructive" />
+          <div className="text-destructive text-lg font-semibold">
+            No workspace found
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-col h-[calc(100svh-theme(spacing.16))]">
+        <DirectMessageHeader memberWithUserInfo={memberWithUserInfo} />
+        <DirectMessageView
+          conversationId={conversation._id}
+          memberWithUserInfo={memberWithUserInfo}
+        />
+        <ChatInput
+          placeholder={`Message @${memberWithUserInfo.user.name}`}
+          conversationId={conversation._id}
+        />
+      </div>
+    );
+  } catch (error) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
         <TriangleAlertIcon className="size-10 text-destructive" />
         <div className="text-destructive text-lg font-semibold">
-          No workspace found
+          Failed to load conversation
+        </div>
+        <div className="text-muted-foreground text-sm">
+          {error instanceof Error ? error.message : "Please try again later"}
         </div>
       </div>
     );
   }
-
-  return (
-    <div className="flex flex-col h-[calc(100svh-theme(spacing.16))]">
-      <DirectMessageHeader memberWithUserInfo={memberWithUserInfo} />
-      <DirectMessageView
-        conversationId={conversation._id}
-        memberWithUserInfo={memberWithUserInfo}
-      />
-      <ChatInput
-        placeholder={`Message @${memberWithUserInfo.user.name}`}
-        conversationId={conversation._id}
-      />
-    </div>
-  );
 };
 
 export default MemberIdPage;

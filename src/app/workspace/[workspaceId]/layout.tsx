@@ -96,7 +96,7 @@ const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
   return (
     <WorkspaceProvider currentWorkspace={currentWorkspace}>
       <div>
-        <HeaderNavBar />
+        <HeaderNavBar workspaceId={params.workspaceId} />
         <div className="flex">
           <SideBar
             currentWorkspace={currentWorkspace}

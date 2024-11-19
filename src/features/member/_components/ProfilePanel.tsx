@@ -195,6 +195,7 @@ const ProfilePanel = ({
                 <DropdownMenuRadioGroup
                   value={member.role}
                   onValueChange={(value) => {
+                    // eslint-disable-next-line @typescript-eslint/no-floating-promises
                     handleUpdateMemberRole(value as Doc<"members">["role"]);
                   }}
                 >

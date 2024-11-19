@@ -85,6 +85,7 @@ const MessageList = ({ variant, messages }: MessageListProps) => {
                   setEditing={setEditingId}
                   isCompact={isCompact}
                   hideThreadButton={variant === "thread"}
+                  hideThreadBar={false}
                   createdAt={message._creationTime}
                   updateAt={message.updatedAt}
                 />
