@@ -137,11 +137,17 @@ const Editor = ({
         },
       },
       imageDropAndPaste: {
-        handler: async (imageDataUrl: string, type: string, imageData: any) => {
+        handler: async (
+          imageDataUrl: string,
+          type: string,
+          imageData: ImageData
+        ) => {
           console.log({ imageDataUrl, type, imageData });
           try {
             // transform the image data to file
-            const file = imageData.toFile();
+            const response = await fetch(imageDataUrl);
+            const blob = await response.blob();
+            const file = new File([blob], "image.png", { type });
 
             // set the preview image url
             const previewUrl = URL.createObjectURL(file);

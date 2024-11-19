@@ -14,7 +14,11 @@ import "react-quill/dist/quill.snow.css";
 declare module "react-quill" {
   interface QuillOptions {
     imageDropAndPaste?: {
-      handler: (imageDataUrl: string, type: string, imageData: any) => void;
+      handler: (
+        imageDataUrl: string,
+        type: string,
+        imageData: ImageData
+      ) => void;
     };
   }
 }
@@ -25,16 +29,14 @@ interface IWrappedComponent extends React.ComponentProps<typeof ReactQuill> {
 
 const ReactQuillBase = dynamic(
   async () => {
-    const { default: RQ } = await import("react-quill");
+    const { default: ReactQuill } = await import("react-quill");
 
     // register custom module
-    if (typeof window !== "undefined") {
-      const Quill = RQ.Quill;
-      Quill.register("modules/imageDropAndPaste", QuillImageDropAndPaste);
-    }
+    const Quill = ReactQuill.Quill;
+    Quill.register("modules/imageDropAndPaste", QuillImageDropAndPaste);
 
     function QuillJS({ forwardedRef, ...props }: IWrappedComponent) {
-      return <RQ ref={forwardedRef} {...props} />;
+      return <ReactQuill ref={forwardedRef} {...props} />;
     }
 
     return QuillJS;
