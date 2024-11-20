@@ -103,14 +103,14 @@ const SearchInputButton = ({ workspaceId }: SearchInputButtonProps) => {
               >
                 <Avatar className="flex items-center ">
                   <AvatarImage
-                    src={member.user.image ?? ""}
+                    src={member?.user?.image ?? ""}
                     className="size-6 rounded-lg"
                   />
                   <AvatarFallback className="size-6 rounded-lg">
-                    {member.user.name?.[0] ?? "M"}
+                    {member?.user?.name?.[0]?.toUpperCase() ?? "M"}
                   </AvatarFallback>
                 </Avatar>
-                <div className="-ml-1">{member.user.name}</div>
+                <div className="-ml-1">{member?.user?.name ?? ""}</div>
               </CommandItem>
             ))}
           </CommandGroup>

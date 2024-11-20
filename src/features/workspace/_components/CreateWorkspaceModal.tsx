@@ -64,7 +64,7 @@ const CreateWorkspaceModal = () => {
         onSuccess: (newWorkspaceId) => {
           closeModal();
           toast.success("Workspace created");
-          router.push(`/workspace/${newWorkspaceId}`);
+          router.replace(`/workspace/${newWorkspaceId}`);
           methods.reset();
         },
         onError: (error) => {
@@ -127,7 +127,7 @@ const CreateWorkspaceModal = () => {
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create a Workspace</DialogTitle>

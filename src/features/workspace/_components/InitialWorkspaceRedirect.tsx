@@ -26,7 +26,7 @@ const InitialWorkspaceRedirect = ({
       openModal();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialWorkspaces, openModal, closeModal, router]);
+  }, []);
 
   return <CreateWorkspaceModal />;
 };

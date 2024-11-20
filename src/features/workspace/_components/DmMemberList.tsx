@@ -69,12 +69,12 @@ const DmMemberItem = ({
     <Link href={`/workspace/${workspaceId}/member/${member._id}`}>
       <div className="flex items-center lowercase text-[#f9edffcc] gap-2 cursor-pointer hover:bg-white/10 py-1 px-2">
         <Avatar className="size-5">
-          <AvatarImage src={member.user.image!} />
+          <AvatarImage src={member?.user?.image ?? ""} />
           <AvatarFallback className="text-xs">
-            {member.user.name?.[0]}
+            {member?.user?.name?.[0]?.toUpperCase() ?? ""}
           </AvatarFallback>
         </Avatar>
-        <div className="truncate">{member.user.name}</div>
+        <div className="truncate">{member?.user?.name ?? ""}</div>
       </div>
     </Link>
   );

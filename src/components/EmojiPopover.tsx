@@ -45,18 +45,20 @@ const EmojiPopover = React.forwardRef<HTMLDivElement, EmojiPopoverProps>(
 
     return (
       <TooltipProvider>
-        <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-          <Tooltip open={isTooltipOpen} onOpenChange={handleTooltipChange}>
-            <TooltipTrigger asChild>
-              <PopoverTrigger asChild>{children}</PopoverTrigger>
-            </TooltipTrigger>
-            <TooltipContent>{hint}</TooltipContent>
-          </Tooltip>
+        <div ref={ref}>
+          <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+            <Tooltip open={isTooltipOpen} onOpenChange={handleTooltipChange}>
+              <TooltipTrigger asChild>
+                <PopoverTrigger asChild>{children}</PopoverTrigger>
+              </TooltipTrigger>
+              <TooltipContent>{hint}</TooltipContent>
+            </Tooltip>
 
-          <PopoverContent className="size-fit bg-transparent border-none shadow-none  p-0">
-            <Picker data={data} onEmojiSelect={handleSelect} />
-          </PopoverContent>
-        </Popover>
+            <PopoverContent className="size-fit bg-transparent border-none shadow-none  p-0">
+              <Picker data={data} onEmojiSelect={handleSelect} />
+            </PopoverContent>
+          </Popover>
+        </div>
       </TooltipProvider>
     );
   }

@@ -167,14 +167,17 @@ const ProfilePanel = ({
       <div className="flex flex-col flex-1 p-6">
         <div className="mb-8 flex justify-center items-center">
           <Avatar className="max-w-64 max-h-64 size-full">
-            <AvatarImage src={member.user.image} alt={member.user.name} />
+            <AvatarImage
+              src={member?.user?.image ?? ""}
+              alt={member?.user?.name ?? ""}
+            />
             <AvatarFallback className="text-6xl aspect-square">
-              {member.user.name?.[0]?.toUpperCase()}
+              {member?.user?.name?.[0]?.toUpperCase() ?? ""}
             </AvatarFallback>
           </Avatar>
         </div>
 
-        <div className="text-2xl font-bold">{member.user.name}</div>
+        <div className="text-2xl font-bold">{member?.user?.name ?? ""}</div>
 
         {/* admin does something to other member */}
         {isCurrentUserAdmin && !isCurrentUser && (
