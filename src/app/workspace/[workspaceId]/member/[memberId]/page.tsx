@@ -43,7 +43,7 @@ const MemberIdPage = async ({ params }: MemberIdPageProps) => {
         <div className="flex flex-col items-center justify-center h-full">
           <TriangleAlertIcon className="size-10 text-destructive" />
           <div className="text-destructive text-lg font-semibold">
-            No workspace found
+            No member found
           </div>
         </div>
       );
