@@ -94,6 +94,13 @@ const ChannelOperationsModal = ({
 
   return (
     <>
+      <DeleteChannelConfirmDialog />
+      <EditChannelModal
+        isOpen={isEditChannelModalOpen}
+        onClose={() => setIsEditChannelModalOpen(false)}
+        channel={channel}
+      />
+
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="p-0 bg-gray-100 h-auto">
           <DialogHeader className="p-4 border-b border-slate-200">
@@ -134,13 +141,6 @@ const ChannelOperationsModal = ({
           </div>
         </DialogContent>
       </Dialog>
-
-      <DeleteChannelConfirmDialog />
-      <EditChannelModal
-        isOpen={isEditChannelModalOpen}
-        onClose={() => setIsEditChannelModalOpen(false)}
-        channel={channel}
-      />
     </>
   );
 };

@@ -12,6 +12,9 @@ import { useGetCurrentUserMemberWithUserInfo } from "@/api/user";
 import MessagesInfiniteScrollLoader from "@/components/MessagesInfiniteScrollLoader";
 import DirectMessageHero from "@/features/member/_components/DirectMessageHero";
 
+import { PhoneOutgoing } from "lucide-react";
+import { Button } from "@/components/shadcnUI/button";
+
 type DirectMessageViewProps = {
   conversationId: Id<"conversations">;
   memberWithUserInfo: Doc<"members"> & { user: Doc<"users"> };
@@ -41,7 +44,9 @@ const DirectMessageView = ({
 
   // handle scroll behavior when new messages are loaded
   useEffect(() => {
-    if (!messages.length || !containerRef.current) return;
+    if (!messages.length || !containerRef.current) {
+      return;
+    }
 
     const container = containerRef.current;
     // the first message is exactly the last messages in the array since we're using flex-col-reverse
@@ -78,7 +83,7 @@ const DirectMessageView = ({
   return (
     <div
       ref={containerRef}
-      className="flex flex-col-reverse flex-1 overflow-y-auto mb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 scrollbar-thumb-rounded-full"
+      className="relative flex flex-col-reverse flex-1 overflow-y-auto mb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 scrollbar-thumb-rounded-full"
     >
       <MessageList variant="channel" messages={messages} />
       <MessagesInfiniteScrollLoader status={status} onLoadMore={loadMore} />

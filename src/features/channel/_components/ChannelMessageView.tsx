@@ -28,7 +28,9 @@ const ChannelMessageView = ({ channel }: ChannelMessageViewProps) => {
 
   // handle scroll behavior when new messages are loaded
   useEffect(() => {
-    if (!messages.length || !containerRef.current) return;
+    if (!messages.length || !containerRef.current) {
+      return;
+    }
 
     const container = containerRef.current;
     // the first message is exactly the last messages in the array since we're using flex-col-reverse

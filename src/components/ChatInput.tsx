@@ -87,6 +87,7 @@ const ChatInput = ({ placeholder, conversationId }: ChatInputProps) => {
         disabled={isSubmitting}
         placeholder={placeholder}
         onSubmit={handleSubmit}
+        conversationId={conversationId}
       />
     </div>
   );

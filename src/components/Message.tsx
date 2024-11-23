@@ -170,74 +170,78 @@ const Message = ({
 
   if (isCompact) {
     return (
-      <div className="flex flex-col gap-2 p-2 hover:bg-gray-100/60 group message-container relative">
-        <div className="flex items-center pl-3 gap-2" ref={messageContentRef}>
-          <Hint description={formatFullTime(new Date(createdAt))}>
-            <button className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 text-center hover:underline">
-              {updateAt
-                ? formatDate(new Date(updateAt), "HH:mm")
-                : formatDate(new Date(createdAt), "HH:mm")}
-            </button>
-          </Hint>
-          {isEditing ? (
-            <div className="px-2 editor-container">
-              <Editor
-                quillRef={editorRef}
-                variant="update"
-                defaultValue={JSON.parse(body)}
-                disabled={isPending}
-                placeholder="Edit message"
-                onCancel={() => setEditing(null)}
-                onSubmit={handleUpdateMessage}
-              />
-            </div>
-          ) : (
-            <div className="flex flex-col ml-2">
-              <QuillContentsRenderer contents={body} />
-              {image?.url && (
-                <Thumbnail imageUrl={image.url} alt="Message image" />
-              )}
-              {updateAt && (
-                <div className="text-xs text-muted-foreground">(edited)</div>
-              )}
-              {reactions.length > 0 && (
-                <div className="flex items-center gap-2 mt-2">
-                  {reactions.map((reaction) => (
-                    <ReactionButton
-                      key={reaction.value}
-                      {...reaction}
-                      onToggle={handleToggleReaction}
-                    />
-                  ))}
-                  <EmojiPopover hint="Emoji" onSelect={handleToggleReaction}>
-                    <button className="rounded-full p-1 hover:bg-gray-200/70 transition-all duration-200">
-                      <SmilePlusIcon className="h-4 w-4 text-muted-foreground" />
-                    </button>
-                  </EmojiPopover>
-                </div>
-              )}
-              {!hideThreadBar && (
-                <ThreadBar
-                  threadCount={threadCount}
-                  threadImage={threadImage}
-                  threadName={threadName}
-                  threadTimestamp={threadTimestamp}
-                  onClick={handleOpenThread}
+      <>
+        <DeleteMessageConfirmDialog />
+
+        <div className="flex flex-col gap-2 p-2 hover:bg-gray-100/60 group message-container relative">
+          <div className="flex items-center pl-3 gap-2" ref={messageContentRef}>
+            <Hint description={formatFullTime(new Date(createdAt))}>
+              <button className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 text-center hover:underline">
+                {updateAt
+                  ? formatDate(new Date(updateAt), "HH:mm")
+                  : formatDate(new Date(createdAt), "HH:mm")}
+              </button>
+            </Hint>
+            {isEditing ? (
+              <div className="px-2 editor-container">
+                <Editor
+                  quillRef={editorRef}
+                  variant="update"
+                  defaultValue={JSON.parse(body)}
+                  disabled={isPending}
+                  placeholder="Edit message"
+                  onCancel={() => setEditing(null)}
+                  onSubmit={handleUpdateMessage}
                 />
-              )}
-            </div>
-          )}
-          <MessageToolBar
-            isAuthor={isAuthor}
-            isPending={isPending}
-            onEdit={() => setEditing(id)}
-            onDelete={() => handleDeleteMessage(image?.storageId)}
-            onSelectReaction={handleToggleReaction}
-            onOpenThread={handleOpenThread}
-            hideThreadButton={hideThreadButton}
-          />
+              </div>
+            ) : (
+              <div className="flex flex-col ml-2">
+                <QuillContentsRenderer contents={body} />
+                {image?.url && (
+                  <Thumbnail imageUrl={image.url} alt="Message image" />
+                )}
+                {updateAt && (
+                  <div className="text-xs text-muted-foreground">(edited)</div>
+                )}
+                {reactions.length > 0 && (
+                  <div className="flex items-center gap-2 mt-2">
+                    {reactions.map((reaction) => (
+                      <ReactionButton
+                        key={reaction.value}
+                        {...reaction}
+                        onToggle={handleToggleReaction}
+                      />
+                    ))}
+                    <EmojiPopover hint="Emoji" onSelect={handleToggleReaction}>
+                      <button className="rounded-full p-1 hover:bg-gray-200/70 transition-all duration-200">
+                        <SmilePlusIcon className="h-4 w-4 text-muted-foreground" />
+                      </button>
+                    </EmojiPopover>
+                  </div>
+                )}
+                {!hideThreadBar && (
+                  <ThreadBar
+                    threadCount={threadCount}
+                    threadImage={threadImage}
+                    threadName={threadName}
+                    threadTimestamp={threadTimestamp}
+                    onClick={handleOpenThread}
+                  />
+                )}
+              </div>
+            )}
+            <MessageToolBar
+              isAuthor={isAuthor}
+              isPending={isPending}
+              onEdit={() => setEditing(id)}
+              onDelete={() => handleDeleteMessage(image?.storageId)}
+              onSelectReaction={handleToggleReaction}
+              onOpenThread={handleOpenThread}
+              hideThreadButton={hideThreadButton}
+            />
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -245,6 +249,8 @@ const Message = ({
 
   return (
     <>
+      <DeleteMessageConfirmDialog />
+
       <div
         className={cn(
           "flex flex-col gap-2 p-2 hover:bg-gray-100/60 group message-container relative",
@@ -339,7 +345,6 @@ const Message = ({
           )}
         </div>
       </div>
-      <DeleteMessageConfirmDialog />
     </>
   );
 };

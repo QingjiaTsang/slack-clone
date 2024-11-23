@@ -93,6 +93,13 @@ const PreferenceModal = ({
 
   return (
     <>
+      <DeleteWorkspaceConfirmDialog />
+      <EditWorkspaceModal
+        isOpen={isEditWorkspaceModalOpen}
+        onClose={() => setIsEditWorkspaceModalOpen(false)}
+        workspace={workspace}
+      />
+
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="p-0 bg-gray-100 h-auto">
           <DialogHeader className="p-4 border-b border-slate-200">
@@ -124,13 +131,6 @@ const PreferenceModal = ({
           </Button>
         </DialogContent>
       </Dialog>
-
-      <DeleteWorkspaceConfirmDialog />
-      <EditWorkspaceModal
-        isOpen={isEditWorkspaceModalOpen}
-        onClose={() => setIsEditWorkspaceModalOpen(false)}
-        workspace={workspace}
-      />
     </>
   );
 };

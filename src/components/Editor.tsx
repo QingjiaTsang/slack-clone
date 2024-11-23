@@ -1,6 +1,7 @@
 "use client";
 
 import type ReactQuill from "react-quill";
+import { Id } from "@/convex/_generated/dataModel";
 
 import {
   useRef,
@@ -12,17 +13,21 @@ import {
 } from "react";
 
 import Image from "next/image";
+import { useParams } from "next/navigation";
 
 import { Button } from "@/components/shadcnUI/button";
 
 import { PiTextAa } from "react-icons/pi";
 import { MdSend } from "react-icons/md";
-import { ImageIcon, SmileIcon, XIcon } from "lucide-react";
+import { ImageIcon, PhoneOutgoingIcon, SmileIcon, XIcon } from "lucide-react";
 import Hint from "@/components/Hint";
 import EmojiPopover from "@/components/EmojiPopover";
 import { cn } from "@/lib/utils";
 
 import ReactQuillBase from "@/components/ReactQuillBase";
+import useConfirm from "@/hooks/useConfirm";
+import { useCreateCall } from "@/features/call/api/call";
+import { toast } from "sonner";
 
 export type EditorSubmitData = {
   image: File | null;
@@ -36,6 +41,7 @@ type EditorProps = {
   quillRef: MutableRefObject<ReactQuill | null>;
   onCancel?: () => void;
   onSubmit: (data: EditorSubmitData) => void;
+  conversationId?: Id<"conversations">;
 };
 
 const Editor = ({
@@ -46,7 +52,17 @@ const Editor = ({
   placeholder = "Write messages here",
   defaultValue = "",
   disabled = false,
+  conversationId,
 }: EditorProps) => {
+  const params = useParams();
+
+  const { mutateAsync: createCall } = useCreateCall();
+
+  const [CallConfirmDialog, confirm] = useConfirm({
+    title: "Call",
+    message: "Are you sure you want to call this member?",
+  }) as [() => JSX.Element, () => Promise<boolean>];
+
   const containerRef = useRef<HTMLDivElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const isEmptyRef = useRef(true);
@@ -117,6 +133,26 @@ const Editor = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleCall = async () => {
+    const confirmed = await confirm();
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      const callId = await createCall({
+        workspaceId: params.workspaceId as Id<"workspaces">,
+        conversationId: conversationId as Id<"conversations">,
+      });
+
+      toast.success("Call requested");
+    } catch (error) {
+      console.error("Failed to create call:", error);
+      toast.error("Failed to create call");
+    }
+  };
+
   // keep modules as a constant to prevent re-render of react-quill
   const modules = useMemo(() => {
     return {
@@ -175,7 +211,9 @@ const Editor = ({
 
   // when the editor is mounted, autofocus on it
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current) {
+      return;
+    }
 
     const observer = new MutationObserver(() => {
       const hasEditor = containerRef.current?.querySelector(".ql-editor");
@@ -202,134 +240,151 @@ const Editor = ({
   }, [defaultValue]);
 
   return (
-    <div className="flex flex-col editor-container">
-      <input
-        type="file"
-        ref={imageInputRef}
-        accept="image/*"
-        onChange={handleImageChange}
-        className="hidden"
-      />
-      <div
-        className={cn(
-          "flex flex-col rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white",
-          { "border border-slate-200": isEditorReady }
-        )}
-      >
-        <div ref={containerRef}>
-          <ReactQuillBase
-            forwardedRef={quillRef}
-            modules={modules}
-            theme="snow"
-            placeholder={placeholder}
-            defaultValue={defaultValue}
-            onChange={handleChange}
-            className="h-full"
-          />
+    <>
+      <CallConfirmDialog />
 
-          {!!uploadedImageUrl && (
-            <div className="p-2">
-              <div className="relative size-[62px] flex justify-center items-center group/image">
-                <Hint description="Remove image">
-                  <button
-                    onClick={removeImage}
-                    className="absolute -top-2 -right-2 size-6 bg-black/70 hover:bg-black text-white rounded-full md:hidden flex md:group-hover/image:flex items-center justify-center z-10"
-                  >
-                    <XIcon className="size-4" />
-                  </button>
-                </Hint>
-                <Image
-                  src={uploadedImageUrl}
-                  alt="uploaded image"
-                  fill
-                  className="object-cover w-full h-full"
-                />
-              </div>
-            </div>
+      <div className="flex flex-col editor-container">
+        <input
+          type="file"
+          ref={imageInputRef}
+          accept="image/*"
+          onChange={handleImageChange}
+          className="hidden"
+        />
+        <div
+          className={cn(
+            "flex flex-col rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white",
+            { "border border-slate-200": isEditorReady }
           )}
+        >
+          <div ref={containerRef}>
+            <ReactQuillBase
+              forwardedRef={quillRef}
+              modules={modules}
+              theme="snow"
+              placeholder={placeholder}
+              defaultValue={defaultValue}
+              onChange={handleChange}
+              className="h-full"
+            />
 
-          {isEditorReady && (
-            <div className="flex px-2 pb-2 z-[5]">
-              <Hint
-                description={
-                  isToolbarVisible ? "Hide formatting" : "Show formatting"
-                }
-              >
-                <Button
-                  disabled={disabled}
-                  size={"iconSm"}
-                  variant={"ghost"}
-                  onClick={toggleToolbar}
+            {!!uploadedImageUrl && (
+              <div className="p-2">
+                <div className="relative size-[62px] flex justify-center items-center group/image">
+                  <Hint description="Remove image">
+                    <button
+                      onClick={removeImage}
+                      className="absolute -top-2 -right-2 size-6 bg-black/70 hover:bg-black text-white rounded-full md:hidden flex md:group-hover/image:flex items-center justify-center z-10"
+                    >
+                      <XIcon className="size-4" />
+                    </button>
+                  </Hint>
+                  <Image
+                    src={uploadedImageUrl}
+                    alt="uploaded image"
+                    fill
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+              </div>
+            )}
+
+            {isEditorReady && (
+              <div className="flex px-2 pb-2 z-[5]">
+                <Hint
+                  description={
+                    isToolbarVisible ? "Hide formatting" : "Show formatting"
+                  }
                 >
-                  <PiTextAa className="size-4" />
-                </Button>
-              </Hint>
-              <EmojiPopover hint="Emoji" onSelect={handleEmojiSelect}>
-                <Button disabled={disabled} size={"iconSm"} variant={"ghost"}>
-                  <SmileIcon className="size-4" />
-                </Button>
-              </EmojiPopover>
-              {variant === "create" && (
-                <Hint description="Image">
                   <Button
                     disabled={disabled}
                     size={"iconSm"}
                     variant={"ghost"}
-                    onClick={() => {
-                      imageInputRef.current?.click();
-                    }}
+                    onClick={toggleToolbar}
                   >
-                    <ImageIcon className="size-4" />
+                    <PiTextAa className="size-4" />
                   </Button>
                 </Hint>
-              )}
-
-              {variant === "update" && (
-                <div className="ml-auto flex items-center gap-x-2">
-                  <Button size={"sm"} variant={"outline"} onClick={onCancel}>
-                    Cancel
+                <EmojiPopover hint="Emoji" onSelect={handleEmojiSelect}>
+                  <Button disabled={disabled} size={"iconSm"} variant={"ghost"}>
+                    <SmileIcon className="size-4" />
                   </Button>
+                </EmojiPopover>
+                {variant === "create" && (
+                  <Hint description="Image">
+                    <Button
+                      disabled={disabled}
+                      size={"iconSm"}
+                      variant={"ghost"}
+                      onClick={() => {
+                        imageInputRef.current?.click();
+                      }}
+                    >
+                      <ImageIcon className="size-4" />
+                    </Button>
+                  </Hint>
+                )}
+
+                {params.memberId && (
+                  <Hint description="Call">
+                    <Button
+                      disabled={disabled}
+                      size={"iconSm"}
+                      variant={"ghost"}
+                      onClick={handleCall}
+                    >
+                      <PhoneOutgoingIcon className="size-4" />
+                    </Button>
+                  </Hint>
+                )}
+
+                {variant === "update" && (
+                  <div className="ml-auto flex items-center gap-x-2">
+                    <Button size={"sm"} variant={"outline"} onClick={onCancel}>
+                      Cancel
+                    </Button>
+                    <Button
+                      disabled={disabled || isEmpty}
+                      size={"sm"}
+                      onClick={handleSubmit}
+                      className="bg-[#007a5a] hover:bg-[#007a5a]/80 text-white"
+                    >
+                      Save
+                    </Button>
+                  </div>
+                )}
+
+                {variant === "create" && (
                   <Button
                     disabled={disabled || isEmpty}
-                    size={"sm"}
+                    size={"iconSm"}
+                    variant={"ghost"}
                     onClick={handleSubmit}
-                    className="bg-[#007a5a] hover:bg-[#007a5a]/80 text-white"
+                    className="ml-auto bg-[#007a5a] hover:bg-[#007a5a]/80 text-white"
                   >
-                    Save
+                    <MdSend className="size-4" />
                   </Button>
-                </div>
-              )}
-
-              {variant === "create" && (
-                <Button
-                  disabled={disabled || isEmpty}
-                  size={"iconSm"}
-                  variant={"ghost"}
-                  onClick={handleSubmit}
-                  className="ml-auto bg-[#007a5a] hover:bg-[#007a5a]/80 text-white"
-                >
-                  <MdSend className="size-4" />
-                </Button>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            )}
+          </div>
         </div>
+        {isEditorReady && variant === "create" && (
+          <div
+            className={cn(
+              "flex justify-end p-2 text-[10px] text-muted-foreground opacity-0 transition",
+              {
+                "opacity-100": !isEmpty,
+              }
+            )}
+          >
+            <p>
+              <strong>Shift + Enter</strong> to add a line
+            </p>
+          </div>
+        )}
       </div>
-      {isEditorReady && variant === "create" && (
-        <div
-          className={cn(
-            "flex justify-end p-2 text-[10px] text-muted-foreground opacity-0 transition",
-            {
-              "opacity-100": !isEmpty,
-            }
-          )}
-        >
-          <p>
-            <strong>Shift + Enter</strong> to add a line
-          </p>
-        </div>
-      )}
-    </div>
+    </>
   );
 };
 

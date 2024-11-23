@@ -69,6 +69,38 @@ const schema = defineSchema({
     .index("by_message_id", ["messageId"])
     .index("by_member_id", ["memberId"])
     .index("by_message_id_and_member_id", ["messageId", "memberId"]),
+
+  calls: defineTable({
+    workspaceId: v.id("workspaces"),
+    channelId: v.optional(v.id("channels")),
+    conversationId: v.optional(v.id("conversations")),
+
+    creatorId: v.id("members"),
+    creatorName: v.string(),
+
+    recipientId: v.id("members"),
+    recipientName: v.string(),
+
+    status: v.union(
+      v.literal("ringing"),
+      v.literal("ongoing"),
+      v.literal("ended"),
+      v.literal("rejected"),
+      v.literal("missed")
+    ),
+    statusUpdatedAt: v.number(),
+
+    startAt: v.number(),
+    endAt: v.optional(v.number()),
+    streamCallId: v.string(),
+    ringTimeout: v.number(),
+  })
+    .index("by_conversation_id_and_status", ["conversationId", "status"])
+    .index("by_creator_id_and_status", ["creatorId", "status"])
+    .index("by_recipient_id_and_status", ["recipientId", "status"])
+    .index("by_workspace_id_and_status", ["workspaceId", "status"])
+    .index("by_statusUpdatedAt", ["statusUpdatedAt"])
+    .index("by_status", ["status"]),
 });
 
 export default schema;

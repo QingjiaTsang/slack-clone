@@ -42,7 +42,10 @@ const InviteMemberModal = ({
   const { mutate, isPending } = useUpdateWorkspace();
 
   const handleCopyLink = async () => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined") {
+      return;
+    }
+
     await window.navigator.clipboard.writeText(
       `${window.location.origin}/join/${workspace._id}?joinCode=${workspace.joinCode}`
     );
@@ -78,6 +81,8 @@ const InviteMemberModal = ({
 
   return (
     <>
+      <GenerateNewJoinCodeConfirmDialog />
+
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent>
           <DialogHeader>
@@ -128,7 +133,6 @@ const InviteMemberModal = ({
           </div>
         </DialogContent>
       </Dialog>
-      <GenerateNewJoinCodeConfirmDialog />
     </>
   );
 };
