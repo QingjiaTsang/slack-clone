@@ -27,7 +27,7 @@ import WorkspaceLayoutSkeleton from "@/features/workspace/_components/WorkspaceL
 import ThreadPanel from "@/features/channel/_components/ThreadPanel";
 import ProfilePanel from "@/features/member/_components/ProfilePanel";
 import { useEffect, useMemo } from "react";
-import { useSubscribeRingingCall } from "@/features/call/api/call";
+import { useSubscribeRingingCall } from "@/api/call";
 import RingingCallModal from "@/features/call/_components/RingingCallModal";
 import { toast } from "sonner";
 

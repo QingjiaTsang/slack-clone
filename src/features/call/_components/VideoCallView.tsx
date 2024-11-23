@@ -22,7 +22,7 @@ import { LoaderIcon } from "lucide-react";
 
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { toast } from "sonner";
-import { useUpdateCallStatus } from "@/features/call/api/call";
+import { useUpdateCallStatus } from "@/api/call";
 
 type VideoCallViewProps = {
   apiKey: string;
@@ -72,7 +72,7 @@ const VideoCallView = ({
 
     // if either user leaves the call, set status of the call to be ended
     // and redirect to the home page with a toast notification
-    client.on("call.session_participant_left", (event) => {
+    client.on("call.session_participant_left", () => {
       updateCallStatus({
         callId,
         status: "ended",
@@ -90,6 +90,7 @@ const VideoCallView = ({
         .catch((e) => console.error("Failed to disconnect user", e));
       setClient(undefined);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiKey, user, token, callId]);
 
   // call setup
@@ -101,7 +102,9 @@ const VideoCallView = ({
     const call = client.call("default", callId);
     setCall(call);
 
-    const joinCall = async () => {
+    // join call
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    (async () => {
       try {
         await call.getOrCreate();
         await call.join({ create: true });
@@ -111,22 +114,22 @@ const VideoCallView = ({
           router.refresh();
         }
       }
-    };
+    })();
 
-    joinCall();
-
+    // cleanup
     return () => {
-      const leaveCall = async () => {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      (async () => {
         try {
           await call.leave();
         } catch (e) {
-          console.error(e);
+          console.error("Failed to leave call:", e);
+        } finally {
+          setCall(undefined);
         }
-      };
-      leaveCall();
-      setCall(undefined);
+      })();
     };
-  }, [client, callId]);
+  }, [client, callId, router]);
 
   // remove active-call flag from localStorage when the tab is closed or the user navigates away
   useEffect(() => {
@@ -143,6 +146,7 @@ const VideoCallView = ({
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [callId]);
 
   if (!client || !call) {

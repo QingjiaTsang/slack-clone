@@ -14,7 +14,8 @@
           "src/stores/**",
           "src/types/**",
           "src/lib/**/*",
-          "src/api/**/*"
+          "src/api/**/*",
+          "src/actions/**/*"
           // "src/data/**/*",
           // "src/drizzle/**/*",
           // "src/server/**/*"

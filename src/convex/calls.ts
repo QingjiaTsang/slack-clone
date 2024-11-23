@@ -1,4 +1,4 @@
-import { Doc, Id } from "./_generated/dataModel";
+import { Id } from "./_generated/dataModel";
 
 import { v } from "convex/values";
 import { type QueryCtxWithUserId, mutation, query } from "./functions";
@@ -9,12 +9,10 @@ import { internalMutation } from "./_generated/server";
 
 const checkUsersInCall = async ({
   ctx,
-  workspaceId,
   currentUserMemberId,
   targetMemberId,
 }: {
   ctx: QueryCtxWithUserId;
-  workspaceId: Id<"workspaces">;
   currentUserMemberId: Id<"members">;
   targetMemberId: Id<"members">;
 }) => {
@@ -107,7 +105,6 @@ export const create = mutation({
 
     const isBusyLine = await checkUsersInCall({
       ctx,
-      workspaceId,
       currentUserMemberId: currentUserMember._id,
       targetMemberId,
     });

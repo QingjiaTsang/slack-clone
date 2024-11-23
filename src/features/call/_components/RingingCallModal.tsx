@@ -12,7 +12,7 @@ import {
 } from "@/components/shadcnUI/dialog";
 import { Button } from "@/components/shadcnUI/button";
 import { Phone, PhoneOff } from "lucide-react";
-import { useUpdateCallStatus } from "@/features/call/api/call";
+import { useUpdateCallStatus } from "@/api/call";
 import { toast } from "sonner";
 
 type RingingCallModalProps = {

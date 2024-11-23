@@ -26,7 +26,7 @@ import { cn } from "@/lib/utils";
 
 import ReactQuillBase from "@/components/ReactQuillBase";
 import useConfirm from "@/hooks/useConfirm";
-import { useCreateCall } from "@/features/call/api/call";
+import { useCreateCall } from "@/api/call";
 import { toast } from "sonner";
 
 export type EditorSubmitData = {
@@ -141,7 +141,7 @@ const Editor = ({
     }
 
     try {
-      const callId = await createCall({
+      await createCall({
         workspaceId: params.workspaceId as Id<"workspaces">,
         conversationId: conversationId as Id<"conversations">,
       });

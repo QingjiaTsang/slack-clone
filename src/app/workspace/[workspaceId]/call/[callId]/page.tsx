@@ -1,7 +1,7 @@
 import { Id } from "@/convex/_generated/dataModel";
 
 import { api } from "@/convex/_generated/api";
-import { fetchMutation, fetchQuery } from "convex/nextjs";
+import { fetchQuery } from "convex/nextjs";
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 
 import { createStreamUserTokenAction } from "@/actions/calls";

@@ -12,9 +12,6 @@ import { useGetCurrentUserMemberWithUserInfo } from "@/api/user";
 import MessagesInfiniteScrollLoader from "@/components/MessagesInfiniteScrollLoader";
 import DirectMessageHero from "@/features/member/_components/DirectMessageHero";
 
-import { PhoneOutgoing } from "lucide-react";
-import { Button } from "@/components/shadcnUI/button";
-
 type DirectMessageViewProps = {
   conversationId: Id<"conversations">;
   memberWithUserInfo: Doc<"members"> & { user: Doc<"users"> };
