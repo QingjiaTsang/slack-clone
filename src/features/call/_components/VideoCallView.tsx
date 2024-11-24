@@ -17,6 +17,7 @@ import {
   StreamTheme,
   StreamVideo,
   useCallStateHooks,
+  AxiosError,
 } from "@stream-io/video-react-sdk";
 import { LoaderIcon } from "lucide-react";
 
@@ -66,6 +67,12 @@ const VideoCallView = ({
       apiKey,
       user,
       token,
+      options: {
+        axiosRequestConfig: {
+          // to prevent timeout error when joining call
+          timeout: 20000,
+        },
+      },
     });
 
     setClient(client);
@@ -110,7 +117,7 @@ const VideoCallView = ({
         await call.join({ create: true });
       } catch (e) {
         console.error("Failed to join call", e);
-        if (e instanceof Error && e.message.includes("timeout")) {
+        if (e instanceof AxiosError && e.message.includes("timeout")) {
           router.refresh();
         }
       }

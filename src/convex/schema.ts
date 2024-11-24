@@ -84,6 +84,7 @@ const schema = defineSchema({
     status: v.union(
       v.literal("ringing"),
       v.literal("ongoing"),
+      v.literal("cancelled"),
       v.literal("ended"),
       v.literal("rejected"),
       v.literal("missed")

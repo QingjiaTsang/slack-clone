@@ -212,7 +212,8 @@ export const updateStatus = mutation({
         v.literal("ongoing"),
         v.literal("ended"),
         v.literal("rejected"),
-        v.literal("missed")
+        v.literal("missed"),
+        v.literal("cancelled")
       )
     ),
     endAt: v.optional(v.number()),

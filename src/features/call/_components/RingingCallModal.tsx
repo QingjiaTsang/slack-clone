@@ -1,6 +1,5 @@
 import { Doc } from "@/convex/_generated/dataModel";
 
-import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 import {
@@ -17,77 +16,62 @@ import { toast } from "sonner";
 
 type RingingCallModalProps = {
   ringingCall: Doc<"calls"> | null | undefined;
+  isRingingCallModalOpen: boolean;
+  setIsRingingCallModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const RingingCallModal = ({ ringingCall }: RingingCallModalProps) => {
+const RingingCallModal = ({
+  ringingCall,
+  isRingingCallModalOpen,
+  setIsRingingCallModalOpen,
+}: RingingCallModalProps) => {
   const router = useRouter();
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  // play the ringtone when the call is ringing
-  useEffect(() => {
-    if (ringingCall) {
-      audioRef.current = new Audio("/audio/call-ringtone.mp3");
-      audioRef.current.loop = true;
-      audioRef.current.play().catch((error) => {
-        console.error("Failed to play ringtone:", error);
-      });
-    }
-
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-    };
-  }, [ringingCall]);
 
   const { mutate: updateCallStatus, isPending: isUpdatingCallStatus } =
     useUpdateCallStatus();
 
-  const handleAccept = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-    }
+  const isCallValid = (
+    call: Doc<"calls"> | null | undefined
+  ): call is Doc<"calls"> => {
+    return !!call && call.ringTimeout > Date.now();
+  };
 
-    if (isUpdatingCallStatus) {
+  const handleAccept = () => {
+    if (isUpdatingCallStatus || !isCallValid(ringingCall)) {
       return;
     }
 
-    if (ringingCall && ringingCall.ringTimeout > Date.now()) {
-      updateCallStatus(
-        {
-          callId: ringingCall._id,
-          status: "ongoing",
+    updateCallStatus(
+      {
+        callId: ringingCall._id,
+        status: "ongoing",
+      },
+      {
+        onSuccess: () => {
+          router.push(
+            `/workspace/${ringingCall.workspaceId}/call/${ringingCall._id}`
+          );
         },
-        {
-          onSuccess: () =>
-            router.push(
-              `/workspace/${ringingCall.workspaceId}/call/${ringingCall._id}`
-            ),
-          onError: () => {
-            toast.error("Something went wrong while accepting call");
-          },
-        }
-      );
-    }
+        onError: () => {
+          toast.error("Something went wrong while accepting call");
+        },
+      }
+    );
   };
 
   const handleReject = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-    }
-
-    if (isUpdatingCallStatus) {
+    if (isUpdatingCallStatus || !ringingCall) {
       return;
     }
 
-    if (ringingCall) {
-      updateCallStatus({ callId: ringingCall._id, status: "rejected" });
-    }
+    updateCallStatus({ callId: ringingCall._id, status: "rejected" });
   };
 
   return (
-    <Dialog open={!!ringingCall}>
+    <Dialog
+      open={isRingingCallModalOpen}
+      onOpenChange={setIsRingingCallModalOpen}
+    >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Incoming Call</DialogTitle>
@@ -95,7 +79,7 @@ const RingingCallModal = ({ ringingCall }: RingingCallModalProps) => {
             {ringingCall?.creatorName} is calling you
           </DialogDescription>
         </DialogHeader>
-        <div className="flex justify-center gap-4 pt-4">
+        <div className="flex justify-center gap-6 pt-4">
           <Button
             onClick={handleReject}
             variant="destructive"

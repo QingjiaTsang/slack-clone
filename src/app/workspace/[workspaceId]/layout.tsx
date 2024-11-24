@@ -1,8 +1,6 @@
 "use client";
 
-import { Doc, Id } from "@/convex/_generated/dataModel";
-
-import { useRouter } from "next/navigation";
+import { Id } from "@/convex/_generated/dataModel";
 
 import {
   ResizableHandle,
@@ -17,25 +15,16 @@ import WorkspaceSidebar from "@/features/workspace/_components/WorkspaceSidebar"
 
 import CreateWorkspaceModal from "@/features/workspace/_components/CreateWorkspaceModal";
 import CreateChannelModal from "@/features/channel/_components/CreateChannelModal";
-import {
-  useGetAllWorkspacesByAuth,
-  useGetWorkspaceById,
-} from "@/features/workspace/api/workspace";
-import { useGetCurrentUserRoleInWorkspace } from "@/api/user";
+
 import usePanel from "@/hooks/usePanel";
 import WorkspaceLayoutSkeleton from "@/features/workspace/_components/WorkspaceLayoutSkeleton";
 import ThreadPanel from "@/features/channel/_components/ThreadPanel";
 import ProfilePanel from "@/features/member/_components/ProfilePanel";
-import { useEffect, useMemo } from "react";
-import { useSubscribeRingingCall } from "@/api/call";
 import RingingCallModal from "@/features/call/_components/RingingCallModal";
-import { toast } from "sonner";
+import RingingCallFloatingEntry from "@/components/RingingCallFloatingEntry";
 
-type CallStatusRecord = {
-  [K in Doc<"calls">["status"]]?: number;
-} & {
-  ringTimeout?: number;
-};
+import useWorkspaceData from "@/features/workspace/hooks/useWorkspaceData";
+import useCallManagement from "@/hooks/useCallManagement";
 
 type WorkspaceLayoutProps = {
   params: {
@@ -45,133 +34,33 @@ type WorkspaceLayoutProps = {
 };
 
 const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
-  const router = useRouter();
-
-  const { data: currentWorkspace, isPending: isCurrentWorkspacePending } =
-    useGetWorkspaceById(params.workspaceId);
-  const { data: userWorkspaces, isPending: isUserWorkspacesPending } =
-    useGetAllWorkspacesByAuth();
-  const { data: currentUserRoleInfo, isPending: isCurrentUserRoleInfoPending } =
-    useGetCurrentUserRoleInWorkspace(params.workspaceId);
-
-  const { data: ringingCall } = useSubscribeRingingCall(params.workspaceId);
-
-  const { parentMessageId, profileMemberId, closePanel } = usePanel();
-
-  const isAdmin = currentUserRoleInfo?.role === "admin";
-
-  const showPanel = !!parentMessageId || !!profileMemberId;
-
-  const incomingCall = useMemo(() => {
-    if (!ringingCall) {
-      return null;
-    }
-
-    if (
-      ringingCall.recipientId === currentUserRoleInfo?._id &&
-      ringingCall.status === "ringing"
-    ) {
-      return ringingCall;
-    }
-
-    return null;
-  }, [ringingCall, currentUserRoleInfo]);
-
-  // redirect to home page if the workspace is not found
-  useEffect(() => {
-    if (
-      !isCurrentWorkspacePending &&
-      !isUserWorkspacesPending &&
-      !isCurrentUserRoleInfoPending
-    ) {
-      if (
-        !currentWorkspace ||
-        !userWorkspaces ||
-        userWorkspaces?.length === 0 ||
-        !currentUserRoleInfo
-      ) {
-        router.replace("/");
-      }
-    }
-  }, [
+  const {
     currentWorkspace,
     userWorkspaces,
     currentUserRoleInfo,
-    router,
-    isCurrentWorkspacePending,
-    isUserWorkspacesPending,
-    isCurrentUserRoleInfoPending,
-  ]);
+    isLoading,
+    isAdmin,
+  } = useWorkspaceData(params.workspaceId);
 
-  // Using localStorage to track which call status notifications have already been shown to the user
-  // This prevents duplicate notifications if the component re-renders or the user reloads the page,
-  // and the call hasn't reached the ringTimeout which will cause the toast still to be shown
-  useEffect(() => {
-    const isCallCreator = ringingCall?.creatorId === currentUserRoleInfo?._id;
-    if (!ringingCall || !isCallCreator) {
-      return;
-    }
+  const {
+    incomingCall,
+    isRingingCallModalOpen,
+    setIsRingingCallModalOpen,
+    currentRingingCall,
+  } = useCallManagement(params.workspaceId, currentUserRoleInfo?._id);
 
-    const shownStatuses: CallStatusRecord = JSON.parse(
-      localStorage.getItem(`call-status-${ringingCall._id}`) || "{}"
-    );
+  const { parentMessageId, profileMemberId, closePanel } = usePanel();
 
-    if (ringingCall.status === "ongoing" && !shownStatuses?.ongoing) {
-      toast.info(`Call to ${ringingCall.recipientName} is accepted`);
-      router.push(
-        `/workspace/${ringingCall.workspaceId}/call/${ringingCall._id}`
-      );
-    } else if (ringingCall.status === "rejected" && !shownStatuses?.rejected) {
-      toast.error(`Call to ${ringingCall.recipientName} is rejected`);
-    }
+  const showPanel = !!parentMessageId || !!profileMemberId;
 
-    localStorage.setItem(
-      `call-status-${ringingCall._id}`,
-      JSON.stringify({
-        ...shownStatuses,
-        [ringingCall.status]: ringingCall.statusUpdatedAt,
-        ringTimeout: ringingCall.ringTimeout,
-      } satisfies CallStatusRecord)
-    );
-
-    // cleanup expired calls status records in localStorage
-    // when the latest feedback of a call is received
-    const cleanupExpiredCallStatusRecords = () => {
-      const allKeys = Object.keys(localStorage);
-      allKeys.forEach((key) => {
-        if (key.startsWith("call-status-")) {
-          const callId = key.replace("call-status-", "");
-          const callStatusRecord = JSON.parse(
-            localStorage.getItem(key) || "{}"
-          ) as CallStatusRecord;
-
-          if (callId !== ringingCall._id) {
-            if (
-              callStatusRecord.ringTimeout &&
-              callStatusRecord.ringTimeout < Date.now()
-            ) {
-              localStorage.removeItem(key);
-            }
-          }
-        }
-      });
-    };
-
-    cleanupExpiredCallStatusRecords();
-  }, [ringingCall, currentUserRoleInfo, router]);
-
-  if (
-    isCurrentWorkspacePending ||
-    isUserWorkspacesPending ||
-    isCurrentUserRoleInfoPending
-  ) {
+  if (isLoading) {
     return <WorkspaceLayoutSkeleton />;
   }
 
   if (
     !currentWorkspace ||
     !userWorkspaces ||
-    userWorkspaces?.length === 0 ||
+    !userWorkspaces?.length ||
     !currentUserRoleInfo
   ) {
     return null;
@@ -179,7 +68,12 @@ const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
 
   return (
     <WorkspaceProvider currentWorkspace={currentWorkspace}>
-      <RingingCallModal ringingCall={incomingCall} />
+      {/* show the ringing call modal for the recipient when the call is incoming */}
+      <RingingCallModal
+        ringingCall={incomingCall}
+        isRingingCallModalOpen={isRingingCallModalOpen}
+        setIsRingingCallModalOpen={setIsRingingCallModalOpen}
+      />
 
       <div>
         <HeaderNavBar workspaceId={params.workspaceId} />
@@ -187,6 +81,15 @@ const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
           <SideBar
             currentWorkspace={currentWorkspace}
             userWorkspaces={userWorkspaces}
+          />
+
+          {/* show the floating entry for the caller and the recipient when the call is ringing */}
+          <RingingCallFloatingEntry
+            currentRingingCall={currentRingingCall}
+            isCreator={
+              currentRingingCall?.creatorId === currentUserRoleInfo?._id
+            }
+            setIsRingingCallModalOpen={setIsRingingCallModalOpen}
           />
 
           <ResizablePanelGroup
