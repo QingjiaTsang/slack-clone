@@ -77,7 +77,7 @@ const CallIdPage = async ({ params }: CallIdPageProps) => {
   );
 
   return (
-    <div className="h-[calc(100svh-theme(spacing.14))] flex flex-col">
+    <div className="h-[calc(100dvh-theme(spacing.14))] flex flex-col">
       <VideoCallView
         apiKey={process.env.STREAM_API_KEY!}
         user={clientUser}

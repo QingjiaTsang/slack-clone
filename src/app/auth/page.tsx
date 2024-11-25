@@ -2,7 +2,7 @@ import AuthScreen from "@/features/auth/_components/AuthScreen";
 
 const AuthPage = () => {
   return (
-    <div className="h-svh">
+    <div className="h-dvh">
       <AuthScreen />
     </div>
   );

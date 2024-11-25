@@ -68,7 +68,7 @@ const WorkspaceSidebar = ({
       </div>
 
       {isMobile && (
-        <div className="mt-auto px-5 py-2 w-full">
+        <div className="mt-auto px-5 py-2.5 w-full">
           <UserButton isMobile={isMobile} />
         </div>
       )}

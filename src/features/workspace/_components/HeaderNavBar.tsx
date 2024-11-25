@@ -39,7 +39,7 @@ const HeaderNavBar = ({
           <SheetContent
             side="left"
             hideCloseButton={true}
-            className="w-[280px] p-0 bg-[#5E2C5F] border-none"
+            className="w-[310px] p-0 bg-[#5E2C5F] border-none"
           >
             <WorkspaceSidebar
               isAdmin={isAdmin}

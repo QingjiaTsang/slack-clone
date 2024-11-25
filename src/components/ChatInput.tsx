@@ -79,7 +79,7 @@ const ChatInput = ({ placeholder, conversationId }: ChatInputProps) => {
   };
 
   return (
-    <div className="px-5 w-full">
+    <div className="w-full px-5">
       <Editor
         key={rerenderFlag}
         quillRef={editorRef}

@@ -3,6 +3,7 @@
 import { Id } from "@/convex/_generated/dataModel";
 
 import {
+  ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/shadcnUI/resizable";
@@ -79,7 +80,7 @@ const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
         setIsRingingCallModalOpen={setIsRingingCallModalOpen}
       />
 
-      <div className="flex h-screen flex-col">
+      <div className="flex h-dvh flex-col">
         <HeaderNavBar
           workspaceId={params.workspaceId}
           isAdmin={isAdmin}
@@ -113,7 +114,7 @@ const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
               minSize={20}
               className={cn(
                 "bg-[#5E2C5F]",
-                "h-[calc(100svh-56px)]",
+                "h-[calc(100dvh-56px)]",
                 "hidden md:block"
               )}
             >
@@ -123,12 +124,15 @@ const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
               />
             </ResizablePanel>
 
-            <ResizablePanel id="main" minSize={20}>
+            <ResizableHandle className="hidden md:block md:bg-[#5E2C5F]" />
+
+            <ResizablePanel id="main" minSize={20} className="overflow-hidden">
               {children}
             </ResizablePanel>
 
             {showPanel && (
               <>
+                <ResizableHandle className="hidden md:block md:bg-[#5E2C5F]" />
                 <ResizablePanel
                   id="thread"
                   defaultSize={30}

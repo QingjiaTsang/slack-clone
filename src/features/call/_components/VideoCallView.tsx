@@ -195,7 +195,7 @@ export const MyUILayout = () => {
       <div className="pt-16">
         <SpeakerLayout participantsBarPosition="bottom" />
       </div>
-      <div className="absolute bottom-0.5 left-1/2 -translate-x-1/2">
+      <div className="absolute bottom-16 md:bottom-0 left-1/2 -translate-x-1/2">
         <CallControls />
       </div>
     </StreamTheme>

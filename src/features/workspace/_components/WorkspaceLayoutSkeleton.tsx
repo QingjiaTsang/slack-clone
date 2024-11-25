@@ -10,7 +10,7 @@ const WorkspaceLayoutSkeleton = () => {
 
   if (isMobile) {
     return (
-      <div className="flex flex-col h-[100svh]">
+      <div className="flex flex-col h-[100dvh]">
         {/* mobile header skeleton */}
         <div className="h-14 bg-[#481349] flex items-center px-4 gap-4">
           <Skeleton className="w-8 h-8" />
@@ -81,7 +81,7 @@ const WorkspaceLayoutSkeleton = () => {
 
       <div className="flex">
         {/* workspace switcher sidebar skeleton */}
-        <div className="hidden md:flex h-[calc(100svh-56px)] w-20 bg-[#481349] flex-col items-center p-2 space-y-4">
+        <div className="hidden md:flex h-[calc(100dvh-56px)] w-20 bg-[#481349] flex-col items-center p-2 space-y-4">
           <div className="w-12 h-12 rounded-lg bg-white/10 animate-pulse" />
           {[...Array(5)].map((_, i) => (
             <div
@@ -99,7 +99,7 @@ const WorkspaceLayoutSkeleton = () => {
           <ResizablePanel
             defaultSize={20}
             minSize={20}
-            className="bg-[#5E2C5F] h-[calc(100svh-56px)]"
+            className="bg-[#5E2C5F] h-[calc(100dvh-56px)]"
           >
             <div className="p-4 space-y-6">
               {/* workspace header skeleton */}

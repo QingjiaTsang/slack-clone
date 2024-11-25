@@ -38,7 +38,7 @@ const SideBar = ({ currentWorkspace, userWorkspaces }: SideNavBarProps) => {
   ];
 
   return (
-    <aside className="hidden md:flex h-[calc(100svh-56px)] w-20 bg-[#481349] flex-col justify-between items-center p-2">
+    <aside className="hidden md:flex h-[calc(100dvh-56px)] w-20 bg-[#481349] flex-col justify-between items-center p-2">
       <div className="flex flex-col items-center h-full text-gray-200 gap-4">
         <WorkspaceSwitcher
           currentWorkspace={currentWorkspace}

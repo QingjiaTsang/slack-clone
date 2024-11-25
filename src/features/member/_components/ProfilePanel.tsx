@@ -281,7 +281,7 @@ const ProfileNotFound = () => (
 );
 
 const ProfileLoading = () => (
-  <div className="flex flex-col h-full md:h-[calc(100svh-theme(spacing.16))]">
+  <div className="flex flex-col h-full md:h-[calc(100dvh-theme(spacing.16))]">
     <div className="p-2 flex justify-between items-center border-b border-b-gray-100 shadow-sm">
       <div className="px-2 font-semibold text-xl">Profile</div>
     </div>
