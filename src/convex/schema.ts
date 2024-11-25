@@ -70,6 +70,10 @@ const schema = defineSchema({
     .index("by_member_id", ["memberId"])
     .index("by_message_id_and_member_id", ["messageId", "memberId"]),
 
+  // requirements for calls:
+  // 1. caller and recipient must be members of the same workspace with an existing conversation
+  // 2. recipient can only be in one active call across all workspaces
+  // 3. caller can only initiate one call at a time
   calls: defineTable({
     workspaceId: v.id("workspaces"),
     channelId: v.optional(v.id("channels")),
