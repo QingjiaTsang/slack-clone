@@ -4,7 +4,10 @@ import {
   Dialog,
   DialogContent,
   DialogTrigger,
+  DialogClose,
 } from "@/components/shadcnUI/dialog";
+
+import { X } from "lucide-react";
 
 type ThumbnailProps = {
   imageUrl: string;
@@ -30,16 +33,20 @@ const Thumbnail = ({ imageUrl, alt = "Message thumbnail" }: ThumbnailProps) => {
       </DialogTrigger>
 
       <DialogContent className="max-w-[800px] border-none bg-transparent p-0 shadow-none [&>button]:hidden">
-        <Image
-          src={imageUrl}
-          alt={alt}
-          width={800}
-          height={0}
-          loading="lazy"
-          quality={85}
-          sizes="(max-width: 1200px) 100vw, 800px"
-          className="rounded-lg aspect-auto"
-        />
+        <div className="relative">
+          <Image
+            src={imageUrl}
+            alt={alt}
+            width={800}
+            height={0}
+            quality={85}
+            sizes="(max-width: 1200px) 100vw, 800px"
+            className="rounded-lg aspect-auto object-contain max-h-[100dvh]"
+          />
+          <DialogClose className="absolute top-4 right-4 rounded-full bg-black/40 p-2 hover:bg-black/60 transition-colors">
+            <X className="h-4 w-4 text-white" />
+          </DialogClose>
+        </div>
       </DialogContent>
     </Dialog>
   );
