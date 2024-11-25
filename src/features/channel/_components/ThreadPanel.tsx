@@ -84,7 +84,7 @@ const ThreadPanel = ({ messageId, onClose }: ThreadPanelProps) => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100svh-theme(spacing.16))]">
+    <div className="flex flex-col h-full md:h-[calc(100svh-theme(spacing.16))] bg-white">
       <div className="p-2 flex justify-between items-center border-b border-b-gray-100 shadow-sm">
         <div className="px-2 font-semibold text-xl">Thread</div>
         <Button variant="ghost" size="icon" onClick={onClose}>

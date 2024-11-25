@@ -4,7 +4,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/shadcnUI/dialog";
@@ -49,12 +48,12 @@ const useConfirm = ({ title, message }: UseConfirmProps) => {
 
         <>{message}</>
 
-        <DialogFooter>
+        <div className="flex justify-center gap-6 pt-4">
           <Button variant="outline" onClick={handleCancel}>
             Cancel
           </Button>
           <Button onClick={handleConfirm}>Confirm</Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );

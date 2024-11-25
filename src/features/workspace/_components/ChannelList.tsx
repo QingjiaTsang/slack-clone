@@ -2,8 +2,7 @@
 
 import { Channel, Workspace } from "@/types/docs";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { Skeleton } from "@/components/shadcnUI/skeleton";
 
@@ -16,9 +15,13 @@ import { useGetAllChannelsByWorkspaceId } from "@/features/workspace/api/workspa
 
 type ChannelListProps = {
   workspace: Workspace;
+  setIsMobileSideBarOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const ChannelList = ({ workspace }: ChannelListProps) => {
+const ChannelList = ({
+  workspace,
+  setIsMobileSideBarOpen,
+}: ChannelListProps) => {
   const { openModal } = useCreateChannelModal();
 
   const { data: channels, isPending } = useGetAllChannelsByWorkspaceId(
@@ -49,6 +52,7 @@ const ChannelList = ({ workspace }: ChannelListProps) => {
           key={channel._id}
           channel={channel}
           workspace={workspace}
+          setIsMobileSideBarOpen={setIsMobileSideBarOpen}
         />
       ))}
     </WorkspaceSection>
@@ -60,26 +64,31 @@ export default ChannelList;
 const ChannelItem = ({
   channel,
   workspace,
+  setIsMobileSideBarOpen,
 }: {
   channel: Channel;
   workspace: Workspace;
+  setIsMobileSideBarOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const pathname = usePathname();
+  const router = useRouter();
 
   return (
-    <Link href={`/workspace/${workspace._id}/channel/${channel._id}`}>
-      <div
-        className={cn(
-          "flex items-center lowercase text-[#f9edffcc] gap-2 cursor-pointer hover:bg-white/10 rounded-md py-0.5 px-3",
-          {
-            "bg-white/85 hover:bg-white/85 text-black":
-              pathname === `/workspace/${workspace._id}/channel/${channel._id}`,
-          }
-        )}
-      >
-        <div className="text-sm shrink-0">#</div>
-        <div className="truncate">{channel.name}</div>
-      </div>
-    </Link>
+    <div
+      onClick={() => {
+        setIsMobileSideBarOpen?.(false);
+        router.push(`/workspace/${workspace._id}/channel/${channel._id}`);
+      }}
+      className={cn(
+        "flex items-center lowercase text-[#f9edffcc] gap-2 cursor-pointer hover:bg-white/10 rounded-md py-0.5 px-3",
+        {
+          "bg-white/85 hover:bg-white/85 text-black":
+            pathname === `/workspace/${workspace._id}/channel/${channel._id}`,
+        }
+      )}
+    >
+      <div className="text-sm shrink-0">#</div>
+      <div className="truncate">{channel.name}</div>
+    </div>
   );
 };

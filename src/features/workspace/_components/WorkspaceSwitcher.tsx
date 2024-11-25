@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/shadcnUI/dropdown-menu";
 
-import { ChevronDownIcon, Plus } from "lucide-react";
+import { ChevronDownIcon, PlusIcon } from "lucide-react";
 
 import { useCreateWorkspaceModal } from "@/stores/useCreateWorkspaceModal";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -98,7 +98,7 @@ const WorkspaceSwitcher = ({
               size={"icon"}
               className="text-xl bg-[#F2F2F2]  text-slate-800 font-semibold group-hover:bg-[#F2F2F2]/80"
             >
-              <Plus />
+              <PlusIcon />
             </Button>
             Create a new workspace
           </div>

@@ -162,14 +162,15 @@ const ProfilePanel = ({
       <UpdateMemberRoleConfirmDialog />
       <RemoveMemberConfirmDialog />
 
-      <div className="flex flex-col h-[calc(100svh-theme(spacing.16))]">
-        <div className="p-2 flex justify-between items-center border-b border-b-gray-100 shadow-sm">
-          <div className="px-2 font-semibold text-xl">Profile</div>
+      <div className="flex flex-col h-full bg-white">
+        <div className="flex items-center justify-between p-4 border-b">
+          <h2 className="text-xl font-bold">Profile</h2>
           <Button variant="ghost" size="icon" onClick={onClose}>
-            <XIcon className="size-4 stroke-[1.5]" />
+            <XIcon className="h-4 w-4" />
           </Button>
         </div>
-        <div className="flex flex-col flex-1 p-6">
+
+        <div className="flex-1 overflow-y-auto p-6">
           <div className="mb-8 flex justify-center items-center">
             <Avatar className="max-w-64 max-h-64 size-full">
               <AvatarImage
@@ -280,7 +281,7 @@ const ProfileNotFound = () => (
 );
 
 const ProfileLoading = () => (
-  <div className="flex flex-col h-[calc(100svh-theme(spacing.16))]">
+  <div className="flex flex-col h-full md:h-[calc(100svh-theme(spacing.16))]">
     <div className="p-2 flex justify-between items-center border-b border-b-gray-100 shadow-sm">
       <div className="px-2 font-semibold text-xl">Profile</div>
     </div>

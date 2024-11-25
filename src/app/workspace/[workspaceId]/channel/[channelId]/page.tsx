@@ -38,7 +38,7 @@ const ChannelIdPage = async ({ params }: ChannelPageProps) => {
     const isAdmin = currentUserRoleInfo?.role === "admin";
 
     return (
-      <div className="flex flex-col h-[calc(100svh-theme(spacing.16))]">
+      <div className="flex flex-col h-[calc(100svh-theme(spacing.16))] pb-8 md:pb-0">
         <ChannelHeader channel={channel} isAdmin={isAdmin} />
         <ChannelMessageView channel={channel} />
         <ChatInput placeholder={`Message #${channel?.name}`} />

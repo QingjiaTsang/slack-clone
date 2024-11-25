@@ -17,13 +17,15 @@ import {
 } from "@/components/shadcnUI/avatar";
 
 import { LoaderIcon } from "lucide-react";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useGetCurrentUser } from "@/api/user";
+import { cn } from "@/lib/utils";
 
-const UserButton = () => {
+type UserButtonProps = {
+  isMobile?: boolean;
+};
+
+const UserButton = ({ isMobile = false }: UserButtonProps) => {
   const router = useRouter();
-
-  const isMobile = useMediaQuery("(max-width: 768px)");
 
   const { signOut } = useAuthActions();
 
@@ -41,16 +43,31 @@ const UserButton = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <div className="flex items-center">
-          <Avatar>
-            <AvatarImage src={user!.image!} />
-            <AvatarFallback className="text-xl">
-              {avatarFallback}
-            </AvatarFallback>
-          </Avatar>
-          {isMobile && <span className="ml-2">{user!.name}</span>}
-        </div>
+      <DropdownMenuTrigger asChild>
+        {isMobile ? (
+          <div
+            className={cn(
+              "flex items-center bg-white backdrop-blur rounded-md p-1 hover:bg-gray-100 shadow-sm w-full cursor-pointer transition-all"
+            )}
+          >
+            <Avatar>
+              <AvatarImage src={user!.image!} />
+              <AvatarFallback className="text-xl">
+                {avatarFallback}
+              </AvatarFallback>
+            </Avatar>
+            <span className="ml-2">{user!.name}</span>
+          </div>
+        ) : (
+          <div className="flex items-center">
+            <Avatar>
+              <AvatarImage src={user!.image!} />
+              <AvatarFallback className="text-xl">
+                {avatarFallback}
+              </AvatarFallback>
+            </Avatar>
+          </div>
+        )}
       </DropdownMenuTrigger>
 
       <DropdownMenuContent>

@@ -3,7 +3,6 @@
 import { Id } from "@/convex/_generated/dataModel";
 
 import {
-  ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/shadcnUI/resizable";
@@ -25,6 +24,9 @@ import RingingCallFloatingEntry from "@/components/RingingCallFloatingEntry";
 
 import useWorkspaceData from "@/features/workspace/hooks/useWorkspaceData";
 import useCallManagement from "@/hooks/useCallManagement";
+
+import { cn } from "@/lib/utils";
+import MobileNavBar from "@/components/MobileNavBar";
 
 type WorkspaceLayoutProps = {
   params: {
@@ -71,26 +73,30 @@ const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
 
   return (
     <WorkspaceProvider currentWorkspace={currentWorkspace}>
-      {/* show the ringing call modal for the recipient when the call is incoming */}
       <RingingCallModal
         ringingCall={incomingCall}
         isRingingCallModalOpen={isRingingCallModalOpen}
         setIsRingingCallModalOpen={setIsRingingCallModalOpen}
       />
 
-      <div>
-        <HeaderNavBar workspaceId={params.workspaceId} />
-        <div className="flex">
-          <SideBar
-            currentWorkspace={currentWorkspace}
-            userWorkspaces={userWorkspaces}
-          />
+      <div className="flex h-screen flex-col">
+        <HeaderNavBar
+          workspaceId={params.workspaceId}
+          isAdmin={isAdmin}
+          workspace={currentWorkspace}
+        />
 
-          {/* show the floating entry for the caller and the recipient when the call is ringing */}
+        <div className="flex flex-1 overflow-hidden">
+          <div className="hidden md:block">
+            <SideBar
+              currentWorkspace={currentWorkspace}
+              userWorkspaces={userWorkspaces}
+            />
+          </div>
+
           <RingingCallFloatingEntry
             currentRingingCall={currentRingingCall}
             isCreator={
-              // currentRingingCall?.creatorId === currentUserRoleInfo?._id
               currentRingingCall?.creatorUserId === currentUserRoleInfo?.userId
             }
             setIsRingingCallModalOpen={setIsRingingCallModalOpen}
@@ -99,30 +105,38 @@ const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
           <ResizablePanelGroup
             direction="horizontal"
             autoSaveId="workspace-layout"
+            className="flex-1"
           >
             <ResizablePanel
               id="sidebar"
               defaultSize={20}
               minSize={20}
-              className="bg-[#5E2C5F] h-[calc(100svh-56px)]"
+              className={cn(
+                "bg-[#5E2C5F]",
+                "h-[calc(100svh-56px)]",
+                "hidden md:block"
+              )}
             >
               <WorkspaceSidebar
                 isAdmin={isAdmin}
                 workspace={currentWorkspace}
               />
             </ResizablePanel>
-            <ResizableHandle withHandle className="bg-[#5E2C5F]" />
+
             <ResizablePanel id="main" minSize={20}>
               {children}
             </ResizablePanel>
+
             {showPanel && (
               <>
-                <ResizableHandle withHandle />
                 <ResizablePanel
                   id="thread"
                   defaultSize={30}
                   minSize={20}
-                  className="shadow-[0_0_8px_rgba(0,0,0,0.25)]"
+                  className={cn(
+                    "shadow-[0_0_8px_rgba(0,0,0,0.25)]",
+                    "fixed inset-0 z-50 md:relative md:inset-auto"
+                  )}
                 >
                   {parentMessageId ? (
                     <ThreadPanel
@@ -141,6 +155,8 @@ const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
             )}
           </ResizablePanelGroup>
         </div>
+
+        <MobileNavBar />
       </div>
 
       <CreateWorkspaceModal />

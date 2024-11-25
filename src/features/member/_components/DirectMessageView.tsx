@@ -37,7 +37,7 @@ const DirectMessageView = ({
     useGetCurrentUserMemberWithUserInfo(memberWithUserInfo.workspaceId);
 
   const isCurrentUser =
-    memberWithUserInfo.user.name === currentUserMember?.user?.name;
+    memberWithUserInfo.user._id === currentUserMember?.user?._id;
 
   // handle scroll behavior when new messages are loaded
   useEffect(() => {

@@ -68,7 +68,9 @@ const RingingCallFloatingEntry = ({
         className={cn(
           "fixed top-1/2 -translate-y-1/2 right-8 z-50",
           "transition-all duration-500 ease-out",
-          isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-12"
+          isVisible
+            ? "opacity-100 translate-x-0 pointer-events-auto visible"
+            : "opacity-0 translate-x-12 pointer-events-none invisible"
         )}
       >
         <TooltipProvider>

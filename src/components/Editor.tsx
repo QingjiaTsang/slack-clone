@@ -28,6 +28,7 @@ import ReactQuillBase from "@/components/ReactQuillBase";
 import useConfirm from "@/hooks/useConfirm";
 import { useCreateCall } from "@/api/call";
 import { toast } from "sonner";
+import { useGetCurrentUserMemberWithUserInfo } from "@/api/user";
 
 export type EditorSubmitData = {
   image: File | null;
@@ -57,6 +58,11 @@ const Editor = ({
   const params = useParams();
 
   const { mutateAsync: createCall } = useCreateCall();
+
+  const { data: currentUserMember } = useGetCurrentUserMemberWithUserInfo(
+    params?.workspaceId as Id<"workspaces">
+  );
+  const isChattingWithMySelf = currentUserMember?._id === params?.memberId;
 
   const [CallConfirmDialog, confirm] = useConfirm({
     title: "Call",
@@ -329,7 +335,7 @@ const Editor = ({
                   </Hint>
                 )}
 
-                {params.memberId && (
+                {params?.memberId && !isChattingWithMySelf && (
                   <Hint description="Call">
                     <Button
                       disabled={disabled}

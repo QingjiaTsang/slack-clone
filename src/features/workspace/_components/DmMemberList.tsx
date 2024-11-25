@@ -4,7 +4,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { User } from "@auth/core/types";
 import { Member } from "@/types/docs";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import {
   Avatar,
@@ -18,9 +18,13 @@ import { useGetAllMembersByWorkspaceId } from "@/features/workspace/api/workspac
 
 type DmMemberListProps = {
   workspaceId: Id<"workspaces">;
+  setIsMobileSideBarOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const DmMemberList = ({ workspaceId }: DmMemberListProps) => {
+const DmMemberList = ({
+  workspaceId,
+  setIsMobileSideBarOpen,
+}: DmMemberListProps) => {
   const { data: members, isPending } =
     useGetAllMembersByWorkspaceId(workspaceId);
 
@@ -50,6 +54,7 @@ const DmMemberList = ({ workspaceId }: DmMemberListProps) => {
           key={member._id}
           member={member}
           workspaceId={workspaceId}
+          setIsMobileSideBarOpen={setIsMobileSideBarOpen}
         />
       ))}
     </WorkspaceSection>
@@ -61,21 +66,29 @@ export default DmMemberList;
 const DmMemberItem = ({
   member,
   workspaceId,
+  setIsMobileSideBarOpen,
 }: {
   member: Member & { user: User };
   workspaceId: Id<"workspaces">;
+  setIsMobileSideBarOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  const router = useRouter();
+
   return (
-    <Link href={`/workspace/${workspaceId}/member/${member._id}`}>
-      <div className="flex items-center lowercase text-[#f9edffcc] gap-2 cursor-pointer hover:bg-white/10 py-1 px-2">
-        <Avatar className="size-5">
-          <AvatarImage src={member?.user?.image ?? ""} />
-          <AvatarFallback className="text-xs">
-            {member?.user?.name?.[0]?.toUpperCase() ?? ""}
-          </AvatarFallback>
-        </Avatar>
-        <div className="truncate">{member?.user?.name ?? ""}</div>
-      </div>
-    </Link>
+    <div
+      onClick={() => {
+        setIsMobileSideBarOpen?.(false);
+        router.push(`/workspace/${workspaceId}/member/${member._id}`);
+      }}
+      className="flex items-center lowercase text-[#f9edffcc] gap-2 cursor-pointer hover:bg-white/10 py-1 px-2"
+    >
+      <Avatar className="size-5">
+        <AvatarImage src={member?.user?.image ?? ""} />
+        <AvatarFallback className="text-xs">
+          {member?.user?.name?.[0]?.toUpperCase() ?? ""}
+        </AvatarFallback>
+      </Avatar>
+      <div className="truncate">{member?.user?.name ?? ""}</div>
+    </div>
   );
 };

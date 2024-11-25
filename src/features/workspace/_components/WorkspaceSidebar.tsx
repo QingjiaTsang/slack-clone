@@ -10,13 +10,23 @@ import WorkspaceSidebarHeader from "@/features/workspace/_components/WorkspaceSi
 import WorkspaceSidebarItem from "@/features/workspace/_components/WorkspaceSidebarItem";
 import ChannelList from "@/features/workspace/_components/ChannelList";
 import DmMemberList from "@/features/workspace/_components/DmMemberList";
+import UserButton from "@/features/workspace/_components/UserButton";
+
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 type WorkspaceSidebarProps = {
   isAdmin: boolean;
   workspace: Workspace | null;
+  setIsMobileSideBarOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const WorkspaceSidebar = ({ isAdmin, workspace }: WorkspaceSidebarProps) => {
+const WorkspaceSidebar = ({
+  isAdmin,
+  workspace,
+  setIsMobileSideBarOpen,
+}: WorkspaceSidebarProps) => {
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
   if (!workspace) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
@@ -29,7 +39,7 @@ const WorkspaceSidebar = ({ isAdmin, workspace }: WorkspaceSidebarProps) => {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col h-full">
       <WorkspaceSidebarHeader workspace={workspace} isAdmin={isAdmin} />
 
       <div className="flex flex-col gap-0.5 px-2">
@@ -46,10 +56,22 @@ const WorkspaceSidebar = ({ isAdmin, workspace }: WorkspaceSidebarProps) => {
           workspace={workspace}
         />
 
-        <ChannelList workspace={workspace} />
+        <ChannelList
+          workspace={workspace}
+          setIsMobileSideBarOpen={setIsMobileSideBarOpen}
+        />
 
-        <DmMemberList workspaceId={workspace._id} />
+        <DmMemberList
+          workspaceId={workspace._id}
+          setIsMobileSideBarOpen={setIsMobileSideBarOpen}
+        />
       </div>
+
+      {isMobile && (
+        <div className="mt-auto px-5 py-2 w-full">
+          <UserButton isMobile={isMobile} />
+        </div>
+      )}
     </div>
   );
 };

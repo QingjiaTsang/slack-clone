@@ -50,7 +50,7 @@ const MemberIdPage = async ({ params }: MemberIdPageProps) => {
     }
 
     return (
-      <div className="flex flex-col h-[calc(100svh-theme(spacing.16))]">
+      <div className="flex flex-col h-[calc(100svh-theme(spacing.16))] pb-8 md:pb-0">
         <DirectMessageHeader memberWithUserInfo={memberWithUserInfo} />
         <DirectMessageView
           conversationId={conversation._id}

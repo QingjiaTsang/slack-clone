@@ -1,11 +1,75 @@
 import {
-  ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/shadcnUI/resizable";
 import { Skeleton } from "@/components/shadcnUI/skeleton";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const WorkspaceLayoutSkeleton = () => {
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
+  if (isMobile) {
+    return (
+      <div className="flex flex-col h-[100svh]">
+        {/* mobile header skeleton */}
+        <div className="h-14 bg-[#481349] flex items-center px-4 gap-4">
+          <Skeleton className="w-8 h-8" />
+          <Skeleton className="flex-1 h-8" />
+          <Skeleton className="w-8 h-8" />
+        </div>
+
+        {/* channel title skeleton */}
+        <div className="px-4 py-2 border-b">
+          <div className="flex items-center gap-2">
+            <Skeleton className="w-6 h-6" />
+            <Skeleton className="w-32 h-6" />
+            <Skeleton className="w-4 h-4 ml-auto" />
+          </div>
+        </div>
+
+        {/* message list skeleton - flex-1 to take remaining space */}
+        <div className="flex-1 overflow-y-auto">
+          {[...Array(5)].map((_, index) => (
+            <div key={index} className="flex items-start gap-2 p-4">
+              <Skeleton className="w-10 h-10 rounded-full" />
+              <div className="flex-1 space-y-2">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="w-24 h-4" />
+                  <Skeleton className="w-12 h-4" />
+                </div>
+                <Skeleton className="w-3/4 h-4" />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* message input skeleton */}
+        <div className="p-4 border-t bg-background">
+          <div className="rounded-lg border">
+            <div className="flex items-center gap-2 p-2">
+              <Skeleton className="w-8 h-8" />
+              <Skeleton className="w-8 h-8" />
+              <Skeleton className="w-8 h-8" />
+              <Skeleton className="w-8 h-8" />
+              <Skeleton className="w-8 h-8" />
+            </div>
+            <div className="px-3 py-2">
+              <Skeleton className="w-full h-8" />
+            </div>
+          </div>
+        </div>
+
+        {/* bottom navigation skeleton */}
+        <div className="h-16 border-t flex justify-around items-center px-4">
+          <Skeleton className="w-8 h-8" />
+          <Skeleton className="w-8 h-8" />
+          <Skeleton className="w-8 h-8" />
+          <Skeleton className="w-8 h-8" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       {/* header skeleton */}
@@ -74,8 +138,6 @@ const WorkspaceLayoutSkeleton = () => {
               </div>
             </div>
           </ResizablePanel>
-
-          <ResizableHandle withHandle />
 
           {/* main content skeleton */}
           <ResizablePanel minSize={20} defaultSize={80}>
