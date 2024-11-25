@@ -13,7 +13,6 @@ export async function createStreamUserTokenAction(
 ) {
   const streamUser: UserRequest = {
     id: memberWithUserInfon._id,
-    // role: memberWithUserInfon.role,
     custom: {
       color: "red",
     },

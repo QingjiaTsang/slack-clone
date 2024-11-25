@@ -2,19 +2,18 @@ import { Id } from "./_generated/dataModel";
 
 import { v } from "convex/values";
 import { type QueryCtxWithUserId, mutation, query } from "./functions";
-import { getMember, getMemberWithUserInfoById } from "./helper";
+import { getMemberWithUserInfoById } from "./helper";
 
-import { v4 as uuidv4 } from "uuid";
 import { internalMutation } from "./_generated/server";
 
 const checkUsersInCall = async ({
   ctx,
-  currentUserMemberId,
-  targetMemberId,
+  currentMemberUserId,
+  targetMemberUserId,
 }: {
   ctx: QueryCtxWithUserId;
-  currentUserMemberId: Id<"members">;
-  targetMemberId: Id<"members">;
+  currentMemberUserId: Id<"users">;
+  targetMemberUserId: Id<"users">;
 }) => {
   // check if the current user is busy in any call
   const currentUserCalls = await ctx.db
@@ -22,8 +21,8 @@ const checkUsersInCall = async ({
     .withIndex("by_creator_id_and_status")
     .filter((q) =>
       q.or(
-        q.eq(q.field("creatorId"), currentUserMemberId),
-        q.eq(q.field("recipientId"), currentUserMemberId)
+        q.eq(q.field("creatorUserId"), currentMemberUserId),
+        q.eq(q.field("recipientUserId"), currentMemberUserId)
       )
     )
     .filter((q) =>
@@ -40,8 +39,8 @@ const checkUsersInCall = async ({
     .withIndex("by_creator_id_and_status")
     .filter((q) =>
       q.or(
-        q.eq(q.field("creatorId"), targetMemberId),
-        q.eq(q.field("recipientId"), targetMemberId)
+        q.eq(q.field("creatorUserId"), targetMemberUserId),
+        q.eq(q.field("recipientUserId"), targetMemberUserId)
       )
     )
     .filter((q) =>
@@ -105,95 +104,52 @@ export const create = mutation({
 
     const isBusyLine = await checkUsersInCall({
       ctx,
-      currentUserMemberId: currentUserMember._id,
-      targetMemberId,
+      currentMemberUserId: currentUserMember.userId,
+      targetMemberUserId: targetMember.userId,
     });
 
     if (isBusyLine) {
       throw new Error("Either user is busy in another call");
     }
 
-    const streamCallId = uuidv4();
-
     return ctx.db.insert("calls", {
       workspaceId,
       conversationId,
       creatorId: currentUserMember._id,
+      creatorUserId: currentUserMember.userId,
       creatorName: currentUserMember.user.name!,
       recipientId: targetMemberId,
+      recipientUserId: targetMember.userId,
       recipientName: targetMemberUserInfo.name!,
       status: "ringing",
       statusUpdatedAt: Date.now(),
       startAt: Date.now(),
       ringTimeout: Date.now() + 30 * 1000,
-      streamCallId,
     });
   },
 });
 
 export const subscribeRingingCall = query({
-  args: {
-    workspaceId: v.id("workspaces"),
-  },
-  handler: async (ctx, args) => {
+  args: {},
+  handler: async (ctx) => {
     if (!ctx.userId) {
       return null;
     }
-
-    const currentUserMember = await getMember(
-      ctx as QueryCtxWithUserId,
-      args.workspaceId,
-      ctx.userId
-    );
-
-    if (!currentUserMember) {
-      return null;
-    }
-
-    const conversations = await ctx.db
-      .query("conversations")
-      .filter((q) =>
-        q.or(
-          q.eq(q.field("memberOneId"), currentUserMember._id),
-          q.eq(q.field("memberTwoId"), currentUserMember._id)
-        )
-      )
-      .collect();
-
-    if (!conversations.length) {
-      return null;
-    }
-
-    const conversationIds = conversations.map(({ _id }) => _id);
 
     // reference: https://discord.com/channels/1019350475847499849/1309890509929709713
     // Note: we can't rely on the _creationTime of the calls,
     // because it's not guaranteed to be a monotonically increasing value,
     // which causes some problems when a user quickly updates the status of multiple calls
-    // so don't do this:
-    // const call = await ctx.db
-    //   .query("calls")
-    //   .withIndex("by_status")
-    //   .filter((q) =>
-    //     q.and(
-    //       q.or(
-    //         ...conversationIds.map((id) => q.eq(q.field("conversationId"), id))
-    //       ),
-    //       q.gt(q.field("ringTimeout"), Date.now())
-    //     )
-    //   )
-    //   .order("desc")
-    //   .first();
-
+    // so just use the statusUpdatedAt for index and order instead
     const call = await ctx.db
       .query("calls")
       .withIndex("by_statusUpdatedAt")
       .filter((q) =>
         q.and(
           q.or(
-            ...conversationIds.map((id) => q.eq(q.field("conversationId"), id))
+            q.eq(q.field("creatorUserId"), ctx.userId),
+            q.eq(q.field("recipientUserId"), ctx.userId)
           ),
-          // only get the calls that are ringing and not expired
           q.gt(q.field("ringTimeout"), Date.now())
         )
       )
@@ -225,31 +181,11 @@ export const updateStatus = mutation({
       throw new Error("Call not found");
     }
 
-    if (!call.conversationId) {
-      throw new Error("Conversation not found");
-    }
-
-    const conversation = await ctx.db.get(call.conversationId);
-
-    if (!conversation) {
-      throw new Error("Conversation not found");
-    }
-
-    const currentUserMember = await getMember(
-      ctx as QueryCtxWithUserId,
-      conversation.workspaceId,
-      ctx.userId
-    );
-
-    if (!currentUserMember) {
-      throw new Error("Not a member of this workspace");
-    }
-
     if (
-      currentUserMember._id !== conversation.memberOneId &&
-      currentUserMember._id !== conversation.memberTwoId
+      call.creatorUserId !== ctx.userId &&
+      call.recipientUserId !== ctx.userId
     ) {
-      throw new Error("Not a participant in this conversation");
+      throw new Error("Not a participant in this call");
     }
 
     return ctx.db.patch(callId, {
@@ -262,21 +198,10 @@ export const updateStatus = mutation({
 
 export const getById = query({
   args: {
-    workspaceId: v.id("workspaces"),
     callId: v.id("calls"),
   },
-  handler: async (ctx, { workspaceId, callId }) => {
+  handler: async (ctx, { callId }) => {
     if (!ctx.userId) {
-      return null;
-    }
-
-    const currentUserMember = await getMember(
-      ctx as QueryCtxWithUserId,
-      workspaceId,
-      ctx.userId
-    );
-
-    if (!currentUserMember) {
       return null;
     }
 
@@ -287,8 +212,8 @@ export const getById = query({
     }
 
     if (
-      call.creatorId !== currentUserMember._id &&
-      call.recipientId !== currentUserMember._id
+      call.creatorUserId !== ctx.userId &&
+      call.recipientUserId !== ctx.userId
     ) {
       return null;
     }

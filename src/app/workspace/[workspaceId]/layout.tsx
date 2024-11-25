@@ -47,7 +47,10 @@ const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
     isRingingCallModalOpen,
     setIsRingingCallModalOpen,
     currentRingingCall,
-  } = useCallManagement(params.workspaceId, currentUserRoleInfo?._id);
+  } = useCallManagement({
+    currentUserId: currentUserRoleInfo?.userId,
+    currentWorkspaceName: currentWorkspace?.name,
+  });
 
   const { parentMessageId, profileMemberId, closePanel } = usePanel();
 
@@ -87,7 +90,8 @@ const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
           <RingingCallFloatingEntry
             currentRingingCall={currentRingingCall}
             isCreator={
-              currentRingingCall?.creatorId === currentUserRoleInfo?._id
+              // currentRingingCall?.creatorId === currentUserRoleInfo?._id
+              currentRingingCall?.creatorUserId === currentUserRoleInfo?.userId
             }
             setIsRingingCallModalOpen={setIsRingingCallModalOpen}
           />

@@ -149,7 +149,11 @@ const Editor = ({
       toast.success("Call requested");
     } catch (error) {
       console.error("Failed to create call:", error);
-      toast.error("Failed to create call");
+      if (error instanceof Error && error.message.includes("busy")) {
+        toast.error("User is on another call. Please try again later.");
+      } else {
+        toast.error("Failed to create call. Please try again.");
+      }
     }
   };
 

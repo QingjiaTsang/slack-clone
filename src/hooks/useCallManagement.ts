@@ -14,27 +14,35 @@ type CallStatusRecord = {
   ringTimeout?: number;
 };
 
-const useCallManagement = (
-  workspaceId: Id<"workspaces">,
-  currentMemberId?: Id<"members">
-) => {
+type UseCallManagementProps = {
+  currentUserId?: Id<"users">;
+  currentWorkspaceName?: Doc<"workspaces">["name"];
+};
+
+const useCallManagement = ({
+  currentUserId,
+  currentWorkspaceName,
+}: UseCallManagementProps) => {
   const router = useRouter();
-  const { data: ringingCall } = useSubscribeRingingCall(workspaceId);
-  const [isRingingCallModalOpen, setIsRingingCallModalOpen] = useState(false);
+
+  const { data: ringingCall } = useSubscribeRingingCall();
+
   const { currentRingingCall, setCurrentRingingCall } = useCurrentRingingCall();
+
+  const [isRingingCallModalOpen, setIsRingingCallModalOpen] = useState(false);
 
   // get the incoming call status for the recipient
   // and determine whether to show the ringing call modal
   const getIncomingCallStatus = (
     ringingCall: Doc<"calls"> | null | undefined,
-    currentMemberId?: Id<"members">
+    currentUserId?: Id<"users">
   ): { call: Doc<"calls"> | null; shouldShowModal: boolean } => {
     if (!ringingCall) {
       return { call: null, shouldShowModal: false };
     }
 
     const isIncomingCall =
-      ringingCall.recipientId === currentMemberId &&
+      ringingCall.recipientUserId === currentUserId &&
       ringingCall.status === "ringing";
 
     return {
@@ -43,8 +51,8 @@ const useCallManagement = (
     };
   };
   const { call: incomingCall, shouldShowModal } = useMemo(
-    () => getIncomingCallStatus(ringingCall, currentMemberId),
-    [ringingCall, currentMemberId]
+    () => getIncomingCallStatus(ringingCall, currentUserId),
+    [ringingCall, currentUserId]
   );
   // show or hide the ringing call modal for the recipient when the call is incoming or not
   useEffect(() => {
@@ -56,7 +64,7 @@ const useCallManagement = (
 
   // track the outgoing call status to toast the creator of the call
   useEffect(() => {
-    const isCallCreator = ringingCall?.creatorId === currentMemberId;
+    const isCallCreator = ringingCall?.creatorUserId === currentUserId;
     if (!ringingCall || !isCallCreator) {
       return;
     }
@@ -69,12 +77,16 @@ const useCallManagement = (
     );
 
     if (ringingCall.status === "ongoing" && !shownStatuses?.ongoing) {
-      toast.info(`Call to ${ringingCall.recipientName} is accepted`);
+      toast.info(
+        `Call to ${ringingCall.recipientName} from ${currentWorkspaceName} is accepted`
+      );
       router.push(
         `/workspace/${ringingCall.workspaceId}/call/${ringingCall._id}`
       );
     } else if (ringingCall.status === "rejected" && !shownStatuses?.rejected) {
-      toast.error(`Call to ${ringingCall.recipientName} is rejected`);
+      toast.error(
+        `Call to ${ringingCall.recipientName} from ${currentWorkspaceName} is rejected`
+      );
     }
 
     localStorage.setItem(
@@ -110,7 +122,7 @@ const useCallManagement = (
     };
 
     cleanupExpiredCallStatusRecords();
-  }, [ringingCall, currentMemberId, router]);
+  }, [ringingCall, currentUserId, currentWorkspaceName, router]);
 
   // track the ringing call to determine whether to show the ringing call floating entry in the layout
   // when the call still waiting for a feedback

@@ -43,7 +43,6 @@ const CallIdPage = async ({ params }: CallIdPageProps) => {
   const call = await fetchQuery(
     api.calls.getById,
     {
-      workspaceId,
       callId,
     },
     {

@@ -15,8 +15,8 @@ export const useCreateCall = () =>
     mutationFn: useConvexMutation(api.calls.create),
   });
 
-export const useSubscribeRingingCall = (workspaceId: Id<"workspaces">) =>
-  useQuery(convexQuery(api.calls.subscribeRingingCall, { workspaceId }));
+export const useSubscribeRingingCall = () =>
+  useQuery(convexQuery(api.calls.subscribeRingingCall, {}));
 
 export const useUpdateCallStatus = () =>
   useMutation({

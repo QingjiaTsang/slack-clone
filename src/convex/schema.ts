@@ -76,9 +76,11 @@ const schema = defineSchema({
     conversationId: v.optional(v.id("conversations")),
 
     creatorId: v.id("members"),
+    creatorUserId: v.id("users"),
     creatorName: v.string(),
 
     recipientId: v.id("members"),
+    recipientUserId: v.id("users"),
     recipientName: v.string(),
 
     status: v.union(
@@ -93,7 +95,6 @@ const schema = defineSchema({
 
     startAt: v.number(),
     endAt: v.optional(v.number()),
-    streamCallId: v.string(),
     ringTimeout: v.number(),
   })
     .index("by_conversation_id_and_status", ["conversationId", "status"])
