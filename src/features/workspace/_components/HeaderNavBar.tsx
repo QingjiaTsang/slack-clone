@@ -31,7 +31,7 @@ const HeaderNavBar = ({
     <nav className="flex items-center justify-between bg-[#481349] text-white px-4">
       <MobileSideBarDrawer isAdmin={isAdmin} workspace={workspace} />
 
-      <div className="w-10" />
+      <div className="hidden md:block w-10" />
       <SearchInputButton workspaceId={workspaceId} />
       <Button variant="transparent" size="icon">
         <CircleAlert className="size-5" />
