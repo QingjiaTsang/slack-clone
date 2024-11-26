@@ -24,6 +24,7 @@ const useRingtone = (isPlaying: boolean) => {
           }
         };
 
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         initAudio();
       }
     };
@@ -52,6 +53,7 @@ const useRingtone = (isPlaying: boolean) => {
         }
       };
 
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       playAudio();
     }
 

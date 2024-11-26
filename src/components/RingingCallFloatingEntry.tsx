@@ -9,7 +9,6 @@ import {
 } from "@/components/shadcnUI/tooltip";
 import {
   Credenza,
-  CredenzaBody,
   CredenzaContent,
   CredenzaDescription,
   CredenzaFooter,

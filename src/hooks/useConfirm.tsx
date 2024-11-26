@@ -21,22 +21,6 @@ const useConfirm = ({ title, message }: UseConfirmProps) => {
     resolve: (value: boolean) => void;
   } | null>(null);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (promise && e.key === "Enter") {
-        handleConfirm();
-      }
-    };
-
-    if (promise) {
-      window.addEventListener("keydown", handleKeyDown);
-    }
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [promise]);
-
   const confirm = () =>
     new Promise((resolve) => {
       setPromise({ resolve });
@@ -55,6 +39,24 @@ const useConfirm = ({ title, message }: UseConfirmProps) => {
     promise?.resolve(false);
     handleClose();
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (promise && e.key === "Enter") {
+        handleConfirm();
+      }
+    };
+
+    if (promise) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [promise]);
 
   const ConfirmationDialog = () => (
     <Credenza open={promise !== null} onOpenChange={handleClose}>
