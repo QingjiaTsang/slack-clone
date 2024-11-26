@@ -132,7 +132,7 @@ const WorkspaceLayout = ({ params, children }: WorkspaceLayoutProps) => {
 
             {showPanel && (
               <>
-                <ResizableHandle className="hidden md:block md:bg-[#5E2C5F]" />
+                <ResizableHandle className="hidden md:block" />
                 <ResizablePanel
                   id="thread"
                   defaultSize={30}

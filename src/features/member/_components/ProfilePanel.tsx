@@ -41,6 +41,15 @@ import {
   useUpdateMemberRoleById,
 } from "@/features/member/api/member";
 
+import {
+  Credenza,
+  CredenzaContent,
+  CredenzaHeader,
+  CredenzaTitle,
+  CredenzaClose,
+} from "@/components/shadcnUI/credenza";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+
 type ProfilePanelProps = {
   workspaceId: Id<"workspaces">;
   memberId: Id<"members">;
@@ -63,6 +72,8 @@ const ProfilePanel = ({
     useDeleteMemberById();
   const { data: currentUserMember, isPending: isCurrentUserPending } =
     useGetCurrentUserMemberWithUserInfo(workspaceId);
+
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   const [LeaveWorkspaceConfirmDialog, confirmLeaveWorkspace] = useConfirm({
     title: "Leave Workspace",
@@ -156,16 +167,21 @@ const ProfilePanel = ({
 
   const isUpdating = isUpdateMemberRolePending || isDeleteMemberPending;
 
-  return (
+  const content = (
     <>
       <LeaveWorkspaceConfirmDialog />
       <UpdateMemberRoleConfirmDialog />
       <RemoveMemberConfirmDialog />
 
       <div className="flex flex-col h-full bg-white">
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center justify-between p-4 md:py-2 border-b md:flex">
           <h2 className="text-xl font-bold">Profile</h2>
-          <Button variant="ghost" size="icon" onClick={onClose}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="md:flex hidden"
+          >
             <XIcon className="h-4 w-4" />
           </Button>
         </div>
@@ -265,6 +281,35 @@ const ProfilePanel = ({
           </div>
         </div>
       </div>
+    </>
+  );
+
+  // Use Credenza for mobile and regular panel for desktop
+  return (
+    <>
+      {/* Mobile view */}
+      {isMobile && (
+        <Credenza open onOpenChange={(open) => !open && onClose()}>
+          <CredenzaContent>
+            <CredenzaHeader>
+              <CredenzaClose asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-2 top-3"
+                >
+                  <XIcon className="h-4 w-4" />
+                </Button>
+              </CredenzaClose>
+            </CredenzaHeader>
+
+            <div className="-mt-7">{content}</div>
+          </CredenzaContent>
+        </Credenza>
+      )}
+
+      {/* Desktop view */}
+      {!isMobile && content}
     </>
   );
 };
