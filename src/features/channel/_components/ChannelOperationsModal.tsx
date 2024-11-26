@@ -10,21 +10,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/shadcnUI/dialog";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetFooter,
-  SheetDescription,
-} from "@/components/shadcnUI/sheet";
+  Credenza,
+  CredenzaBody,
+  CredenzaContent,
+  CredenzaDescription,
+  CredenzaFooter,
+  CredenzaHeader,
+  CredenzaTitle,
+} from "@/components/shadcnUI/credenza";
 import {
   Form,
   FormControl,
@@ -34,12 +27,11 @@ import {
 } from "@/components/shadcnUI/form";
 import { Input } from "@/components/shadcnUI/input";
 import { toast } from "sonner";
+import { Button } from "@/components/shadcnUI/button";
 
 import { TrashIcon } from "lucide-react";
 
 import useConfirm from "@/hooks/useConfirm";
-import { Button } from "@/components/shadcnUI/button";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 import {
   useDeleteChannel,
@@ -101,18 +93,18 @@ const ChannelOperationsModal = ({
         channel={channel}
       />
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="p-0 bg-gray-100 h-auto">
-          <DialogHeader className="p-4 border-b border-slate-200">
-            <DialogTitle className="flex items-center gap-1">
+      <Credenza open={isOpen} onOpenChange={setIsOpen}>
+        <CredenzaContent className="p-0 bg-gray-100 h-auto">
+          <CredenzaHeader className="p-4 border-b border-slate-200">
+            <CredenzaTitle className="flex items-center gap-1">
               <span>#</span>
               <span>{channel.name}</span>
-            </DialogTitle>
-            <DialogDescription className="hidden">
+            </CredenzaTitle>
+            <CredenzaDescription className="hidden">
               Manage your channel preferences.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col gap-4 mb-4">
+            </CredenzaDescription>
+          </CredenzaHeader>
+          <CredenzaBody className="flex flex-col gap-4 mb-4 max-md:mt-4">
             <div className="mx-4 p-4 bg-white rounded-lg flex justify-between">
               <div>
                 <div className="text-sm font-semibold">Channel Name</div>
@@ -138,9 +130,9 @@ const ChannelOperationsModal = ({
                 <div className="text-sm font-semibold">Delete Channel</div>
               </Button>
             )}
-          </div>
-        </DialogContent>
-      </Dialog>
+          </CredenzaBody>
+        </CredenzaContent>
+      </Credenza>
     </>
   );
 };
@@ -165,8 +157,6 @@ const EditChannelModal = ({
   channel,
 }: EditChannelModalProps) => {
   const router = useRouter();
-
-  const isMobile = useMediaQuery("(max-width: 640px)");
 
   const { mutate, isPending } = useUpdateChannel();
 
@@ -229,51 +219,24 @@ const EditChannelModal = ({
     </Form>
   );
 
-  if (isMobile) {
-    return (
-      <Sheet open={isOpen} onOpenChange={onClose}>
-        <SheetContent side="bottom">
-          <SheetHeader>
-            <SheetTitle>Rename Channel</SheetTitle>
-            <SheetDescription className="hidden">
-              Rename your channel to something more descriptive.
-            </SheetDescription>
-          </SheetHeader>
-
-          {formContent}
-
-          <SheetFooter className="mt-4">
-            <Button
-              form="edit-channel-form"
-              type="submit"
-              isLoading={isPending}
-            >
-              Save
-            </Button>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
-    );
-  }
-
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Rename Channel</DialogTitle>
-          <DialogDescription className="hidden">
+    <Credenza open={isOpen} onOpenChange={onClose}>
+      <CredenzaContent>
+        <CredenzaHeader>
+          <CredenzaTitle>Rename Channel</CredenzaTitle>
+          <CredenzaDescription className="hidden">
             Rename your channel to something more descriptive.
-          </DialogDescription>
-        </DialogHeader>
+          </CredenzaDescription>
+        </CredenzaHeader>
 
-        {formContent}
+        <CredenzaBody>{formContent}</CredenzaBody>
 
-        <DialogFooter>
+        <CredenzaFooter>
           <Button form="edit-channel-form" type="submit" isLoading={isPending}>
             Save
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </CredenzaFooter>
+      </CredenzaContent>
+    </Credenza>
   );
 };

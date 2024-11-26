@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/shadcnUI/dialog";
+  Credenza,
+  CredenzaBody,
+  CredenzaContent,
+  CredenzaDescription,
+  CredenzaFooter,
+  CredenzaHeader,
+  CredenzaTitle,
+} from "@/components/shadcnUI/credenza";
 import { Button } from "@/components/shadcnUI/button";
 
 type UseConfirmProps = {
@@ -18,6 +20,22 @@ const useConfirm = ({ title, message }: UseConfirmProps) => {
   const [promise, setPromise] = useState<{
     resolve: (value: boolean) => void;
   } | null>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (promise && e.key === "Enter") {
+        handleConfirm();
+      }
+    };
+
+    if (promise) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [promise]);
 
   const confirm = () =>
     new Promise((resolve) => {
@@ -39,23 +57,25 @@ const useConfirm = ({ title, message }: UseConfirmProps) => {
   };
 
   const ConfirmationDialog = () => (
-    <Dialog open={promise !== null} onOpenChange={handleClose}>
-      <DialogContent onKeyDown={(e) => e.key === "Enter" && handleConfirm()}>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription className="hidden">{message}</DialogDescription>
-        </DialogHeader>
+    <Credenza open={promise !== null} onOpenChange={handleClose}>
+      <CredenzaContent>
+        <CredenzaHeader>
+          <CredenzaTitle>{title}</CredenzaTitle>
+          <CredenzaDescription className="hidden">
+            {message}
+          </CredenzaDescription>
+        </CredenzaHeader>
 
-        <>{message}</>
+        <CredenzaBody>{message}</CredenzaBody>
 
-        <div className="flex justify-center gap-6 pt-4">
+        <CredenzaFooter className="flex justify-center gap-6">
           <Button variant="outline" onClick={handleCancel}>
             Cancel
           </Button>
           <Button onClick={handleConfirm}>Confirm</Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </CredenzaFooter>
+      </CredenzaContent>
+    </Credenza>
   );
 
   return [ConfirmationDialog, confirm];

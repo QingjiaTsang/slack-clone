@@ -3,13 +3,15 @@ import { Workspace } from "@/types/docs";
 import { useRouter } from "next/navigation";
 
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/shadcnUI/dialog";
+  Credenza,
+  CredenzaBody,
+  CredenzaClose,
+  CredenzaContent,
+  CredenzaDescription,
+  CredenzaFooter,
+  CredenzaHeader,
+  CredenzaTitle,
+} from "@/components/shadcnUI/credenza";
 import { Button } from "@/components/shadcnUI/button";
 import { toast } from "sonner";
 
@@ -83,17 +85,17 @@ const InviteMemberModal = ({
     <>
       <GenerateNewJoinCodeConfirmDialog />
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Invite to {workspace.name}</DialogTitle>
-          </DialogHeader>
-          <DialogDescription>
-            Copy the Join Code or the Link below to invite
-          </DialogDescription>
+      <Credenza open={isOpen} onOpenChange={setIsOpen}>
+        <CredenzaContent>
+          <CredenzaHeader>
+            <CredenzaTitle>Invite to {workspace.name}</CredenzaTitle>
+            <CredenzaDescription>
+              Copy the Join Code or the Link below to invite
+            </CredenzaDescription>
+          </CredenzaHeader>
 
-          <div className="my-12">
-            <div className="flex items-baseline justify-center gap-2 uppercase text-4xl font-bold tracking-widest">
+          <CredenzaBody>
+            <div className="flex items-baseline justify-center gap-2 uppercase text-4xl font-bold tracking-widest my-12">
               {workspace.joinCode}
               <Button
                 variant="ghost"
@@ -104,13 +106,13 @@ const InviteMemberModal = ({
                 <CopyIcon className="size-4" />
               </Button>
             </div>
-          </div>
+          </CredenzaBody>
 
-          <div className="flex items-center justify-between w-full">
-            <DialogClose asChild>
+          <CredenzaFooter className="flex items-center justify-between w-full">
+            <CredenzaClose asChild>
               <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <div>
+            </CredenzaClose>
+            <div className="flex gap-2">
               <Button
                 variant="ghost"
                 className="gap-2"
@@ -130,9 +132,9 @@ const InviteMemberModal = ({
                 Copy Link
               </Button>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </CredenzaFooter>
+        </CredenzaContent>
+      </Credenza>
     </>
   );
 };

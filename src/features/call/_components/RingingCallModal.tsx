@@ -1,14 +1,14 @@
 import { Doc } from "@/convex/_generated/dataModel";
-
 import { useRouter } from "next/navigation";
 
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/shadcnUI/dialog";
+  Credenza,
+  CredenzaBody,
+  CredenzaContent,
+  CredenzaDescription,
+  CredenzaHeader,
+  CredenzaTitle,
+} from "@/components/shadcnUI/credenza";
 import { Button } from "@/components/shadcnUI/button";
 import { Phone, PhoneOff } from "lucide-react";
 import { useUpdateCallStatus } from "@/api/call";
@@ -26,7 +26,6 @@ const RingingCallModal = ({
   setIsRingingCallModalOpen,
 }: RingingCallModalProps) => {
   const router = useRouter();
-
   const { mutate: updateCallStatus, isPending: isUpdatingCallStatus } =
     useUpdateCallStatus();
 
@@ -68,37 +67,40 @@ const RingingCallModal = ({
   };
 
   return (
-    <Dialog
+    <Credenza
       open={isRingingCallModalOpen}
       onOpenChange={setIsRingingCallModalOpen}
     >
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Incoming Call</DialogTitle>
-          <DialogDescription>
+      <CredenzaContent className="sm:max-w-md">
+        <CredenzaHeader>
+          <CredenzaTitle>Incoming Call</CredenzaTitle>
+          <CredenzaDescription>
             {ringingCall?.creatorName} is calling you
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex justify-center gap-6 pt-4">
-          <Button
-            onClick={handleReject}
-            variant="destructive"
-            disabled={isUpdatingCallStatus}
-            className="rounded-full w-12 h-12 p-0"
-          >
-            <PhoneOff className="h-6 w-6" />
-          </Button>
-          <Button
-            onClick={handleAccept}
-            variant="default"
-            disabled={isUpdatingCallStatus}
-            className="rounded-full w-12 h-12 p-0 bg-green-600 hover:bg-green-700"
-          >
-            <Phone className="h-6 w-6" />
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+          </CredenzaDescription>
+        </CredenzaHeader>
+
+        <CredenzaBody>
+          <div className="flex justify-center gap-6 max-md:mb-4">
+            <Button
+              onClick={handleReject}
+              variant="destructive"
+              disabled={isUpdatingCallStatus}
+              className="rounded-full w-12 h-12 p-0"
+            >
+              <PhoneOff className="h-6 w-6" />
+            </Button>
+            <Button
+              onClick={handleAccept}
+              variant="default"
+              disabled={isUpdatingCallStatus}
+              className="rounded-full w-12 h-12 p-0 bg-green-600 hover:bg-green-700"
+            >
+              <Phone className="h-6 w-6" />
+            </Button>
+          </div>
+        </CredenzaBody>
+      </CredenzaContent>
+    </Credenza>
   );
 };
 

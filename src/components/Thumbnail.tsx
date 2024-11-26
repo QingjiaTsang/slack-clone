@@ -1,11 +1,11 @@
 import Image from "next/image";
 
 import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-  DialogClose,
-} from "@/components/shadcnUI/dialog";
+  Credenza,
+  CredenzaContent,
+  CredenzaTrigger,
+  CredenzaClose,
+} from "@/components/shadcnUI/credenza";
 
 import { X } from "lucide-react";
 
@@ -16,8 +16,8 @@ type ThumbnailProps = {
 
 const Thumbnail = ({ imageUrl, alt = "Message thumbnail" }: ThumbnailProps) => {
   return (
-    <Dialog>
-      <DialogTrigger>
+    <Credenza>
+      <CredenzaTrigger asChild>
         <div className="border border-gray-200 rounded-lg mt-2 mb-1 cursor-zoom-in">
           <Image
             src={imageUrl}
@@ -30,10 +30,10 @@ const Thumbnail = ({ imageUrl, alt = "Message thumbnail" }: ThumbnailProps) => {
             className="rounded-lg aspect-auto"
           />
         </div>
-      </DialogTrigger>
+      </CredenzaTrigger>
 
-      <DialogContent className="max-w-[800px] border-none bg-transparent p-0 shadow-none [&>button]:hidden">
-        <div className="relative">
+      <CredenzaContent className="max-w-[800px] border-none bg-transparent p-0 shadow-none [&>button]:hidden md:h-auto max-md:h-[100dvh]">
+        <div className="relative h-full flex items-center justify-center">
           <Image
             src={imageUrl}
             alt={alt}
@@ -41,14 +41,16 @@ const Thumbnail = ({ imageUrl, alt = "Message thumbnail" }: ThumbnailProps) => {
             height={0}
             quality={85}
             sizes="(max-width: 1200px) 100vw, 800px"
-            className="rounded-lg aspect-auto object-contain max-h-[100dvh]"
+            className="rounded-lg object-contain w-full h-full max-h-[90dvh]"
           />
-          <DialogClose className="absolute top-4 right-4 rounded-full bg-black/40 p-2 hover:bg-black/60 transition-colors">
-            <X className="h-4 w-4 text-white" />
-          </DialogClose>
+          <CredenzaClose asChild>
+            <button className="absolute top-4 right-4 rounded-full bg-black/40 p-2 hover:bg-black/60 transition-colors">
+              <X className="h-4 w-4 text-white" />
+            </button>
+          </CredenzaClose>
         </div>
-      </DialogContent>
-    </Dialog>
+      </CredenzaContent>
+    </Credenza>
   );
 };
 

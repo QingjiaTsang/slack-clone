@@ -8,13 +8,14 @@ import {
   TooltipTrigger,
 } from "@/components/shadcnUI/tooltip";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/shadcnUI/dialog";
+  Credenza,
+  CredenzaBody,
+  CredenzaContent,
+  CredenzaDescription,
+  CredenzaFooter,
+  CredenzaHeader,
+  CredenzaTitle,
+} from "@/components/shadcnUI/credenza";
 import { Button } from "@/components/shadcnUI/button";
 import { useUpdateCallStatus } from "@/api/call";
 import { Doc } from "@/convex/_generated/dataModel";
@@ -115,15 +116,16 @@ const RingingCallFloatingEntry = ({
       </div>
 
       {/* Cancel Call Dialog */}
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Cancel Outgoing Call</DialogTitle>
-            <DialogDescription>
+      <Credenza open={showDialog} onOpenChange={setShowDialog}>
+        <CredenzaContent className="sm:max-w-md">
+          <CredenzaHeader>
+            <CredenzaTitle>Cancel Outgoing Call</CredenzaTitle>
+            <CredenzaDescription>
               Are you sure you want to cancel this call?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex gap-2 justify-center">
+            </CredenzaDescription>
+          </CredenzaHeader>
+
+          <CredenzaFooter className="flex gap-2 justify-center">
             <Button
               type="button"
               variant="destructive"
@@ -140,9 +142,9 @@ const RingingCallFloatingEntry = ({
             >
               Keep Waiting
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </CredenzaFooter>
+        </CredenzaContent>
+      </Credenza>
     </>
   );
 };

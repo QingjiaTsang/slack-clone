@@ -1,27 +1,18 @@
 "use client";
 
 import { Id } from "@/convex/_generated/dataModel";
-
 import { useParams, useRouter } from "next/navigation";
-
 import { useCreateChannelModal } from "@/stores/useCreateChannelModal";
 
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/shadcnUI/sheet";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/shadcnUI/dialog";
+  Credenza,
+  CredenzaBody,
+  CredenzaContent,
+  CredenzaDescription,
+  CredenzaFooter,
+  CredenzaHeader,
+  CredenzaTitle,
+} from "@/components/shadcnUI/credenza";
 import {
   Form,
   FormControl,
@@ -37,7 +28,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useCreateChannel } from "@/features/channel/api/channel";
 
 const workspaceFormSchema = z.object({
@@ -52,11 +42,7 @@ type TWorkspaceFormSchema = z.infer<typeof workspaceFormSchema>;
 const CreateChannelModal = () => {
   const params = useParams();
   const router = useRouter();
-
   const workspaceId = params.workspaceId as Id<"workspaces">;
-
-  const isMobile = useMediaQuery("(max-width: 640px)");
-
   const { mutate, isPending } = useCreateChannel();
 
   const methods = useForm<TWorkspaceFormSchema>({
@@ -84,84 +70,53 @@ const CreateChannelModal = () => {
     );
   };
 
-  const ModalContent = (
-    <>
-      <Form {...methods}>
-        <form
-          id="create-channel-form"
-          onSubmit={methods.handleSubmit(onSubmit)}
-        >
-          <FormField
-            control={methods.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="e.g. study-group"
-                    onCompositionEnd={(e) => {
-                      const target = e.target as HTMLInputElement;
-                      field.onChange(target.value.replace(/\s+/g, "-"));
-                    }}
-                    onChange={(e) => {
-                      if (!(e.nativeEvent as InputEvent).isComposing) {
-                        field.onChange(e.target.value.replace(/\s+/g, "-"));
-                      } else {
-                        field.onChange(e.target.value);
-                      }
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </form>
-      </Form>
-    </>
-  );
-
-  if (isMobile) {
-    return (
-      <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetContent side="bottom" className="space-y-4">
-          <SheetHeader>
-            <SheetTitle>Create a Channel</SheetTitle>
-            <SheetDescription className="hidden">
-              Create a new channel to start your project.
-            </SheetDescription>
-          </SheetHeader>
-
-          {ModalContent}
-
-          <SheetFooter className="mt-4">
-            <Button
-              form="create-channel-form"
-              type="submit"
-              isLoading={isPending}
-            >
-              Create
-            </Button>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
-    );
-  }
-
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Create a Channel</DialogTitle>
-          <DialogDescription className="hidden">
+    <Credenza open={isOpen} onOpenChange={setIsOpen}>
+      <CredenzaContent>
+        <CredenzaHeader>
+          <CredenzaTitle>Create a Channel</CredenzaTitle>
+          <CredenzaDescription className="hidden">
             Create a new channel to start your project.
-          </DialogDescription>
-        </DialogHeader>
+          </CredenzaDescription>
+        </CredenzaHeader>
 
-        {ModalContent}
+        <CredenzaBody>
+          <Form {...methods}>
+            <form
+              id="create-channel-form"
+              onSubmit={methods.handleSubmit(onSubmit)}
+            >
+              <FormField
+                control={methods.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="e.g. study-group"
+                        onCompositionEnd={(e) => {
+                          const target = e.target as HTMLInputElement;
+                          field.onChange(target.value.replace(/\s+/g, "-"));
+                        }}
+                        onChange={(e) => {
+                          if (!(e.nativeEvent as InputEvent).isComposing) {
+                            field.onChange(e.target.value.replace(/\s+/g, "-"));
+                          } else {
+                            field.onChange(e.target.value);
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
+        </CredenzaBody>
 
-        <DialogFooter>
+        <CredenzaFooter>
           <Button
             form="create-channel-form"
             type="submit"
@@ -169,9 +124,9 @@ const CreateChannelModal = () => {
           >
             Create
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </CredenzaFooter>
+      </CredenzaContent>
+    </Credenza>
   );
 };
 
