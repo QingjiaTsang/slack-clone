@@ -249,3 +249,23 @@ export const handleExpiredCalls = internalMutation({
     );
   },
 });
+
+export const handleLongRunningCalls = internalMutation({
+  handler: async (ctx) => {
+    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+
+    const result = await ctx.db
+      .query("calls")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("status"), "ongoing"),
+          q.lt(q.field("startAt"), twoHoursAgo.getTime())
+        )
+      )
+      .collect();
+
+    for (const call of result) {
+      await ctx.db.patch(call._id, { status: "ended" });
+    }
+  },
+});
