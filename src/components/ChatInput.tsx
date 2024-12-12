@@ -25,7 +25,7 @@ const ChatInput = ({ placeholder, conversationId }: ChatInputProps) => {
 
   const generateUploadUrl = useMutation(api.messages.generateUploadUrl);
 
-  const { mutate } = useCreateMessage();
+  const { mutateAsync } = useCreateMessage();
 
   const [rerenderFlag, setRerenderFlag] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -54,7 +54,7 @@ const ChatInput = ({ placeholder, conversationId }: ChatInputProps) => {
         storageId = res.storageId;
       }
 
-      await mutate({
+      await mutateAsync({
         body: data.body,
         ...(storageId && { image: storageId }),
         ...(channelId && { channelId: channelId as Id<"channels"> }),
@@ -65,6 +65,7 @@ const ChatInput = ({ placeholder, conversationId }: ChatInputProps) => {
       // toast.success("Message sent");
       setRerenderFlag((prev) => prev + 1);
 
+      // scroll to the bottom of the message container to show the new message
       const messageContainer = document.querySelector(".scrollbar-thin");
       if (messageContainer) {
         messageContainer.scrollTop = messageContainer.scrollHeight;

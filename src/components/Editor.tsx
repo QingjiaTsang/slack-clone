@@ -168,6 +168,12 @@ const Editor = ({
     return {
       keyboard: {
         bindings: {
+          "header enter": {
+            key: "Enter",
+            handler: () => {
+              handleSubmit();
+            },
+          },
           enter: {
             key: "Enter",
             handler: () => {
@@ -263,7 +269,7 @@ const Editor = ({
         />
         <div
           className={cn(
-            "flex flex-col rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white",
+            "flex flex-col rounded-md focus-within:border-slate-300 focus-within:shadow-sm transition bg-white",
             { "border border-slate-200": isEditorReady }
           )}
         >

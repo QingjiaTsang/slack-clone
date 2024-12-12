@@ -133,6 +133,32 @@ body {
   @apply truncate;
 }
 
+.ql-editor h1 {
+  font-size: 2em !important;
+  font-weight: bold !important;
+  line-height: 1.2 !important;
+}
+
+.ql-editor h2 {
+  font-size: 1.5em !important;
+  font-weight: bold !important;
+  line-height: 1.2 !important;
+}
+
+.ql-editor h3 {
+  font-size: 1.17em !important;
+  font-weight: bold !important;
+  line-height: 1.2 !important;
+}
+
+.ql-snow .ql-picker.ql-expanded .ql-picker-options {
+  top: auto !important;
+  bottom: 100% !important;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 50;
+}
+
 @keyframes reaction-bounce {
   0% {
     transform: scale(1);

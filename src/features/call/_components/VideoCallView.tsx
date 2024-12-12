@@ -113,12 +113,33 @@ const VideoCallView = ({
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     (async () => {
       try {
-        await call.getOrCreate();
-        await call.join({ create: true });
+        console.log("Attempting to create/join call...");
+        const callResponse = await call.getOrCreate();
+        console.log("Call created/retrieved:", callResponse);
+
+        await call.join({
+          create: true,
+        });
+        console.log("Successfully joined call");
       } catch (e) {
         console.error("Failed to join call", e);
-        if (e instanceof AxiosError && e.message.includes("timeout")) {
-          router.refresh();
+        if (e instanceof AxiosError) {
+          console.error("Axios error details:", {
+            message: e.message,
+            code: e.code,
+            response: e.response?.data,
+          });
+
+          updateCallStatus({
+            callId,
+            status: "ended",
+            endAt: Date.now(),
+          });
+
+          if (e.message.includes("timeout")) {
+            toast.error("Connection timeout. Retrying...");
+            router.refresh();
+          }
         }
       }
     })();
@@ -136,7 +157,7 @@ const VideoCallView = ({
         }
       })();
     };
-  }, [client, callId, router]);
+  }, [client, callId, router, workspaceId, updateCallStatus]);
 
   // remove active-call flag from localStorage when the tab is closed or the user navigates away
   useEffect(() => {
