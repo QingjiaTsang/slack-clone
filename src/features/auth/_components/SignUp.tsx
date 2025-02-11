@@ -63,7 +63,7 @@ const SignUp = ({ onToggleAuthCard: onToggleAuthForm }: SignUpProps) => {
         flow: "email-verification",
       });
       toast.success("Sign up successfully.");
-      router.push("/");
+      router.push("/workspace");
     } catch (error) {
       console.error("Verification failed:", error);
       toast.error(`Verification failed. Please try again.`);

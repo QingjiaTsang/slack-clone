@@ -26,7 +26,7 @@ const ChannelIdPage = async ({ params }: ChannelPageProps) => {
 
     if (!channel) {
       // if channel not found, redirect to the home page
-      redirect("/");
+      redirect("/workspace");
     }
 
     const currentUserRoleInfo = await fetchQuery(
@@ -46,7 +46,7 @@ const ChannelIdPage = async ({ params }: ChannelPageProps) => {
     );
   } catch (_error) {
     // if user input a wrong channel id, redirect to the home page
-    redirect("/");
+    redirect("/workspace");
   }
 };
 

@@ -36,7 +36,7 @@ const useWorkspaceData = (workspaceId: Id<"workspaces">) => {
         userWorkspaces?.length === 0 ||
         !currentUserRoleInfo
       ) {
-        router.replace("/");
+        router.replace("/workspace");
       }
     }
   }, [

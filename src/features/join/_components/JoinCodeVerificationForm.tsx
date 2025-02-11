@@ -78,7 +78,7 @@ const JoinCodeVerificationForm = ({
         <div className="text-destructive text-lg font-semibold">
           No workspace found
         </div>
-        <Button variant="outline" onClick={() => router.replace("/")}>
+        <Button variant="outline" onClick={() => router.replace("/workspace")}>
           <HomeIcon className="mr-2 h-4 w-4" />
           Back to Home
         </Button>
@@ -150,7 +150,7 @@ const JoinCodeVerificationForm = ({
           className="w-full text-[#1D1C1D] border-[#1D1C1D] hover:bg-[#F8F8F8]"
           asChild
         >
-          <Link href="/" className="flex items-center justify-center">
+          <Link href="/workspace" className="flex items-center justify-center">
             <HomeIcon className="mr-2 h-4 w-4" />
             Back to Home
           </Link>

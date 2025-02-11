@@ -65,7 +65,7 @@ const PreferenceModal = ({
         onSuccess: () => {
           toast.success("Workspace deleted");
           setIsOpen(false);
-          router.replace("/");
+          router.replace("/workspace");
         },
         onError: (error) => {
           toast.error("Failed to delete workspace");

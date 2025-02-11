@@ -6,12 +6,12 @@ import {
 
 // docs: https://labs.convex.dev/auth/authz/nextjs#require-authentication-for-certain-routes
 const isAuthPage = createRouteMatcher(["/auth(.*)"]);
-const isPublicRoute = createRouteMatcher(["/auth(.*)"]);
+const isPublicRoute = createRouteMatcher(["/auth(.*)", "/"]);
 
 export default convexAuthNextjsMiddleware((request, { convexAuth }) => {
   // redirect authenticated users away from auth page
   if (isAuthPage(request) && convexAuth.isAuthenticated()) {
-    return nextjsMiddlewareRedirect(request, "/");
+    return nextjsMiddlewareRedirect(request, "/workspace");
   }
 
   // redirect unauthenticated users to auth page for protected routes
@@ -23,5 +23,5 @@ export default convexAuthNextjsMiddleware((request, { convexAuth }) => {
 export const config = {
   // The following matcher runs middleware on all routes
   // except static assets.
-  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: ["/((?!.*\\..*|_next).*)", "/(api|trpc)(.*)"],
 };

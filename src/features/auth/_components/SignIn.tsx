@@ -79,7 +79,7 @@ const SignIn = ({ onToggleAuthCard: onToggleAuthForm }: SignInProps) => {
         password: data.password,
         flow: "signIn",
       });
-      router.push("/");
+      router.push("/workspace");
     } catch (error) {
       console.error("Error during OAuth sign in:", error);
       toast.error("Sign in failed");
