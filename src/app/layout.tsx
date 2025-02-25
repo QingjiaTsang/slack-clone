@@ -4,8 +4,6 @@ import localFont from "next/font/local";
 
 import { ClientProviders } from "@/components/ClientProviders";
 
-import ReactLenis from "lenis/react";
-
 import "./globals.css";
 
 const geistSans = localFont({
@@ -35,9 +33,7 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <ReactLenis root>
-            <ClientProviders>{children}</ClientProviders>
-          </ReactLenis>
+          <ClientProviders>{children}</ClientProviders>
         </body>
       </html>
     </ConvexAuthNextjsServerProvider>

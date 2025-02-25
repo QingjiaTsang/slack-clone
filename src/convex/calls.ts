@@ -227,18 +227,21 @@ export const handleExpiredCalls = internalMutation({
   handler: async (ctx) => {
     const now = Date.now();
 
-    // find all expired calls
+    // Only query expired calls within last 24 hours to reduce query scope
+    const oneDayAgo = now - 24 * 60 * 60 * 1000;
+
     const expiredCalls = await ctx.db
       .query("calls")
       .filter((q) =>
         q.and(
           q.eq(q.field("status"), "ringing"),
-          q.lt(q.field("ringTimeout"), now)
+          q.lt(q.field("ringTimeout"), now),
+          q.gt(q.field("startAt"), oneDayAgo)
         )
       )
-      .collect();
+      .take(100); // Process max 100 records at a time
 
-    // update the status of all expired calls
+    // Update expired call statuses
     await Promise.all(
       expiredCalls.map((call) =>
         ctx.db.patch(call._id, {
@@ -253,16 +256,18 @@ export const handleExpiredCalls = internalMutation({
 export const handleLongRunningCalls = internalMutation({
   handler: async (ctx) => {
     const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
     const result = await ctx.db
       .query("calls")
       .filter((q) =>
         q.and(
           q.eq(q.field("status"), "ongoing"),
-          q.lt(q.field("startAt"), twoHoursAgo.getTime())
+          q.lt(q.field("startAt"), twoHoursAgo.getTime()),
+          q.gt(q.field("startAt"), oneDayAgo.getTime())
         )
       )
-      .collect();
+      .take(50); // Process max 50 records at a time
 
     for (const call of result) {
       await ctx.db.patch(call._id, { status: "ended" });

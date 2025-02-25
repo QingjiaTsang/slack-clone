@@ -106,7 +106,9 @@ const schema = defineSchema({
     .index("by_recipient_id_and_status", ["recipientId", "status"])
     .index("by_workspace_id_and_status", ["workspaceId", "status"])
     .index("by_statusUpdatedAt", ["statusUpdatedAt"])
-    .index("by_status", ["status"]),
+    .index("by_status", ["status"])
+    .index("by_status_and_startAt", ["status", "startAt"])
+    .index("by_status_and_ringTimeout", ["status", "ringTimeout"]),
 });
 
 export default schema;

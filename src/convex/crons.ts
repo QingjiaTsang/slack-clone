@@ -6,14 +6,14 @@ const crons = cronJobs();
 // check expired calls every minute
 crons.interval(
   "update expired calls status",
-  { minutes: 1 },
+  { minutes: 10 },
   internal.calls.handleExpiredCalls
 );
 
 // automatically end calls that have been ongoing for more than 2 hours
 crons.interval(
   "end long running calls",
-  { minutes: 5 }, // check every 5 minutes
+  { minutes: 10 }, // check every 10 minutes
   internal.calls.handleLongRunningCalls
 );
 

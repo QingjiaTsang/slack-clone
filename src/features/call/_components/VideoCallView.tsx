@@ -68,9 +68,10 @@ const VideoCallView = ({
       user,
       token,
       options: {
+        logLevel: "debug",
         axiosRequestConfig: {
           // to prevent timeout error when joining call
-          timeout: 20000,
+          timeout: 30 * 1000,
         },
       },
     });
@@ -123,17 +124,19 @@ const VideoCallView = ({
         console.log("Successfully joined call");
       } catch (e) {
         console.error("Failed to join call", e);
+
+        // update call status from ongoing to ended
+        updateCallStatus({
+          callId,
+          status: "ended",
+          endAt: Date.now(),
+        });
+
         if (e instanceof AxiosError) {
           console.error("Axios error details:", {
             message: e.message,
             code: e.code,
             response: e.response?.data,
-          });
-
-          updateCallStatus({
-            callId,
-            status: "ended",
-            endAt: Date.now(),
           });
 
           if (e.message.includes("timeout")) {
